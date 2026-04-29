@@ -1,8 +1,8 @@
 import permision from './permission.js';
 import md5Encode from './md5.js';
 import areajs from './area.js';
-// var _host = 'https://xlinkbeta.fsgo365.cn';
-var _host = 'https://xlink.fsgo365.cn';
+var _host = 'https://xlinkbeta.fsgo365.cn';
+// var _host = 'https://xlink.fsgo365.cn';
 // var _host = 'http://localhost:8080';
 // var _host = 'http://192.168.1.24:8081'; // wgd
 // var _host = 'http://192.168.1.25:8080'; // zj
