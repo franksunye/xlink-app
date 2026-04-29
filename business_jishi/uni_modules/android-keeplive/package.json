@@ -1,0 +1,90 @@
+{
+  "id": "android-keeplive",
+  "displayName": "安卓双进程应用保活 避免系统干掉进程 ",
+  "version": "1.1.17",
+  "description": "为蓝牙 webscoket 定位等后台功能保驾护航，稳定运行等 息屏保活、锁屏唤醒 ，亮屏息屏监听，android 原生定时任务,闹钟，息屏准时",
+  "keywords": [
+    "安卓保活",
+    "通知栏权限",
+    "电池权限",
+    "通知栏点击事件自定义",
+    "",
+    "适配高版本"
+],
+  "repository": "",
+  "engines": {
+    "HBuilderX": "^3.99"
+  },
+  "dcloudext": {
+    "type": "uts",
+    "sale": {
+      "regular": {
+        "price": "2.99"
+      },
+      "sourcecode": {
+        "price": "100.00"
+      }
+    },
+    "contact": {
+      "qq": ""
+    },
+    "declaration": {
+      "ads": "无",
+      "data": "插件不采集任何数据",
+      "permissions": "  <uses-permission android:name=\"android.permission.START_ACTIVITIES\" />\n    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\n    <uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\" />\n    <uses-permission android:name=\"android.permission.GET_TASKS\" />\n    <uses-permission android:name=\"android.permission.SCHEDULE_EXACT_ALARM\" />\n    <uses-permission android:name=\"android.permission.SET_ALARM\"/>\n    <uses-permission android:name=\"android.permission.USE_EXACT_ALARM\"/>\n    <uses-permission android:name=\"android.permission.SCHEDULE_EXACT_ALARM\" />\n    <uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\" />\n    <uses-permission android:name=\"android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS\" />\n    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK\"/>"
+    },
+    "npmurl": ""
+  },
+  "uni_modules": {
+    "dependencies": [],
+    "encrypt": [],
+    "platforms": {
+      "cloud": {
+        "tcb": "y",
+        "aliyun": "y",
+        "alipay": "y"
+      },
+      "client": {
+        "Vue": {
+          "vue2": "y",
+          "vue3": "y"
+        },
+        "App": {
+            "app-android": {
+                "minVersion": "19"
+            },
+            "app-ios": "n",
+            "app-harmony": "u"
+        },
+        "H5-mobile": {
+          "Safari": "n",
+          "Android Browser": "n",
+          "微信浏览器(Android)": "n",
+          "QQ浏览器(Android)": "n"
+        },
+        "H5-pc": {
+          "Chrome": "n",
+          "IE": "n",
+          "Edge": "n",
+          "Firefox": "n",
+          "Safari": "n"
+        },
+        "小程序": {
+          "微信": "n",
+          "阿里": "n",
+          "百度": "n",
+          "字节跳动": "n",
+          "QQ": "n",
+          "钉钉": "n",
+          "快手": "n",
+          "飞书": "n",
+          "京东": "n"
+        },
+        "快应用": {
+          "华为": "n",
+          "联盟": "n"
+        }
+      }
+    }
+  }
+}

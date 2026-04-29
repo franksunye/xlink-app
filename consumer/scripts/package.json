@@ -1,0 +1,9 @@
+{
+  "name": "consumer-app-scripts",
+  "version": "1.0.0",
+  "description": "Helper scripts for Consumer App",
+  "main": "qiniu-upload.js",
+  "dependencies": {
+    "qiniu": "^7.11.0"
+  }
+}

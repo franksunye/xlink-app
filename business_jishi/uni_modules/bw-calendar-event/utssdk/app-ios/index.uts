@@ -1,0 +1,280 @@
+import { UTSiOS } from 'DCloudUTSFoundation'
+import {
+	EKAlarm, EKEventStore, EKEvent, EKEntityType,
+	EKWeekday,
+	EKSpan, EKRecurrenceRule, EKRecurrenceDayOfWeek, EKRecurrenceFrequency
+} from 'EventKit'
+import { Date, URL, DateFormatter, TimeZone } from 'Foundation'
+import { Double, Int } from 'Swift';
+import { UIAlertController, UIAlertAction, UIApplication } from "UIKit"
+import { DispatchQueue } from 'Dispatch';
+import { CreateOptions, removeOptions, successCallback, removeAllOptions, callback, resultType } from '../interface';
+
+const eventStore : EKEventStore = new EKEventStore()
+const weekly = [
+	EKWeekday.sunday,
+	EKWeekday.monday,
+	EKWeekday.tuesday,
+	EKWeekday.wednesday,
+	EKWeekday.thursday,
+	EKWeekday.friday,
+	EKWeekday.saturday,
+]
+
+/** 请求授权 */
+function requestAccess(success : successCallback) {
+	eventStore.requestAccess(to = EKEntityType.event,
+		completion = (granted : boolean, error : any) => {
+			if (!granted) {
+				// 没有允许授权，弹窗提示
+				DispatchQueue.main.async(execute = () : void => {
+					let alertViewController = new UIAlertController(
+						title = "提示",
+						message = "请在iPhone的\"设置->隐私->日历\"选项中,允许应用访问你的日历。",
+						preferredStyle = UIAlertController.Style.alert)
+					let actionCancel = new UIAlertAction(
+						title = "取消",
+						style = UIAlertAction.Style.default,
+						handler = (action : UIAlertAction) => {
+							// 点击取消的回调方法
+							// result(0)
+						})
+					let actinSure = new UIAlertAction(
+						title = "设置",
+						style = UIAlertAction.Style.default,
+						handler = (action : UIAlertAction) => {
+							// 点击设置的回调方法
+
+							let url : URL = new URL(string = "App-Prefs:root=CALENDARS")!
+							if (UTSiOS.available("iOS 12.0, *")) {
+								UIApplication.shared.open(url, completionHandler = (e) => {
+									console.log(e);
+								})
+							} else {
+								console.log('aaa');
+								UIApplication.shared.openURL(url)
+							}
+
+						})
+					alertViewController.addAction(actionCancel)
+					alertViewController.addAction(actinSure)
+					UTSiOS.getCurrentViewController().present(
+						alertViewController,
+						animated = true)
+				})
+				return
+			}
+			success()
+		})
+
+}
+
+// string转Date
+function timeFormatter(date : string, format : string = 'yyyy-MM-dd HH:mm:ss') : Date {
+	const dateFormatter = new DateFormatter()
+	dateFormatter.dateFormat = format
+	dateFormatter.timeZone = TimeZone.current
+	const formatDate : Date = dateFormatter.date(from = date)!
+	return new Date(timeIntervalSince1970 = formatDate.timeIntervalSince1970)
+}
+
+export function createEventCalendar(opts : CreateOptions) {
+	requestAccess(() => {
+		const startDate = timeFormatter(opts.startDate)
+		const endDate = timeFormatter(opts.endDate)
+		//过滤重复事件
+		let predicate = eventStore.predicateForEvents(
+			withStart = startDate,
+			end = endDate,
+			calendars = [eventStore.defaultCalendarForNewEvents!])
+		let eventsArray = eventStore.events(matching = predicate)
+		const some = eventsArray.some((item) : boolean => {
+			return item.startDate == startDate && item.endDate == endDate
+		})
+		if (some) {
+			console.log('已添加过相同时间的日历提醒');
+			opts.fail?.({
+				message: '已添加过相同时间的日历提醒'
+			})
+			return
+		}
+		let event = new EKEvent(eventStore = eventStore)
+		event.title = opts.title
+		event.notes = opts.notes
+		event.startDate = startDate
+		event.endDate = endDate
+		// 是否全天
+		event.isAllDay = opts.isAllDay
+		//设置系统的默认日历
+		event.calendar = eventStore.defaultCalendarForNewEvents
+
+		// 提醒事项
+		const alarmArray : number[] = opts.alarmOffset
+		alarmArray.map((time) => {
+			let dTime : Double = time.toDouble()
+			event.addAlarm(new EKAlarm(relativeOffset = dTime))
+		})
+		// 重复规则 每周重复
+		if (opts.weeks.length !== 0) {
+			const daysOfWeek = opts.weeks.map((week : number) : EKRecurrenceDayOfWeek => {
+				return new EKRecurrenceDayOfWeek(weekly[week])
+			})
+			const rule = new EKRecurrenceRule(
+				recurrenceWith = EKRecurrenceFrequency.weekly,
+				interval = 1,
+				daysOfTheWeek = daysOfWeek,
+				daysOfTheMonth = null,
+				monthsOfTheYear = null,
+				weeksOfTheYear = null,
+				daysOfTheYear = null,
+				setPositions = null,
+				end = null
+			)
+			event.addRecurrenceRule(rule)
+		}
+
+		try {
+			UTSiOS.try(eventStore.save(event, span = EKSpan.thisEvent))
+			const eventId = event.eventIdentifier
+			opts.success?.({
+				eventId
+			})
+		} catch (error) {
+			console.log('error', error.localizedDescription);
+			opts.fail?.({
+				message: error.localizedDescription
+			})
+		}
+	})
+
+}
+
+export function removeEventCalendar(opts : removeOptions) {
+	requestAccess(() => {
+		let event = eventStore.event(withIdentifier = opts.idfer)
+		if (event == null) {
+			opts.fail?.({
+				message: '获取事件失败'
+			})
+			return
+		}
+		try {
+			UTSiOS.try(eventStore.remove(event!, span = EKSpan.futureEvents))
+			opts.success?.({
+				message: '删除成功'
+			})
+		} catch (error) {
+			opts.fail?.({
+				message: error.localizedDescription
+			})
+		}
+	})
+}
+
+
+// 删除某个时间段所有的事件(会删除这个时间段所有时间,包括用户自己添加的)
+export function removeAllEventCalendar(opts : removeAllOptions) {
+	requestAccess(() => {
+		const calendars = [eventStore.defaultCalendarForNewEvents!]
+		let predicate = eventStore.predicateForEvents(
+			withStart = timeFormatter(opts.startDate),
+			end = timeFormatter(opts.endDate),
+			calendars = calendars)
+		// //根据时间段来筛选
+		let eventsArray = eventStore.events(matching = predicate)
+		let errorArr : EKEvent[] = []
+		if (eventsArray.length !== 0) {
+			eventsArray.map((event : EKEvent) => {
+
+				try {
+					if (event.recurrenceRules != null) {
+						UTSiOS.try(eventStore.remove(event, span = EKSpan.futureEvents, commit = true))
+					} else {
+						UTSiOS.try(eventStore.remove(event, span = EKSpan.thisEvent, commit = true))
+					}
+				} catch (error) {
+					errorArr.push(event)
+				}
+
+
+			})
+			if (errorArr.length !== 0) {
+				opts.fail?.({
+					errorArr
+				})
+			} else {
+				opts.success?.({
+					message: '删除时间段提醒成功'
+				})
+			}
+			return
+		}
+		opts.fail?.({
+			message: '当前时间段未查询到事件'
+		})
+	})
+}
+
+export function getEventCalendar(success : callback) {
+	requestAccess(() => {
+		const calendars = [eventStore.defaultCalendarForNewEvents!]
+		// 开始时间当前时间
+		const startDate = new Date(timeIntervalSince1970 = new Date().timeIntervalSince1970)
+		// 结束时间一年后
+		const endDate = new Date(timeIntervalSinceNow = 60 * 60 * 24 * 365)
+		let predicate = eventStore.predicateForEvents(
+			withStart = startDate,
+			end = endDate,
+			calendars = calendars)
+		//根据时间段来筛选
+		let eventsArray = eventStore.events(matching = predicate)
+		let result : resultType[] = []
+		eventsArray.map((item : EKEvent) : void => {
+			const some = result.some((i) : boolean => i.eventId == item.eventIdentifier)
+			if (some) {
+				return
+			}
+			let ruleDays : any[] = []
+			if (item.recurrenceRules != null) {
+				item.recurrenceRules?.forEach((rule) => {
+					rule.daysOfTheWeek!.map((day) => {
+						switch (day.dayOfTheWeek) {
+							case EKWeekday.sunday:
+								ruleDays.push(0)
+								break;
+							case EKWeekday.monday:
+								ruleDays.push(1)
+								break;
+							case EKWeekday.tuesday:
+								ruleDays.push(2)
+								break;
+							case EKWeekday.wednesday:
+								ruleDays.push(3)
+								break;
+							case EKWeekday.thursday:
+								ruleDays.push(4)
+								break;
+							case EKWeekday.friday:
+								ruleDays.push(5)
+								break;
+							case EKWeekday.saturday:
+								ruleDays.push(6)
+								break;
+						}
+					})
+				})
+			}
+
+			const obj : resultType = {
+				startDate: item.startDate,
+				endDate: item.endDate,
+				notes: item.notes,
+				title: item.title,
+				eventId: item.eventIdentifier,
+				rules: ruleDays
+			}
+			result.push(obj)
+		})
+		success(JSON.stringify(result))
+	})
+}

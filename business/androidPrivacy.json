@@ -1,0 +1,38 @@
+{
+    "version" : "1",
+    "prompt" : "template",
+    "title" : "隐私政策和用户协议",
+    "message" : "　　感谢您信任并使用“修链房屋维修服务商端”简称“XLink”，为保护您的个人信息安全，我们将依据<a href=\"https://pub.fsgo365.cn/privacyAgreement.html\">《隐私政策》</a>和<a href=\"https://pub.fsgo365.cn/userAgreement.html\">《用户协议》</a>来帮助您了解：我们如何收集、使用、存储个人信息，以及您享有的相关权利和需要遵守的相关事项。<br/>　　如果您同意，请点击下面“同意并继续”，我们会尽全力保护您的个人信息安全，为您提供优质的服务。",
+    "buttonAccept" : "同意并继续",
+    "buttonRefuse" : "不同意并退出应用",
+    "hrefLoader" : "default",
+    "backToExit" : "true",
+    "second" : {
+        "title" : "确认提示",
+        "message" : "　　进入应用前，您需先同意<a href=\"https://pub.fsgo365.cn/privacyAgreement.html\">《隐私政策》</a>和<a href=\"https://pub.fsgo365.cn/userAgreement.html\">《用户协议》</a>，否则将退出应用。",
+        "buttonAccept" : "同意并继续",
+        "buttonRefuse" : "不同意并退出应用"
+    },
+    "disagreeMode" : {
+        "support" : false,
+        "loadNativePlugins" : false,
+        "visitorEntry" : false,
+        "showAlways" : false
+    },
+    "styles" : {
+        "backgroundColor" : "#FFFFFF",
+        "borderRadius" : "5px",
+        "title" : {
+            "color" : "#323233"
+        },
+        "buttonAccept" : {
+            "color" : "#106cff"
+        },
+        "buttonRefuse" : {
+            "color" : "#969799"
+        },
+        "buttonVisitor" : {
+            "color" : "#00ffff"
+        }
+    }
+}

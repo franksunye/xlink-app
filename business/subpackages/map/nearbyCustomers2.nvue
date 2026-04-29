@@ -1,0 +1,1166 @@
+<template>
+	<view class="bodyBox">
+		<map
+			id="myMap"
+			:style="'width: ' + screenWidth + 'px; height: ' + screenHeight + 'px'"
+			:longitude="mapObj.longitude"
+			:latitude="mapObj.latitude"
+			:show-location="true"
+			max-scale="18"
+			min-scale="12"
+			:scale="mapObj.scale"
+			@regionchange="regionchange"
+			:markers="mapObj.markers"
+			@callouttap="callouttap"
+			@markertap="markertap"
+			@labeltap="labeltap"
+		></map>
+
+		<view
+			class="popup"
+			:style="{
+				width: screenWidth + 'px',
+				height: screenHeight * 0.7 + 'px',
+				transform: `translateY(${translateYValue}px)`
+			}"
+		>
+			<view
+				class="popup-content"
+				@touchstart="handleTouchStart"
+				@touchmove="handleTouchMove"
+				@touchend="handleTouchEnd"
+				@click="togglePopup"
+			>
+				<image
+					src="https://pub.fsgo365.cn/icon-up.jpg"
+					:style="{
+						transform: `rotate(${isPopupOpen ? '180deg' : '0deg'})`,
+						height: '20px'
+					}"
+					mode="heightFix"
+				></image>
+
+				<view class="title">
+					<block v-if="activeMarkerId">
+						<view style="color: #000">该小区共{{ fpi.total == null ? '--' : fpi.total }}个工单</view>
+					</block>
+					<text class="" v-else>未选择小区</text>
+				</view>
+			</view>
+
+			<scroll-view scroll-y class="popup-list" @scrolltolower="scrolltolower">
+				<block v-if="fpi.total > 0">
+					<view
+						class="card"
+						:style="'width: ' + screenWidth * 0.9 + 'px;'"
+						v-for="(item, index) in workOrderList"
+						:key="index"
+						@click.stop="toDetail(item.data._id)"
+					>
+						<view class="card_top c-m-12">
+							<view class="card_header">
+								<view class="header_left">
+									<view
+										class="header_tag"
+										:class="
+											['1', '2', '5'].includes(item.data.exts.sourceType)
+												? 'c-bg-red'
+												: 'c-bg-blue'
+										"
+									>
+										<img
+											style="width: 20px; height: 20px"
+											:src="
+												'https://pub.fsgo365.cn/icon-' +
+												(item.data.serviceType == '40' ? 'shuazi.png' : 'fangshui.png')
+											"
+										/>
+									</view>
+									<text
+										@tap.stop="
+											(e) =>
+												copy(e, item.data.orderNum, '已复制完整工单编号 ' + item.data.orderNum)
+										"
+										class="c-m-l-20 c-size-15"
+									>
+										{{ '#' + item.data.orderNum.slice(5) }}
+									</text>
+								</view>
+								<view class="header_right">
+									<text class="c-size-15" :style="{ color: item.state != 10 && '#106cff' }">
+										{{ codelabel('select', 'status', item.data.status) }}
+									</text>
+								</view>
+							</view>
+						</view>
+
+						<view
+							v-if="item.data.district || item.data.address"
+							class="c-flex c-flex-between c-flex-row c-m-b-16"
+						>
+							<view class="c-flex-1">
+								{{
+									(item.data.district ? formatDistrict(Number(item.data.district)) : '') +
+									' ' +
+									(item.data.address || '')
+								}}
+							</view>
+							<view
+								v-if="item.data.gpsPoint && item.data.gpsPoint.longitude && item.data.gpsPoint.latitude"
+								class="c-m-l-20 c-flex c-item-center c-flex-row"
+								style="height: 22px; line-height: 22px"
+								@click.stop="
+									(e) => openLocation(e, item.data.gpsPoint, item.data.area, item.data.address)
+								"
+								:data-event="{ id: '9c142Y5468' }"
+							>
+								<view
+									v-if="item.data.exts.distance || item.data.exts.distance == 0"
+									class="c-size-12 c-gray c-m-r-10 c-flex"
+									:data-event="{ id: '9c142Y5468' }"
+								>
+									{{ item.data.exts.distance }}
+									<text class="c-m-l-5">km</text>
+								</view>
+								<image
+									src="https://pub.fsgo365.cn/icon-car.png"
+									style="width: 20px; height: 20px"
+									:data-event="{ id: '9c142Y5468' }"
+								></image>
+							</view>
+						</view>
+
+						<view class="c-flex-wrap c-flex c-flex-row c-item-center c-m-b-16">
+							<view class="c-flex c-item-center c-m-10 c-flex-row">
+								<view class="card-icon-view card-icon-border c-m-r-20">
+									<view v-if="!item.data.exts.gender" class="">
+										<image
+											style="width: 20px; height: 20px"
+											src="https://pub.fsgo365.cn/icon-character-unknown.png"
+										></image>
+									</view>
+									<image
+										style="width: 20px; height: 20px"
+										v-else
+										:src="
+											item.data.exts.gender == '1'
+												? 'https://pub.fsgo365.cn/icon-character-man.png'
+												: 'https://pub.fsgo365.cn/icon-character-woman.png'
+										"
+									></image>
+								</view>
+								<text class="c-size-14">
+									{{
+										item.data.name &&
+										item.data.name.length > 4 &&
+										item.data.exts.supervisorName &&
+										item.data.exts.headmanName
+											? item.data.name.substring(0, 4) + '...'
+											: item.data.name
+									}}
+								</text>
+							</view>
+							<view v-if="item.data.exts.supervisorName" class="c-flex c-flex-row c-item-center">
+								<view class="card-icon-view card-icon-border c-m-r-20">
+									<image
+										style="width: 20px; height: 20px"
+										src="https://pub.fsgo365.cn/icon-character-supervisor.png"
+									></image>
+								</view>
+								<text class="c-size-14">{{ item.data.exts.supervisorName }}</text>
+							</view>
+						</view>
+
+						<view>
+							<!-- 联系客户 -->
+							<block v-if="Number(item.data.status) > 103">
+								<view
+									class="van_button"
+									v-if="item.data && item.data.phone"
+									@click.stop="(e) => makeCall(e, item.data.phone)"
+									:data-event="{ id: 'B43eOJcj6q' }"
+								>
+									联系客户
+								</view>
+								<view
+									class="van_button"
+									v-else
+									@click.stop="
+										(e) =>
+											call(
+												e,
+												'1',
+												null,
+												item.data.contactIds && item.data.contactIds[0]
+													? item.data.contactIds[0]
+													: '',
+												item.data._id
+											)
+									"
+									:data-event="{ id: 'k5NVc60iAz' }"
+								>
+									联系客户
+								</view>
+							</block>
+						</view>
+					</view>
+				</block>
+				<block v-else>
+					<van-empty image="search" description="该小区没有查询到工单" />
+				</block>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+
+<script>
+var common = require('../../resources/js/common.js');
+import area from '../../resources/js/area'; // 注意要调整路径
+var areajs = require('../../resources/js/area.js');
+const app = getApp();
+let nextId = 1;
+let formattedDate;
+export default {
+	data() {
+		return {
+			mapObj: {
+				longitude: 116.404, // 默认经度 地图中心点
+				latitude: 39.915, // 默认纬度    地图中心点
+				northeast: {},
+				eastsouth: {},
+				requestType: 'name', //值为“city”时发送区域城市请求；当值为district时，表示是区域请求。。。。
+				markers: [],
+				markersList: [], //
+				mapContext: null, // map上下文
+				scale: 15 //默认缩放级别
+			},
+			centerLocation: [116.404, 39.915], //当前地图中心点
+			diagonalDistanceKm: 0, // 半径  单位km
+			existingIds: new Set(), // 用于记录已加载标记点的 id
+			addressValue: '', //搜索框输入的内容
+			provinceArray: [], //搜索区域数据列表
+			filteredPoints: [], //收缩框检索出来的数据
+			fpi: {
+				total: null, //总条数
+				page: 1, //当前页码
+				rows: 30
+			},
+			workOrderList: [], //工单列表
+			showSearchSuggestions: false, //是否显示收缩检索框
+			showPicker: false, //是否显示热门城市选择器
+			province: { code: '120000', text: '北京市' }, //
+			params: {}, //父亲元素传递过来的参数
+			activeMarkerId: '', //激活项
+			activatedItems: [], //已经激活了的数组
+			options: {
+				cascadeCode_repairParts: {
+					codeId: 'repairParts'
+				},
+				codecfg_status: {
+					codeId: 'STATUS'
+				}
+			},
+			popupHeight: 60, // 初始化高度
+			isPopupOpen: false, // 弹出层初始为关闭状态
+			debounceTimeout: null, // 用于存储防抖的定时器
+
+			screenWidth: 0,
+			screenHeight: 0,
+			translateYValue: 0,
+			initialTranslateY: 0,
+
+			startY: 0,
+			currentY: 0,
+			// 页面停留时间记录对象
+			pageTrack: {
+				enterTime: 0, // 1.进入时间戳
+				leaveTime: 0, // 2.离开时间戳
+				duration: 0, // 3.停留时长（秒）
+				preRoute: '', // 4.来源页面
+				currentRoute: '', // 5.当前页面
+				currentOptions: {}, // 6.当前页面参数
+				leaveType: '' // 7.离开方式 hide:跳转,unload:返回
+			},
+			areaList: Object.assign({}, areajs.default)
+		};
+	},
+	onReady() {},
+	onLoad(options) {
+		common.osg.init(this, options, app);
+
+		// 示例：调用函数获取今天的时间
+		this.formattedDate = this.getTodayStartTime();
+		if (options.data) {
+			const data = options.data;
+			const decodedData = decodeURIComponent(data); // 解码 URL 编码
+			this.params = JSON.parse(decodedData); // 解析 JSON 字符串
+		}
+
+		let User = wx.getStorageSync('user');
+		this.user_id = User._id;
+		//获取map上下文
+		const mapContext = uni.createMapContext('myMap', this);
+		this.mapObj.mapContext = mapContext;
+		console.log('map 上下文', this.mapObj.mapContext);
+		common.osg.codeoption();
+		this.getCurrentLocation();
+
+		const systemInfo = wx.getSystemInfoSync();
+		this.screenWidth = systemInfo.screenWidth; // 获取屏幕宽度
+		this.screenHeight = systemInfo.windowHeight; // 获取屏幕高度
+		this.translateYValue = systemInfo.windowHeight - 50; // 获取位移的高度
+		console.log('默认位移距离', this.translateYValue);
+
+		this.handleTouchMove = this.throttle(this.handleTouchMoveThrottled, 16); // 每 16ms 触发一次
+
+		// #ifdef APP-PLUS
+
+		setTimeout(() => {
+			mapContext.getRegion({
+				success: ({ northeast, southwest }) => {
+					this.northeast = northeast;
+					this.southwest = southwest;
+					mapContext.getScale({
+						success: ({ scale }) => {
+							console.log('当前地图的缩放级别:', scale);
+							// 你可以在这里处理缩放级别
+							// this.getMapDetails(scale);
+							// this.debounce(this.getListData, 300)();
+							this.debounce(this.newGetListData, 300)();
+						},
+						fail: (err) => {
+							console.log('获取缩放级别失败:', err);
+							// 处理失败的逻辑
+						}
+					});
+				},
+				fail: (err) => {
+					console.log('获取缩放级别失败:', err);
+					// 处理失败的逻辑
+				}
+			});
+		}, 1000);
+		// #endif
+	},
+	onShow() {
+		// 获取路由信息
+		const pages = getCurrentPages();
+		if (pages.length == 0) return; // 刚启动时触发1次onShow，页面为undefined，不会触发onHide和onUnload。随后才进入首页。
+
+		// 返回当前页面时清空之前数据重新计算
+		this.pageTrack = {
+			enterTime: 0, // 1.进入时间戳
+			leaveTime: 0, // 2.离开时间戳
+			duration: 0, // 3.停留时长（秒）
+			preRoute: '', // 4.来源页面
+			currentRoute: '', // 5.当前页面
+			currentOptions: {}, // 6.当前页面参数
+			leaveType: '' // 7.离开方式 hide:跳转,unload:返回
+		};
+
+		this.pageTrack.enterTime = Date.now(); // 1.进入时间戳
+		this.pageTrack.preRoute = pages.length < 2 ? '' : pages[pages.length - 2]?.route; // 4.来源页面
+		this.pageTrack.currentRoute = pages[pages.length - 1]?.route; // 5.当前页面
+		this.pageTrack.currentOptions = pages[pages.length - 1]?.options || {}; // 6.当前页面参数
+	},
+	onHide() {
+		this.pageLeave('hide');
+	},
+	onUnload() {
+		this.pageLeave('unload');
+	},
+	methods: {
+		// 离开页面上报
+		pageLeave(leaveType) {
+			// 当使用reLaunch关闭所有页面打开新页面时，原来已经hide的页面会再次触发unload，hide时已上报，unload时不需要重复上报。如点击退出登录时。
+			if (this.pageTrack.leaveType == 'hide') {
+				console.log('xxxxxx pageLeave return  xxxxxxx');
+				return;
+			}
+
+			let now = Date.now();
+			let duration = Number(((now - this.pageTrack.enterTime) / 1000).toFixed(0));
+			if (duration < 0.1) return; // android查看文件返回时，会返回到wps列表，此时并没有返回到App，但会触发1次onShow和onHide，不上报.
+
+			this.pageTrack.leaveTime = now; // 2.离开时间
+			this.pageTrack.duration = duration; // 3.停留时长（秒）
+			this.pageTrack.leaveType = leaveType; // 7.离开方式
+
+			common.osg.report('pageTrack', this.pageTrack);
+		},
+		// 防抖函数
+		debounce(func, wait) {
+			return (...args) => {
+				if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
+				this.debounceTimeout = setTimeout(() => {
+					func.apply(this, args);
+				}, wait);
+			};
+		},
+		// 简单节流实现
+		throttle(func, limit) {
+			let inThrottle;
+			return function () {
+				const args = arguments;
+				const context = this;
+				if (!inThrottle) {
+					func.apply(context, args);
+					inThrottle = true;
+					setTimeout(() => (inThrottle = false), limit);
+				}
+			};
+		},
+		// 搜索框输入内容改变的时候触发
+		onChange(e) {
+			// 如果输入框为空，直接 return，不做任何操作
+			if (e.detail.trim() === '') {
+				this.showSearchSuggestions = false;
+				this.filteredPoints = []; // 清空之前的搜索结果
+				return;
+			}
+			this.showSearchSuggestions = e.detail.trim() !== '';
+			this.addressValue = e.detail;
+			this.debounce(this.queryCommunityData, 500)();
+		},
+
+		// 使用正则匹配搜索词 标红
+		highlightText(text) {
+			if (!this.addressValue) return text;
+			const regex = new RegExp(`(${this.addressValue})`, 'gi');
+			return text.replace(regex, '<span style="color: red;">$1</span>');
+		},
+		//点击提示词 定位到目标点
+		navigateToMarker(item) {
+			this.resetPagination();
+			this.addressValue = item.name;
+			//关闭搜索提示词
+			this.showSearchSuggestions = false;
+			console.log('点击拿到当前的点击项', item);
+			this.moveMarkerToCenter(item, 16);
+			this.activeMarkerId = this.concatenateLatLng(item.latitude, item.longitude);
+
+			this.getServiceAppointment(item);
+		},
+
+		newGetListData() {
+			let aggr = [
+				{
+					$match: {
+						'exts.supervisorId': this.user_id,
+						state: 1,
+						status: { $gt: '204' },
+						gpsPoint: {
+							$geoWithin: {
+								$centerSphere: [
+									this.centerLocation,
+									Math.round(this.diagonalDistanceKm * 10) / 10 / 6378.1
+								]
+							}
+						}
+					}
+				},
+				{
+					$addFields: {
+						leakagesite: { $first: '$exts.leakagesite_copy' }
+					}
+				},
+				{
+					$group: {
+						_id: {
+							leakagesite: '$leakagesite',
+							nhId: '$exts.nhId'
+						},
+						scount: { $sum: 1 }
+					}
+				},
+				{
+					$lookup: {
+						from: 'neighborhood',
+						let: { nhId: '$_id.nhId' },
+						pipeline: [
+							{
+								$match: {
+									$expr: {
+										$and: [{ $eq: ['$_id', '$$nhId'] }]
+									}
+								}
+							},
+							{
+								$project: {
+									name: '$name',
+									gpsPoint: '$originGpsPoint'
+								}
+							}
+						],
+						as: 'nhData'
+					}
+				},
+				{
+					$unwind: '$nhData'
+				}
+			];
+
+			common.osg.ajax(
+				'/stat/aggr/serviceAppointment.do',
+				{ aggr: JSON.stringify(aggr) },
+				(res) => {
+					console.log('新接口拿到的数据', res);
+
+					for (let index = 0; index < res.length; index++) {
+						let item = res[index];
+						const { _id, name, gpsPoint } = item.nhData;
+						let markerItem = {
+							id: nextId++, // 为每个元素添加 id 属性
+							_id: _id || null,
+							longitude: gpsPoint.longitude,
+							latitude: gpsPoint.latitude,
+							width: 1,
+							height: 1,
+							title: name,
+							iconPath: 'https://pub.fsgo365.cn/poi-marker-technician.png',
+							callout: {
+								content: name,
+								color: '#fff',
+								fontSize: 12,
+								borderRadius: 10,
+								borderWidth: 2,
+								borderColor: '#3072f6',
+								bgColor: '#3072f6',
+								padding: 5,
+								display: 'ALWAYS'
+							}
+						};
+						if (!this.existingIds.has(_id)) {
+							this.existingIds.add(_id); // 将新的 id 加入到 existingIds 中
+							// this.mapObj.markers.push(markerItem);
+							this.mapObj.markersList.push(markerItem);
+						}
+					}
+					this.mapObj.markers = JSON.parse(JSON.stringify(this.mapObj.markersList));
+					console.log('223344556677', this.mapObj.markers);
+				},
+				{ noload: true }
+			);
+		},
+
+		// 将经纬度转换为字符串id
+		concatenateLatLng(lat, lng) {
+			let latStr = lat.toString();
+			let lngStr = lng.toString();
+
+			// 去除小数点
+			latStr = latStr.replace('.', '');
+			lngStr = lngStr.replace('.', '');
+			// 拼接经纬度字符串
+			let concatenatedStr = latStr + lngStr;
+			// 将拼接后的字符串转换为数字
+			let concatenatedNum = Number(concatenatedStr);
+			console.log('111111', concatenatedNum);
+			return concatenatedNum;
+		},
+		// 地图视野发生改变的时候
+		regionchange(e) {
+			console.log(e);
+			// #ifdef APP-PLUS
+
+			if (e.detail.type == 'end' || e.type == 'end') {
+				this.mapObj.mapContext.getRegion({
+					success: ({ northeast, southwest }) => {
+						this.northeast = northeast;
+						this.southwest = southwest;
+
+						// 获取东北角和西南角坐标
+						let lat1 = northeast.latitude;
+						let lon1 = northeast.longitude;
+						let lat2 = southwest.latitude;
+						let lon2 = southwest.longitude;
+						// 计算对角线直线距离
+						this.diagonalDistanceKm = this.getDistance(lat1, lon1, lat2, lon2);
+
+						this.mapObj.mapContext.getCenterLocation({
+							success: ({ latitude, longitude }) => {
+								this.centerLocation = [longitude, latitude];
+							}
+						});
+						this.mapObj.mapContext.getScale({
+							success: ({ scale }) => {
+								console.log('当前地图的缩放级别:', scale);
+								// 你可以在这里处理缩放级别
+								// this.getMapDetails(scale);
+								// this.debounce(this.getListData, 300)();
+
+								this.debounce(this.newGetListData, 300)();
+							},
+							fail: (err) => {
+								console.log('获取缩放级别失败:', err);
+								// 处理失败的逻辑
+							}
+						});
+					},
+					fail: (err) => {
+						console.log('获取缩放级别失败:', err);
+						// 处理失败的逻辑
+					}
+				});
+			}
+			// #endif
+
+			// #ifdef MP-WEIXIN
+			if (e.type === 'end') {
+				const { scale } = e.target;
+				const { northeast, southwest } = e.target.region;
+				this.northeast = northeast;
+				this.southwest = southwest;
+
+				console.log(e.target);
+				// 传递当前地图缩放等级
+				// this.getMapDetails(scale);
+				console.log('当前地图缩放的等级', scale, this.mapObj.requestType);
+				//请求数据
+
+				// this.debounce(this.getListData, 300)();
+				this.debounce(this.newGetListData, 300)();
+			}
+
+			// #endif
+		},
+		//更改缩放等级
+		// getMapDetails(scale) {
+		// 	switch (true) {
+		// 		case scale >= 7 && scale < 10.5:
+		// 			this.mapObj.requestType = 'city';
+		// 			break;
+		// 		case scale >= 10.5 && scale < 12.5:
+		// 			this.mapObj.requestType = 'district';
+		// 			break;
+		// 		case scale >= 12.5 && scale < 14.5:
+		// 			this.mapObj.requestType = 'subdistrict';
+		// 			break;
+		// 		case scale >= 14.5 && scale < 22:
+		// 			this.mapObj.requestType = 'name';
+		// 			break;
+		// 		default:
+		// 	}
+		// },
+		// 计算下一个层级
+		// getNextZoomLevel() {
+		// 	switch (this.mapObj.requestType) {
+		// 		case 'city':
+		// 			return 11; // 下一层级是district
+		// 		case 'district':
+		// 			return 13; // 下一层级是subdistrict
+		// 		case 'subdistrict':
+		// 			return 16; // 下一层级是name
+		// 		case 'name':
+		// 			return 16.1;
+		// 		default:
+		// 			return false; // 如果没有匹配的类型，则返回最小层级
+		// 	}
+		// },
+		//根据经纬度进行定位
+		getCurrentLocation() {
+			// 传递过来的经纬度无效
+			// const { longitude, latitude } = this.params.gpsPoint || {};
+			//39.920086 是 纬度（Latitude）
+			//116.441013 是 经度（Longitude）
+			// console.log('app.globalData', app.globalData.location);
+
+			// const [latitude, longitude] = app.globalData.location.split(',');
+
+			let latitude = '';
+			let longitude = '';
+			let options = this.params.gpsPoint;
+			// 优先使用传入参数
+			if (options && options.latitude && options.longitude) {
+				latitude = options.latitude;
+				longitude = options.longitude;
+				console.log('传入的参数');
+			} else if (app.globalData.location) {
+				// 其次尝试用全局默认位置
+				const [lat, lng] = app.globalData.location.split(',');
+				latitude = lat;
+				longitude = lng;
+				console.log('取app的参数');
+			}
+
+			//如果有经纬度 直接 定位的
+			if (longitude && latitude) {
+				this.mapObj.latitude = latitude;
+				this.mapObj.longitude = longitude;
+			} else {
+				//通过定位来解决
+				wx.getLocation({
+					type: 'gcj02', // 默认为 'gcj02' 坐标系，适用于大多数情况
+            		isHighAccuracy: true,
+					success: (res) => {
+						// 成功获取位置
+						const { longitude: lng, latitude: lat } = res;
+						this.mapObj.latitude = lat;
+						this.mapObj.longitude = lng;
+						// 高亮标记点
+					},
+					fail: (error) => {
+						// 失败处理
+						console.error('获取位置失败:', error);
+					}
+				});
+			}
+		},
+		// 点击地图自定义气泡的时候触发
+		callouttap(e) {
+			this.resetPagination();
+			const { markerId } = e.detail;
+			//拿到点击的那个自定义气泡Id
+			this.activatedItems = this.mapObj.markersList.find((m) => m.id == markerId);
+			console.log('拿到点击的那个自定义气泡', this.activatedItems);
+			if (this.activatedItems) {
+				this.activeMarkerId = markerId; // 设置为当前点击的 markerId
+				console.log(this.activeMarkerId);
+				this.getServiceAppointment(this.activatedItems);
+				this.moveMarkerToCenter(this.activatedItems); // 保持原有的逻辑
+
+				// 更新所有 markers 的 callout.bgColor
+				this.mapObj.markersList.forEach((item) => {
+					if (
+						item.id === markerId &&
+						(item.callout.bgColor == '#3072f6' || item.callout.bgColor == '#f58778')
+					) {
+						item.callout.bgColor = '#fa5741';
+						item.callout.borderColor = '#fa5741';
+					} else if (item.id !== markerId && item.callout.bgColor == '#fa5741') {
+						item.callout.bgColor = '#f58778';
+						item.callout.borderColor = '#f58778';
+					}
+				});
+				this.mapObj.markers = JSON.parse(JSON.stringify(this.mapObj.markersList));
+			}
+		},
+		moveMarkerToCenter(marker, zoomLevel = null) {
+			const { longitude: lng, latitude: lat } = marker;
+			if (lng && lat) {
+				this.mapObj.mapContext.moveToLocation({
+					longitude: lng,
+					latitude: lat
+					// success: () => {
+					// 	//这里加300ms的延时是为了防止和moveToLocation功能冲突，保留地图移动的动画
+					// 	const timer = setTimeout(() => {
+					// 		this.mapObj.longitude = lng;
+					// 		this.mapObj.latitude = lat;
+					// 		clearTimeout(timer);
+					// 	}, 300);
+					// }
+				});
+			} else {
+				console.log('经纬度缺失');
+			}
+		},
+		//展开弹出层
+		togglePopup() {
+			console.log('经纬度缺失');
+			if (!this.activeMarkerId) return;
+
+			this.isPopupOpen = !this.isPopupOpen;
+			if (this.isPopupOpen) {
+				this.translateYValue = this.screenHeight * 0.3;
+			} else {
+				this.translateYValue = this.screenHeight - 50;
+			}
+		},
+		//查询工单列列表 接口
+		getServiceAppointment(item) {
+			this.fpi.total = null;
+			common.osg.ajax(
+				// '/basic/serviceAppointment/query',
+				'/basic/serviceAppointment/querySAWorkflowNode',
+				{
+					'is:exts.nhId|string#or': item._id,
+					notFilterBelongTo: '1',
+					notFilterOrgId: '1',
+					page: this.fpi.page,
+					rows: this.fpi.rows
+				},
+				({ data, total }) => {
+					// this.workOrderList = data;
+					this.fpi.page++; // 自增 page 值
+					this.fpi.total = total;
+					console.log('查询工单列列表', data);
+					console.log('查询小区工单数', this.fpi.total);
+					this.workOrderList = [...this.workOrderList, ...data];
+				},
+				{ noload: true }
+			);
+		},
+
+		// codelabel(options, value) {
+		// 	return common.osg.formatCascadeMultiple(options, value);
+		// },
+
+		codelabel(type, option, val) {
+			if (!val) return;
+			if (type == 'select') {
+				return common.osg.codelabel(option, val);
+			} else if (type == 'cascade') {
+				return common.osg.formatCascade(option, val);
+			}
+		},
+
+		//地区选择器 处理取消事件
+		handleCancel() {
+			this.showPicker = false;
+		},
+		//地区选择器 处理确认事件
+		handleConfirm(e) {
+			const { value, index } = e.detail;
+			this.showPicker = false;
+			this.province = value;
+			this.resetPagination();
+			this.fpi.total = 0;
+			this.activeMarkerId = '';
+			this.locateCityCenter(this.province.text, this.province.text);
+		},
+		//根据城市定位当前地图中心的点
+		locateCityCenter(address, city) {
+			common.osg.geo(
+				address,
+				(res) => {
+					const { location } = res;
+					console.log(res);
+					console.log(location);
+					this.mapObj.longitude = location.split(',')[0];
+					this.mapObj.latitude = location.split(',')[1];
+					this.mapObj.scale = 8;
+				},
+				city
+			);
+		},
+		//查询小区数据
+		queryCommunityData() {
+			common.osg.ajax(
+				'/basic/neighborhood/query',
+				{
+					'regex:name|string#and': this.addressValue,
+					'is:city|string#and': '',
+					'is:province|string#and': this.province.code,
+					'is:province|string#and': this.params._id || '',
+					notFilterBelongTo: '1',
+					notFilterOrgId: '1',
+					rows: 10
+				},
+				({ data }) => {
+					this.filteredPoints = data;
+				},
+				{ noload: true }
+			);
+		},
+		//触底事件
+		scrolltolower() {
+			if (this.workOrderList.length === this.fpi.total) {
+				wx.showToast({
+					title: '暂无更多',
+					icon: 'none',
+					duration: 2000
+				});
+				return; // 防止重复调用
+			}
+
+			this.getServiceAppointment(this.activatedItems);
+		},
+		// 重置分页器
+		resetPagination() {
+			this.fpi.page = 1; // 重置页码
+			this.workOrderList = []; // 清空数据列表
+		},
+		getTodayStartTime() {
+			// 获取今天的日期
+			let today = new Date();
+
+			// 将时间设置为 00:00:00
+			today.setHours(0, 0, 0, 0);
+
+			// 获取本地时间并格式化为 "YYYY-MM-DD HH:mm:ss" 格式
+			let year = today.getFullYear();
+			let month = String(today.getMonth() + 1).padStart(2, '0'); // 月份从0开始
+			let day = String(today.getDate()).padStart(2, '0');
+			let hours = String(today.getHours()).padStart(2, '0');
+			let minutes = String(today.getMinutes()).padStart(2, '0');
+			let seconds = String(today.getSeconds()).padStart(2, '0');
+
+			// 生成最终日期格式
+			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		},
+		handleTouchStart(e) {
+			// this.startY = e.touches[0].pageY;
+			this.startY = e.touches[0].pageY; // 按下那一刻的位置
+			this.initialTranslateY = this.translateYValue; // 当前弹窗的偏移值
+			console.log(112233, this.startY);
+		},
+		handleTouchMoveThrottled(e) {
+			this.currentY = e.touches[0].pageY;
+			const moveY = this.currentY - this.startY;
+
+			let newTranslateY = this.translateYValue + moveY;
+
+			const minTranslateY = this.screenHeight - this.screenHeight * 0.7; // 展开高度
+			const maxTranslateY = this.screenHeight - 50; // 收起高度
+
+			if (newTranslateY < minTranslateY) newTranslateY = minTranslateY;
+			if (newTranslateY > maxTranslateY) newTranslateY = maxTranslateY;
+
+			this.translateYValue = Math.round(newTranslateY);
+			// this.startY = this.currentY; // 重新设置起点，保持顺滑拖动 xxxx
+
+			console.log('排查抽搐原因，translateYValue', this.translateYValue);
+			console.log('排查抽搐原因startY', this.startY);
+		},
+
+		handleTouchEnd() {
+			// 判断收起还是展开（50%为临界点）
+			const middle = this.screenHeight - this.screenHeight * 0.35;
+			if (this.translateYValue < middle) {
+				this.translateYValue = this.screenHeight - this.screenHeight * 0.7;
+				this.isPopupOpen = true;
+			} else {
+				this.translateYValue = this.screenHeight - 50;
+				this.isPopupOpen = false;
+			}
+		},
+		call(e, type, callerId, calleeId, sid) {
+			e.stopPropagation();
+			console.log('112233', sid);
+			let status = false;
+			common.osg.ajax(
+				'basic/winnerlook/getMiddleNumberBySid',
+				{
+					// type,
+					// callerId: callerId || wx.getStorageSync('user')._id,
+					// calleeId: calleeId,
+					sid
+				},
+				(res) => {
+					status = true;
+					if (res.data && res.data.phoneNumberX) {
+						this.makeCall(e, res.data.phoneNumberX);
+					} else {
+						const modal = weex.requireModule('modal');
+						modal.toast({
+							message: '获取手机号失败'
+						});
+					}
+				},
+				{
+					fail: () => {}
+				}
+			);
+
+			setTimeout(() => {
+				if (!status) {
+					const modal = weex.requireModule('modal');
+					modal.toast({
+						message: '获取手机号失败'
+					});
+				}
+			}, 1500);
+		},
+		makeCall(e, phoneNumber) {
+			e.stopPropagation();
+			console.log('223344', phoneNumber);
+			// this.showType = 'makeCall';
+			wx.makePhoneCall({
+				phoneNumber: phoneNumber
+			});
+		},
+		// 复制到剪切板
+		copy(e, data, msg) {
+			e.stopPropagation(); // 如果你还想再次手动阻止冒泡（推荐）
+			wx.setClipboardData({
+				data: data,
+				success(res) {
+					wx.getClipboardData({
+						success(res) {
+							if (msg) common.osg.toast(msg, 'none');
+						}
+					});
+				}
+			});
+		},
+		getDistance(lat1, lon1, lat2, lon2) {
+			//   const R = 6371e3; // 地球半径，单位：米
+			const R = 6378.1; // 地球半径，单位：公里
+			const φ1 = (lat1 * Math.PI) / 180;
+			const φ2 = (lat2 * Math.PI) / 180;
+			const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+			const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+			const a =
+				Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+			return R * c; // 返回单位：KM
+		},
+		formatDistrict(value) {
+			return this.areaList.county_list[value];
+		},
+		openLocation(e, gpsPoint, area, address) {
+			e.stopPropagation();
+			uni.openLocation({
+				latitude: gpsPoint.latitude,
+				longitude: gpsPoint.longitude,
+				name: address || '',
+				address:
+					(area.length == 3 ? this.areaList.city_list[area[1]] + this.areaList.county_list[area[2]] : '') +
+					address
+			});
+		},
+		// 复制到剪切板
+		// copy(data, msg) {
+		// 	wx.setClipboardData({
+		// 		data: data,
+		// 		success() {
+		// 			if (msg) common.osg.toast(msg, 'none');
+		// 		}
+		// 	});
+		// },
+		doOpen(path, data) {
+			common.osg.open(path, data);
+		},
+		toDetail(id) {
+			this.doOpen('/subpackages/serviceAppointment/serviceAppointment', { id });
+		}
+	}
+	// watch: {
+	// // 监听 mapObj.requestType 的变化
+	// 'mapObj.requestType'() {
+	// 	// 清空已有的标记点
+	// 	this.mapObj.markersList = [];
+	// 	// 清空 existingIds，避免重复标记点的加载
+	// 	this.existingIds = new Set(); // 重新初始化为一个新的空 Set
+	// 	console.log(this.existingIds, '初始化');
+	// 	console.log(this.mapObj.markersList, '123412321');
+	// }
+	// }
+};
+</script>
+
+<style lang="scss" scoped>
+.bodyBox {
+	position: relative;
+}
+.c-m-12 {
+	margin-bottom: 12px;
+}
+.popup {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 100;
+	background-color: #fff;
+}
+
+.popup-content {
+	align-items: center;
+	height: 50px;
+	background-color: #fff;
+	.title {
+		font-size: 35rpx;
+		color: #000;
+		font-weight: bolder;
+	}
+}
+
+.popup-list {
+	flex: 1;
+	overflow-y: auto;
+	background-color: #fff;
+	align-items: center;
+}
+
+.card {
+	background-color: #fff;
+	margin: 16px;
+	padding: 16px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	box-shadow: 0 2px 12px 0 rgba(100, 101, 102, 0.12);
+}
+.searchBar {
+	height: 50px;
+	position: absolute;
+	background-color: red;
+	top: 0px;
+	left: 0px;
+	z-index: 100;
+}
+
+.card_top {
+	flex: 1;
+	height: 24px;
+}
+
+.card_header {
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+.header_left {
+	flex-direction: row;
+	align-items: center;
+}
+.header_right {
+	align-items: center;
+}
+.header_tag {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+	align-items: center;
+	justify-content: center;
+}
+.c-bg-red {
+	background-color: #ee0a24;
+}
+.c-bg-blue {
+	background-color: #1989fa;
+}
+.van_button {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 44px;
+	padding: 0px 10px;
+	border: 1px solid #ebedf0;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.card-icon-view {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.card-icon-border {
+	border: 1px solid #ebedf0;
+	border-radius: 4px;
+}
+.loader {
+	width: 20px;
+	height: 20px;
+	border: 4px solid #ccc;
+	border-top: 4px solid #3498db;
+	border-radius: 50%;
+	transition-duration: 3s;
+	transform: rotate(1800deg);
+}
+
+.loader_rotate {
+	transform: rotate(1080deg); /* 三圈 */
+}
+
+.van_button:active {
+	background-color: #ebedf0; /* 点击时背景变蓝色一点 */
+}
+</style>

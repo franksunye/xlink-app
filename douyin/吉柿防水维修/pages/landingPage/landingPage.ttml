@@ -1,0 +1,18 @@
+<view>
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image1.jpg" />
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image2.jpg" />
+    <view>
+        <input value="{{name}}" placeholder="点击填写您的姓名" data-key="name" onBlur="onBlur" />
+        <input value="{{phone}}" placeholder="点击填写您的手机（仅限北京、上海业主）" data-key="phone" onBlur="onBlur" />
+        <view class="button" bindtap="save">
+            <text>一键预约上门</text> 
+            <text class="gt">></text>
+        </view>
+        <view class="statement"><text class="red">*</text>为了您的隐私及我们的声誉，您的信息将被严格保密，请放心填写</view>
+    </view>
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image3.jpg" />
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image4.jpg" />
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image5.jpg" />
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image6.jpg" />
+    <image mode="widthFix" src="https://pub.fsgo365.cn/jishi/landingPage/image7.jpg" />
+</view>

@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "dependencies": {
+    "glob": "^11.0.0",
+    "nanoid": "^4.0.0",
+    "replace-in-file": "^8.2.0"
+  }
+}

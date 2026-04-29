@@ -1,0 +1,1028 @@
+/**c表示custom自定义**/
+page {
+  background-color: #f8f8f8;
+  --transparent: transparent;
+  --black: #000;
+  --white: #fff;
+  /*#444b50*/
+  /*--gray: #969799;*/
+  --gray: #3c7a79;
+  --green: #07c160;
+  /* #7dcf9e; */
+  --red: #ee0a24;
+  /* #e28064; */
+  --yellow: #f3bb62;
+  --blue: #1989fa;
+  /* #79afef; */
+  --purple: #f0f3f6;
+  --gray-light: #f2f2f2;
+  --black-dark: #323233;
+}
+
+/*布局*/
+.c-flex {
+  display: flex;
+}
+
+.c-flex-row {
+  flex-direction: row;
+}
+
+.c-flex-col {
+  flex-direction: column;
+}
+
+.c-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.c-flex-1 {
+  flex: 1;
+}
+
+.c-flex-2 {
+  flex: 2 !important;
+}
+
+.c-flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.c-flex-between {
+  justify-content: space-between !important;
+}
+
+.c-flex-around {
+  justify-content: space-around;
+}
+
+.c-flex-start {
+  justify-content: flex-start;
+}
+
+.c-flex-end {
+  justify-content: flex-end;
+}
+
+.c-fixed {
+  position: fixed;
+}
+
+.c-none {
+  display: none !important;
+}
+
+.c-w {
+  width: 100% !important;
+}
+
+.c-h {
+  height: 100% !important;
+}
+
+.c-w-1 {
+  width: 100vw !important;
+}
+
+.c-h-1 {
+  height: 100vh !important;
+}
+
+.c-w-100 {
+  width: 100%;
+}
+
+.c-h-100 {
+  height: 100%;
+}
+
+.c-p-0 {
+  padding: 0rpx !important;
+}
+
+.c-p-5 {
+  padding: 5rpx !important;
+}
+
+.c-p-10 {
+  padding: 10rpx !important;
+}
+
+.c-p-15 {
+  padding: 15rpx !important;
+}
+
+.c-p-20 {
+  padding: 20rpx !important;
+}
+
+.c-p-v-10 {
+  padding-left: 10rpx !important;
+  padding-right: 10rpx !important;
+}
+
+.c-p-v-20 {
+  padding-left: 20rpx !important;
+  padding-right: 20rpx !important;
+}
+
+.c-m-0 {
+  margin: 0rpx;
+}
+
+.c-m-10 {
+  margin: 10rpx;
+}
+
+.c-m-15 {
+  margin: 15rpx;
+}
+
+.c-m-20 {
+  margin: 20rpx;
+}
+
+.c-m-h-10 {
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+.c-m-v-10 {
+  padding-left: 10rpx;
+  padding-right: 10rpx;
+}
+
+.c-m-t-10 {
+  margin-top: 10rpx;
+}
+
+.c-m-t-15 {
+  margin-top: 15rpx;
+}
+
+.c-m-t-20 {
+  margin-top: 20rpx;
+}
+
+.c-m-b-5 {
+  margin-top: 5rpx;
+}
+
+.c-m-l-10 {
+  margin-left: 10rpx;
+}
+
+.c-m-r-10 {
+  margin-right: 10rpx;
+}
+
+.c-m-l-20 {
+  margin-left: 20rpx;
+}
+
+.c-m-r-20 {
+  margin-right: 20rpx;
+}
+
+.c-top-0 {
+  top: 0;
+}
+
+.c-bottom-0 {
+  bottom: 0;
+}
+
+.c-indent {
+  text-indent: 50rpx;
+}
+
+.c-radius {
+  border-radius: 6rpx;
+}
+
+.c-text-left {
+  text-align: left;
+}
+
+.c-text-center {
+  text-align: center;
+}
+
+.c-text-right {
+  text-align: right;
+}
+
+.c-lf {
+  float: left;
+}
+
+.c-rt {
+  float: right;
+}
+
+.c-hidden {
+  overflow: hidden;
+}
+
+.c-auto {
+  overflow: auto;
+}
+
+.c-auto-x {
+  overflow-x: auto;
+}
+
+.c-auto-y {
+  overflow-y: auto;
+}
+
+.c-border-n {
+  border: none !important;
+}
+
+/* 字体 */
+.c-size-12 {
+  font-size: 12px;
+}
+
+.c-size-13 {
+  font-size: 13px;
+}
+
+.c-size-14 {
+  font-size: 14px;
+}
+
+.c-size-16 {
+  font-size: 16px;
+}
+
+.c-size-18 {
+  font-size: 18px;
+}
+
+.c-size-20 {
+  font-size: 20px;
+}
+
+.c-size-22 {
+  font-size: 22px;
+}
+
+.c-size-24 {
+  font-size: 24px;
+}
+
+.c-weight-600 {
+  font-weight: 600;
+}
+
+.c-bold {
+  font-weight: bold;
+}
+
+.c-clear::after,
+.c-clear::before,
+.c-clear {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.c-nowrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.c-nowrap-normal {
+  white-space: normal;
+}
+
+.c-pointer {
+  cursor: pointer;
+}
+
+.c-no-pointer {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.c-opacity {
+  opacity: 0;
+}
+
+.c-opacity-5 {
+  opacity: 0.5;
+}
+
+.c-opacity-1 {
+  opacity: 1;
+}
+
+.c-underline {
+  text-decoration: underline;
+}
+
+.c-underline-no {
+  text-decoration: none;
+}
+
+.c-break-all {
+  word-break: break-all;
+}
+
+.c-input-none {
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+/*颜色*/
+.c-transparent {
+  color: transparent !important;
+}
+
+.c-black {
+  color: var(--black) !important;
+}
+
+.c-black-dark {
+  color: var(--black-dark) !important;
+}
+
+.c-white {
+  color: var(--white) !important;
+}
+
+.c-gray {
+  color: var(--gray) !important;
+}
+
+.c-gray-light {
+  color: var(--gray-light) !important;
+}
+
+.c-green {
+  color: var(--green) !important;
+}
+
+.c-red {
+  color: var(--red) !important;
+}
+
+.c-yellow {
+  color: var(--yellow) !important;
+}
+
+.c-blue {
+  color: var(--blue) !important;
+}
+
+c-c-2 {
+  color: #222 !important;
+}
+
+.c-c-9 {
+  color: #676767 !important;
+}
+
+.c-c-yh {
+  color: #d52e26 !important;
+}
+
+/*背景色*/
+.c-bg-transparent {
+  background-color: var(--transparent) !important;
+}
+
+.c-bg-black {
+  background-color: var(--black) !important;
+}
+
+.c-bg-black-dark {
+  background-color: var(--black-dark) !important;
+}
+
+.c-bg-white {
+  background-color: var(--white) !important;
+}
+
+.c-bg-gray {
+  background-color: var(--gray) !important;
+}
+
+.c-bg-gray-light {
+  background-color: var(--gray-light) !important;
+}
+
+.c-bg-gray-button {
+  background-color: rgb(239, 239, 239) !important;
+}
+
+.c-bg-green {
+  background-color: var(--green) !important;
+}
+
+.c-bg-red {
+  background-color: var(--red) !important;
+}
+
+.c-bg-yellow {
+  background-color: var(--yellow) !important;
+}
+
+.c-bg-blue {
+  background-color: var(--blue) !important;
+}
+
+.c-bg-purple {
+  background-color: var(--purple) !important;
+}
+
+.c-relative {
+  position: relative;
+}
+
+.c-absolute {
+  position: absolute;
+}
+
+.c-item-center {
+  align-items: center;
+}
+
+/* 列表头部 */
+.c-header {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+}
+
+/* 列表内容 */
+.c-content {
+  margin-top: 110rpx;
+}
+
+/* 列表过滤条 */
+.c-filterBar {
+  display: flex;
+  background-color: #fff;
+  padding: 0 20rpx;
+  height: 65rpx;
+  align-items: center;
+  font-size: 16px;
+}
+
+.c-filterBar-tabs {
+  flex: 1;
+  display: flex;
+  height: 65rpx;
+  line-height: 65rpx;
+  white-space: nowrap;
+  overflow-x: scroll;
+}
+
+.c-filterBar-tabs > view {
+  margin: 0 20rpx;
+  box-sizing: border-box;
+}
+
+.c-line-bottom {
+  border-bottom: 1px solid var(--red);
+}
+
+/* .c-line-bottom::after {
+  content: '';
+  width: 30px;
+  position: absolute;
+  bottom: -3px;
+  z-index: 1;
+  height: 3px;
+  background-color: #ee0a24;
+  border-radius: 3px;
+  left: calc(50% - 15px);
+} */
+
+/* 卡片 */
+.c-card {
+  background-color: #fff;
+  margin: 20rpx;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  font-size: 16px;
+  box-shadow: 0 8px 12px #ebedf0;
+  overflow: hidden;
+}
+
+.c-card > view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.c-card-title {
+  border-bottom: 1px solid #f2f2f2;
+  margin-bottom: 10rpx;
+  padding-bottom: 10rpx;
+  font-size: 16px;
+}
+
+.c-card-icon {
+  padding: 0 5rpx;
+  background-color: #f2f2f2;
+  border-radius: 5rpx;
+  margin-right: 15rpx;
+}
+
+.c-card-content {
+  padding: 20rpx;
+  flex-direction: column;
+  align-items: flex-start !important;
+}
+
+/* 详情页 */
+.c-box {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 摘要 */
+.c-abstract {
+  font-size: 16px;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+}
+
+.c-abstract > view {
+  display: flex;
+  align-items: center;
+  padding: 5rpx 0;
+}
+
+.c-abstract > view > van-icon {
+  background-color: #f2f2f2;
+  margin-left: 10rpx;
+}
+
+/* tab页 */
+.c-tab-content {
+  margin: 20rpx;
+  padding-bottom: 140rpx;
+}
+
+/* tab标签内容高度占剩余百分百 */
+.van-tab__pane--active {
+  height: 100% !important;
+}
+
+.van-tabs__content {
+  height: calc(100% - 44px) !important;
+}
+
+/* 右下角悬浮按钮 */
+.c-ball {
+  position: fixed;
+  bottom: 130rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  color: #fff;
+  background-color: rgba(125, 207, 158, 0.8);
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  line-height: 100rpx;
+}
+
+/* 底部按钮组 */
+.c-button-group-bottom {
+  position: fixed;
+  bottom: 0rpx;
+  width: 100%;
+  padding: 10rpx 20rpx 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f3f6;
+  color: #c8c9cc;
+}
+
+.c-button-group-item {
+  width: 100%;
+  min-height: 110rpx;
+  padding: 10rpx;
+  box-sizing: border-box;
+  border-radius: 10rpx;
+  background-color: #07c160;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.c-icon-disable {
+  font-size: 20px;
+  position: absolute;
+  left: calc(50% - 10px);
+  top: calc(50% - 10px);
+}
+
+/* 底部单个按钮 */
+.c-button-bottom {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+.c-ball-left {
+  left: 20rpx;
+}
+
+.c-ball-right {
+  right: 20rpx;
+}
+
+.c-ball van-icon {
+  padding: 15rpx;
+  font-size: 35px;
+}
+
+.c-ball-text {
+  font-size: 16px;
+}
+
+/* 取消弹出层上边距 */
+.van-nav-bar.van-hairline--bottom {
+  padding-top: 0 !important;
+}
+
+/* 单元格value左对齐 */
+.c-cell-title {
+  max-width: 100px;
+}
+
+.c-cell-value {
+  text-align: left;
+  color: #323233 !important;
+  display: flex !important;
+}
+
+/* 步骤条 */
+.c-step {
+  display: flex;
+  background-color: #fff;
+  min-height: 200rpx;
+}
+
+.c-step-left {
+  width: 50rpx;
+  height: 100%;
+  position: relative;
+  background-color: #fff;
+}
+
+.c-step-left van-icon {
+  position: absolute;
+  left: calc(50% - 8px);
+  top: 80rpx;
+  background-color: #fff;
+  color: var(--blue);
+  z-index: 2;
+}
+
+.c-step-left.active van-icon {
+  color: var(--green);
+}
+
+.c-sideline {
+  border: 1px dashed #ebedf0;
+  width: 0;
+  height: 200rpx;
+  margin: 0 auto;
+  position: absolute;
+  left: 20rpx;
+}
+
+.c-step-center {
+  flex: 1;
+  padding: 15rpx;
+  border-bottom: 1px solid #ebedf0;
+  display: flex;
+  flex-direction: column;
+}
+
+.c-step-center > view {
+  padding: 5rpx 0;
+}
+
+.c-step-right {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ebedf0;
+}
+
+.c-step-right button {
+  margin-left: 10rpx;
+}
+
+.c-step-right van-button {
+  margin: 0 auto;
+}
+
+/*详情页单页*/
+.detail {
+  margin: 15rpx;
+  /*height: calc(100vh - 10rpx);*/
+  overflow-y: auto;
+  background-color: var(--white);
+  box-sizing: border-box;
+  padding: 20rpx;
+  border-radius: 6rpx;
+}
+
+/*标题竖线*/
+.tips {
+  display: inline-block;
+  width: 6rpx;
+  height: 32rpx;
+  margin-right: 20rpx;
+}
+
+/*轮播图*/
+swiper {
+  border-radius: 14px;
+  overflow: hidden;
+  transform: translateY(0);
+}
+
+swiper-item image {
+  width: 100%;
+}
+
+/*公告栏*/
+.noticeBar {
+  padding: 0 20rpx 0 10rpx !important;
+  height: 60rpx !important;
+}
+
+/*图片*/
+.view-image {
+  width: 120rpx;
+  min-width: 120rpx;
+  height: 120rpx;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.view-image image {
+  width: 100%;
+  height: 100%;
+}
+
+.c-border-b {
+  border-bottom: 1px solid #f2f2f2;
+}
+
+/*产品选择弹出层*/
+.c-selection {
+  flex: 1;
+  display: flex;
+}
+
+.c-selection-left {
+  flex: 1;
+  background: #fafafa;
+}
+
+.c-selection-left-item {
+  padding: 20rpx 40rpx 20rpx 20rpx;
+  position: relative;
+}
+
+.c-selection-left-item-tag {
+  position: absolute;
+  top: 28rpx;
+  right: 8rpx;
+  font-size: 12px;
+  min-width: 16px;
+  text-align: center;
+  height: 16px;
+  line-height: 16p;
+  padding: 0 5rpx;
+  box-sizing: border-box;
+  color: #fff;
+  background-color: var(--red);
+  border-radius: 999px;
+}
+
+.c-left-icon-red {
+  color: red;
+  font-weight: bold;
+}
+
+.c-left-icon-red::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 4px;
+  height: 16px;
+  background-color: #ee0a24;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  content: '';
+}
+
+.c-selection-right {
+  flex: 3;
+}
+
+.c-selection-right-item {
+  position: relative;
+  padding: 20rpx;
+  padding-right: 26px !important;
+}
+
+.c-selection-right-item-icon {
+  position: absolute;
+  height: 16px;
+  top: 16rpx;
+  right: 10rpx;
+}
+
+/* vant弹出层顶部保存取消按钮始终显示 */
+.c-popup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.c-popup-cells {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.c-bottom-buttons {
+  position: fixed;
+  bottom: 20rpx;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.c-bottom-buttons van-button {
+  width: 40%;
+}
+
+.c-bottom-buttons .van-button {
+  width: 100%;
+}
+
+/* 单元格样式 */
+.van-cell {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.van-cell__title,
+.van-cell__value {
+  /* flex: none !important; */
+  font-size: 16px;
+}
+
+.declarationBind .van-cell__value {
+  flex: 1 !important;
+}
+
+.van-cell__value {
+  display: block !important;
+  font-size: 16px;
+}
+
+.c-cell-headline {
+  padding: 20rpx 20rpx;
+  max-width: 100%;
+  background-color: #fff;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.c-cell-gap {
+  width: 100%;
+  padding: 10rpx 30rpx;
+  background-color: #f2f2f2 !important;
+  font-size: 14px;
+  box-sizing: border-box;
+  color: #969799;
+}
+
+.c-cell-switch .van-cell__title {
+  max-width: 100% !important;
+  flex: 3;
+}
+
+.c-cell-radio-group,
+.c-cell-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.c-cell-radio-group .van-radio {
+  margin: 10rpx;
+}
+
+.c-cell-checkbox-group .van-checkbox {
+  margin: 10rpx;
+}
+
+/* 上传图片 */
+.van-uploader__preview {
+  margin: 0 15px 8px 0 !important;
+}
+
+.c-cell-view {
+  padding: 10px 16px;
+  background-color: #fff;
+}
+
+.van-picker__frame {
+  width: 1px;
+}
+
+/* 省市区组件顶部导航栏背景色 */
+.van-picker__toolbar {
+  background-color: #fff;
+}
+
+.c-required {
+  position: absolute;
+  left: 8px;
+  color: red;
+}
+
+.c-cell_title {
+  font-size: 16px;
+  color: #323233;
+}
+
+.c-cell_value {
+  font-size: 16px;
+  color: #969799;
+}
+
+.c-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.c-loading {
+  position: absolute;
+  left: calc(50vw - 25px);
+  top: calc(50vh - 25px);
+  color: #fff;
+}
+
+.van-loading__text {
+  color: #fff;
+}
+
+/* 隐藏h5标题*/
+uni-page-head {
+  display: none !important;
+}
+
+/* //50px为底部导航栏的高度 */
+uni-page-wrapper {
+  height: calc(100% - 50px - env(safe-area-inset-bottom)) !important;
+}
+
+.c-fab {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  position: fixed;
+  right: 0px;
+  bottom: 50px;
+  border: 1px solid #0078d0;
+}
+.c-fab image {
+  width: 40px;
+  height: 40px;
+}

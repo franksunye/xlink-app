@@ -1,0 +1,44 @@
+/**
+ * interface.uts
+ * uts插件接口定义文件，按规范定义接口文件可以在HBuilderX中更好的做到语法提示
+ */
+
+
+
+export type CreateOptions = {
+  title : string
+  notes: string
+  startDate: string
+  endDate: string
+  alarmOffset: number[]
+  isAllDay: boolean,
+  weeks: number[]
+  success ?: (res : any) => void
+  fail ?: (res : any) => void
+}
+
+export type successCallback = () => any
+
+export type callback = (res: any) => any
+
+export type removeOptions = {
+  idfer : string
+  success ?: (res : any) => void
+  fail ?: (res : any) => void
+}
+
+export type removeAllOptions = {
+  startDate: string
+  endDate: string
+  success ?: (res : any) => void
+  fail ?: (res : any) => void
+}
+
+export type resultType = {
+	startDate : Date
+	endDate : Date
+	notes : string
+	title : string
+	eventId : string
+	rules: any[]
+}

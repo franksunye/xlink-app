@@ -1,0 +1,426 @@
+{
+  "easycom": {},
+  "pages": [
+    //pages数组中第一项表示应用启动页
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom",
+        "transparentTitle": "always",
+        "titlePenetrate": "YES"
+      }
+    },
+    {
+      "path": "pages/classification/classification",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom",
+        "transparentTitle": "always",
+        "titlePenetrate": "YES"
+      }
+    },
+    {
+      "path": "pages/declaration/declaration",
+      "style": {
+        "navigationBarTitleText": "快速预约"
+      }
+    },
+    {
+      "path": "pages/declaration/linkDeclaration",
+      "style": {
+        "navigationBarTitleText": "快速预约"
+      }
+    },
+    {
+      "path": "pages/declaration/amap",
+      "style": {
+        "navigationBarTitleText": "定位"
+      }
+    },
+    {
+      "path": "pages/message/message",
+      "style": {
+        "navigationBarTitleText": "平台客服"
+      }
+    },
+    {
+      "path": "pages/account/account",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom",
+        "transparentTitle": "always",
+        "titlePenetrate": "YES"
+      }
+    }
+  ],
+  "subpackages": [
+    {
+      "root": "subpackages", // 分包根目录
+      // "name": "subpackages", // 分包别名，分包预下载时可以使用
+      // 分包页面路径，相对于分包根目录
+      "pages": [
+        {
+          "path": "store/storeDetail",
+          "style": {
+            "navigationBarTitleText": "",
+            "navigationStyle": "custom",
+            "transparentTitle": "always",
+            "titlePenetrate": "YES"
+          }
+        },
+        {
+          "path": "store/storeInfo",
+          "style": {
+            "navigationBarTitleText": "门店信息"
+          }
+        },
+        {
+          "path": "activity/activity",
+          "style": {
+            "navigationBarTitleText": "活动页"
+          }
+        },
+        {
+          "path": "web/media",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "housekeeper/housekeepers",
+          "style": {
+            "navigationBarTitleText": "管家列表"
+          }
+        },
+        {
+          "path": "housekeeper/housekeeper",
+          "style": {
+            "navigationBarTitleText": "管家信息"
+          }
+        },
+        {
+          "path": "good/goods",
+          "style": {
+            "navigationBarTitleText": "服务商品"
+          }
+        },
+        {
+          "path": "good/good",
+          "style": {
+            "navigationBarTitleText": "商品详情"
+          }
+        },
+        {
+          "path": "good/search",
+          "style": {
+            "navigationBarTitleText": "搜索"
+          }
+        },
+        {
+          "path": "address/addresses",
+          "style": {
+            "navigationBarTitleText": "收货地址"
+          }
+        },
+        {
+          "path": "address/address",
+          "style": {
+            "navigationBarTitleText": "收货地址"
+          }
+        },
+        {
+          "path": "user/userInfo",
+          "style": {
+            "navigationBarTitleText": "个人资料"
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointments",
+          "style": {
+            "navigationBarTitleText": "我的工单"
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointment",
+          "style": {
+            "navigationBarTitleText": "工单详情"
+          }
+        },
+        {
+          "path": "serviceAppointment/detail",
+          "style": {
+            "navigationBarTitleText": "工单详情"
+          }
+        },
+        {
+          "path": "message/messages",
+          "style": {
+            "navigationBarTitleText": "消息中心"
+          }
+        },
+        {
+          "path": "message/message",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "housekeeper/myHousekeeper",
+          "style": {
+            "navigationBarTitleText": "专属管家"
+          }
+        },
+        {
+          "path": "activity/takeCash",
+          "style": {
+            "navigationBarTitleText": "分享得现金"
+          }
+        },
+        {
+          "path": "income/myRewards",
+          "style": {
+            "navigationBarTitleText": "我的奖励"
+          }
+        },
+        {
+          "path": "income/revenueDetails",
+          "style": {
+            "navigationBarTitleText": "收益明细"
+          }
+        },
+        {
+          "path": "income/cashOut",
+          "style": {
+            "navigationBarTitleText": "兑换现金"
+          }
+        },
+        {
+          "path": "income/withdrawalDetails",
+          "style": {
+            "navigationBarTitleText": "提现明细"
+          }
+        },
+        {
+          "path": "income/sing",
+          "style": {
+            "navigationBarTitleText": "提现账号开通"
+          }
+        },
+        {
+          "path": "web/web",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "warranty/warranties",
+          "style": {
+            "navigationBarTitleText": "我的质保单"
+          }
+        },
+        {
+          "path": "contract/contracts",
+          "style": {
+            "navigationBarTitleText": "我的合同"
+          }
+        },
+        {
+          "path": "contract/canvas",
+          "style": {
+            "navigationBarTitleText": "签字"
+          }
+        },
+        {
+          "path": "contract/AcceptanceForm",
+          "style": {
+            "navigationBarTitleText": "我的验收单"
+          }
+        },
+        {
+          "path": "survey/surveys",
+          "style": {
+            "navigationBarTitleText": "我的勘察报告"
+          }
+        },
+        {
+          "path": "order/orders",
+          "style": {
+            "navigationBarTitleText": "订单列表"
+          }
+        },
+        {
+          "path": "order/payments",
+          "style": {
+            "navigationBarTitleText": "支付记录"
+          }
+        },
+        {
+          "path": "order/pay",
+          "style": {
+            "navigationBarTitleText": "金额明细"
+          }
+        },
+        {
+          "path": "noticeManage/noticeManage",
+          "style": {
+            "navigationBarTitleText": "企业公告",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "noticeManage/detail",
+          "style": {
+            "navigationBarTitleText": "企业公告",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "quotationCalculator/quotationCalculator",
+          "style": {
+            "navigationBarTitleText": "免费估价",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "coupon/my",
+          "style": {
+            "navigationBarTitleText": "我的卡券",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "coupon/mall",
+          "style": {
+            "navigationBarTitleText": "领券中心",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "coupon/record",
+          "style": {
+            "navigationBarTitleText": "使用记录",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "extForm/extForm",
+          "style": {
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "inspection/inspections",
+          "style": {
+            "navigationBarTitleText": "巡检报告",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "serviceAppointment/files",
+          "style": {
+            "navigationBarTitleText": "档案袋",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointmentDetail",
+          "style": {
+            "navigationBarTitleText": "服务进度",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "serviceStore/serviceStores",
+          "style": {
+            "navigationBarTitleText": "服务门店",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "case/cases",
+          "style": {
+            "navigationBarTitleText": "案例库",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "case/case",
+          "style": {
+            "navigationBarTitleText": "案例库",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "certification/certification",
+          "style": {
+            "navigationBarTitleText": "工程师档案",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "certification/serviceResource",
+          "style": {
+            "navigationBarTitleText": "工程师档案",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "order/baojiadan",
+          "style": {
+            "navigationBarTitleText": "报价单",
+            "navigationStyle": "custom",
+            "transparentTitle": "always",
+            "enablePullDownRefresh": false
+          }
+        }
+      ],
+      "independent": false // 分包是否是独立分包
+    }
+  ],
+  // 分包预载配置
+  "preloadRule": {
+    // 当我们进入了pages/index/index页面以后就会预下载subpackages
+    "pages/index/index": {
+      "network": "all", //在指定网络下预下载，可选值为：all（不限网络）、wifi（仅wifi下预下载）
+      "packages": [
+        "subpackages"
+      ] //进入页面后预下载分包
+    }
+  },
+  "tabBar": {
+    "color": "#919191",
+    "selectedColor": "#231815",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "服务中心",
+        "iconPath": "/static/images/tabBar/fuwuzhongxin-o.png",
+        "selectedIconPath": "/static/images/tabBar/fuwuzhongxin.png"
+      },
+      {
+        "pagePath": "pages/account/account",
+        "text": "个人中心",
+        "iconPath": "/static/images/tabBar/gerenzhongxin-o.png",
+        "selectedIconPath": "/static/images/tabBar/gerenzhongxin.png"
+      }
+    ],
+    "position": "bottom"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取附近门店"
+    }
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "吉柿修房",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#FFFFFF",
+    "backgroundTextStyle": "light"
+  },
+  "uniIdRouter": {}
+}

@@ -1,0 +1,46 @@
+page{
+    background-color: #fff;
+}
+
+image{
+    display: flex;
+    width:100vw;
+}
+
+input {
+    margin: 0 20px 15px;
+    padding: 6px 10px;
+    font-size: 16px;
+    background-color: #ececec;
+    border-radius: 8px;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 20px;
+    padding: 8px 0;
+    color:#fff;
+    background-color: #dd1919;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    font-weight: 500;
+}
+
+.gt{
+    margin-left:5px;
+    line-height: 10px;
+}
+
+.statement{
+    font-size: 10px;
+    color:#999;
+    text-align: center;
+    margin:15px 0 40px;
+}
+
+.red{
+    color:#dd1919;
+}

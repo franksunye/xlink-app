@@ -1,0 +1,30 @@
+function codelabel(opts, codeValue) {
+  if (opts) {
+    for (var i = 0; i < opts.length; i++) {
+      if (codeValue == opts[i].value) return opts[i].name;
+    }
+  }
+
+  if (!codeValue) {
+    return codeValue;
+  } else {
+    return '未知';
+  }
+}
+
+function selectCount(items, type) {
+  var count = 0;
+
+  for (var i = 0; i < items.length; i++) {
+    if (type == items[i].productType && items[i].selected) count++;
+  }
+
+  return count;
+}
+
+module.exports = {
+  osg: {
+    codelabel,
+    selectCount
+  }
+};

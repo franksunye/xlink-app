@@ -1,0 +1,129 @@
+<template>
+  <view class="noticeManage" @click.capture="track">
+    <block v-for="(item, i) in data" :key="i">
+      <view
+        v-if="i == 0"
+        class="notice-top"
+        @click="noticeClick(item)"
+        :data-event="{ id: 'ISlQL7O9z1' }"
+      >
+        <van-image
+          fit="widthFix"
+          width="100%"
+          :src="downloadUrl + '' + item.fileids[0]"
+          class="c-flex"
+          :data-event="{ id: 'ISlQL7O9z1' }"
+        ></van-image>
+        <view class="title c-ellipsis2" :data-event="{ id: 'ISlQL7O9z1' }">{{ item.title }}</view>
+      </view>
+      <view v-else class="notice" @click="noticeClick(item)" :data-event="{ id: 'Z8-_8QJtPY' }">
+        <van-image
+          fit="widthFix"
+          width="150px"
+          hight="80px"
+          :src="downloadUrl + '' + item.fileids[0]"
+          class="c-flex"
+          custom-class="image"
+          :data-event="{ id: 'Z8-_8QJtPY' }"
+        ></van-image>
+        <view
+          class="info"
+          :style="i == data.length - 1 ? 'border:none' : ''"
+          :data-event="{ id: 'Z8-_8QJtPY' }"
+        >
+          <view class="c-ellipsis2" :data-event="{ id: 'Z8-_8QJtPY' }">{{ item.title }}</view>
+          <view class="c-color-value c-size-14" :data-event="{ id: 'Z8-_8QJtPY' }">
+            {{ item.updateTime }}
+          </view>
+        </view>
+      </view>
+    </block>
+    <van-empty v-if="data.length == 0" description="暂无公告" class="c-empty"></van-empty>
+  </view>
+</template>
+
+<script>
+const app = getApp();
+var common = require('../../resources/js/common.js');
+export default {
+  data() {
+    return {
+      downloadUrl: common.osg.downloadUrl,
+      data: []
+    };
+  },
+  onLoad(param) {
+    common.osg.init(this, param, app);
+    this.getData();
+  },
+  methods: {
+    getData(isTop) {
+      let params = {
+        _all: '1',
+        'is:type|integer#and': 3,
+        'is:exts.chooseApplet|string#and': '1',
+        sortField: 'isTop,createTime',
+        sortOrder: 'desc'
+      };
+      common.osg.ajax('document/query', params, res => {
+        this.data = res.data;
+      });
+    },
+    noticeClick(item) {
+      if (item.path) {
+        common.osg.open(item.path, {
+          documentId: item._id
+        });
+      } else {
+        common.osg.open('detail', {
+          id: item._id
+        });
+      }
+    },
+    onPullDownRefresh() {
+      this.getData();
+    }
+  }
+};
+</script>
+
+<style lang="scss">
+page {
+  padding-bottom: 1px;
+}
+.noticeManage {
+  margin: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  .notice-top {
+    position: relative;
+    .title {
+      position: absolute;
+      left: 15px;
+      bottom: 10px;
+      color: #fff;
+      margin-right: 15px;
+    }
+  }
+  .notice {
+    display: flex;
+    justify-content: space-between;
+    .image {
+      padding: 10px;
+      .van-image__img {
+        border-radius: 3px;
+      }
+    }
+    .info {
+      flex: 1;
+      padding: 10px 0;
+      margin-right: 10px;
+      border-bottom: 1px solid #ebedf0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+  }
+}
+</style>

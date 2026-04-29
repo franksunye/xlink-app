@@ -1,0 +1,449 @@
+{
+  "easycom": {},
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "修链科技丨防水补漏",
+        // "navigationBarTextStyle": "#ffffff",
+        // "navigationBarBackgroundColor": "#107AD0", indexLogin
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/account/account",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#107AD0"
+      }
+    },
+    {
+      "path": "pages/declaration/declaration",
+      "style": {
+        "navigationBarTitleText": "预约"
+      }
+    },
+    {
+      "path": "pages/declaration/open",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/index/indexLogin",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
+      "path": "pages/index/indexWaresDetail",
+      "style": {
+        "navigationBarTitleText": "商品详情"
+      }
+    },
+    {
+      "path": "pages/index/indexWares",
+      "style": {
+        "navigationBarTitleText": "商品列表"
+      }
+    }
+  ],
+  "subpackages": [
+    {
+      "root": "subpackages",
+      // 分包根目录
+      // "name": "subpackages", // 分包别名，分包预下载时可以使用
+      // 分包页面路径，相对于分包根目录
+      "pages": [
+        {
+          "path": "login/loginAuth",
+          "style": {
+            "navigationBarTitleText": "登录"
+          }
+        },
+        {
+          "path": "ask/ask",
+          "style": {
+            "navigationBarTitleText": "智能问诊"
+          }
+        },
+        {
+          "path": "order/orders",
+          "style": {
+            "navigationBarTitleText": "我的订单"
+          }
+        },
+        {
+          "path": "order/order",
+          "style": {
+            "navigationBarTitleText": "订单详情"
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointment",
+          "style": {
+            "navigationBarTitleText": "我的订单",
+            "navigationBarTextStyle": "white",
+            "navigationBarBackgroundColor": "#107AD0"
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointments",
+          "style": {
+            "navigationBarTitleText": "新我的订单"
+          }
+        },
+        {
+          "path": "serviceAppointment/newServiceAppointment",
+          "style": {
+            "navigationBarTitleText": "我的订单详情页"
+          }
+        },
+        {
+          "path": "authorize/authorize",
+          "style": {
+            "navigationBarTitleText": "授权登录"
+          }
+        },
+        {
+          "path": "butler/butler",
+          "style": {
+            "navigationBarTitleText": "人员查询",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "butler/butlerdetail",
+          "style": {
+            "navigationBarTitleText": "维修管家详情",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "butler/customerReviews",
+          "style": {
+            "navigationBarTitleText": "客户评价"
+          }
+        },
+        {
+          "path": "store/store",
+          "permission": {
+            "scope.userLocation": {
+              "desc": "你的位置信息将用于小程序位置接口的效果展示" // 高速公路行驶持续后台定位
+            }
+          },
+          "style": {
+            "navigationBarTitleText": "选择维修门店",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "store/storeDetail"
+        },
+
+        {
+          "path": "activity/activity",
+          "style": {
+            "navigationBarTitleText": "推广动态",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "lead/lead",
+          "style": {
+            "navigationBarTextStyle": "white",
+            "navigationBarBackgroundColor": "#107AD0",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "wallet/wallet",
+          "style": {
+            "navigationBarTitleText": "我的账户",
+            "navigationBarTextStyle": "white",
+            "navigationBarBackgroundColor": "#107AD0",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "wallet/walletDetail",
+          "style": {
+            "navigationBarTitleText": "资金明细",
+            "navigationBarTextStyle": "white",
+            "navigationBarBackgroundColor": "#107AD0",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "warranty/warrantys",
+          "style": {
+            "enablePullDownRefresh": false,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "质保",
+            "app-plus": {
+              "titleNView": false
+            }
+          }
+        },
+        {
+          "path": "login/login",
+          "style": {
+            "enablePullDownRefresh": false,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "登录",
+            "app-plus": {
+              "titleNView": false
+            }
+          }
+        },
+        {
+          "path": "h5/bind",
+          "style": {
+            "enablePullDownRefresh": false,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "登录",
+            "app-plus": {
+              "titleNView": false
+            }
+          }
+        },
+        {
+          "path": "h5/channels",
+          "style": {
+            "enablePullDownRefresh": false,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "我的渠道"
+          }
+        },
+        {
+          "path": "h5/visitors",
+          "style": {
+            "enablePullDownRefresh": false,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "渠道访客"
+          }
+        },
+        {
+          "path": "extForm/extForm",
+          "style": {}
+        },
+        {
+          "path": "butler/document",
+          "style": {
+            "enablePullDownRefresh": false,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "维修案例详情"
+          }
+        },
+
+        {
+          "path": "coupon/my",
+          "style": {
+            "navigationBarTitleText": "我的卡券",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "coupon/mall",
+          "style": {
+            "navigationBarTitleText": "卡券中心",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "coupon/record",
+          "style": {
+            "navigationBarTitleText": "使用记录",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "api/openMP",
+          "style": {
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "noticeManage/noticeManage",
+          "style": {
+            "navigationBarTitleText": "公告"
+          }
+        },
+        {
+          "path": "noticeManage/detail",
+          "style": {
+            "navigationBarTitleText": "公告"
+          }
+        },
+        {
+          "path": "web/web",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "message/messages",
+          "style": {
+            "navigationBarTitleText": "消息中心",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "message/message",
+          "style": {
+            "navigationBarTitleText": "消息",
+            "enablePullDownRefresh": true,
+            "backgroundColor": "#f0f3f6",
+            "backgroundTextStyle": "dark"
+          }
+        }
+      ]
+    }
+  ],
+  // 分包预载配置
+  "preloadRule": {
+    // 当我们进入了pages/index/index页面以后就会预下载subpackages
+    "pages/index/index": {
+      "network": "all", //在指定网络下预下载，可选值为：all（不限网络）、wifi（仅wifi下预下载）
+      "packages": ["subpackages"] //进入页面后预下载分包
+    }
+  },
+  "tabBar": {
+    "color": "#323233",
+    "selectedColor": "#107AD0",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "color": "#FFFFFF",
+        "selectedColor": "#107AD0",
+        "iconPath": "/static/images/tabBar/tab-index.png",
+        "selectedIconPath": "/static/images/tabBar/tab-indexFill.png"
+      },
+      // {
+      //   "pagePath": "pages/message/messages",
+      //   "text": "我的咨询",
+      //   "color": "#FFFFFF",
+      //   "selectedColor": "#FF0000",
+      //   "iconPath": "/static/images/tabBar/tabBar-message.png",
+      //   "selectedIconPath": "/static/images/tabBar/tabBar-message-fill.png"
+      // },
+
+      {
+        "pagePath": "pages/declaration/open",
+        "text": "预约",
+        "color": "#FFFFFF",
+        "selectedColor": "#FF0000",
+        "iconPath": "/static/images/tabBar/declaration2.png",
+        "selectedIconPath": "/static/images/tabBar/declaration-fill2.png"
+      },
+      {
+        "pagePath": "pages/account/account",
+        "text": "我的",
+        "color": "#FFFFFF",
+        "selectedColor": "#FF0000",
+        "iconPath": "/static/images/tabBar/tab-mine.png",
+        "selectedIconPath": "/static/images/tabBar/tab-mineFill.png"
+      }
+    ],
+    "position": "bottom"
+  },
+  "condition": {
+    //模式配置，仅开发期间生效
+    "current": 0, //当前激活的模式(list 的索引项)
+    "list": [
+      {
+        "name": "", //模式名称
+        "path": "", //启动页面，必选
+        "query": "" //启动参数，在页面的onLoad函数里面得到
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "修链科技 ｜ 房屋维修",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8",
+    "usingComponents": {
+      "van-action-sheet": "./wxcomponents/vant/action-sheet/index",
+      "van-area": "./wxcomponents/vant/area/index",
+      "van-button": "./wxcomponents/vant/button/index",
+      "van-card": "./wxcomponents/vant/card/index",
+      "van-cell": "./wxcomponents/vant/cell/index",
+      "van-cell-group": "./wxcomponents/vant/cell-group/index",
+      "van-checkbox": "./wxcomponents/vant/checkbox/index",
+      "van-checkbox-group": "./wxcomponents/vant/checkbox-group/index",
+      "van-col": "./wxcomponents/vant/col/index",
+      "van-count-down": "./wxcomponents/vant/count-down/index",
+      "van-dialog": "./wxcomponents/vant/dialog/index",
+      "van-divider": "./wxcomponents/vant/divider/index",
+      "van-field": "./wxcomponents/vant/field/index",
+      "van-goods-action": "./wxcomponents/vant/goods-action/index",
+      "van-goods-action-icon": "./wxcomponents/vant/goods-action-icon/index",
+      "van-goods-action-button": "./wxcomponents/vant/goods-action-button/index",
+      "van-icon": "./wxcomponents/vant/icon/index",
+      "van-image": "./wxcomponents/vant/image/index",
+      "van-loading": "./wxcomponents/vant/loading/index",
+      "van-nav-bar": "./wxcomponents/vant/nav-bar/index",
+      "van-notice-bar": "./wxcomponents/vant/notice-bar/index",
+      "van-notify": "./wxcomponents/vant/notify/index",
+      "van-panel": "./wxcomponents/vant/panel/index",
+      "van-popup": "./wxcomponents/vant/popup/index",
+      "van-progress": "./wxcomponents/vant/progress/index",
+      "van-radio": "./wxcomponents/vant/radio/index",
+      "van-radio-group": "./wxcomponents/vant/radio-group/index",
+      "van-row": "./wxcomponents/vant/row/index",
+      "van-search": "./wxcomponents/vant/search/index",
+      "van-sidebar": "./wxcomponents/vant/sidebar/index",
+      "van-sidebar-item": "./wxcomponents/vant/sidebar-item/index",
+      "van-slider": "./wxcomponents/vant/slider/index",
+      "van-stepper": "./wxcomponents/vant/stepper/index",
+      "van-steps": "./wxcomponents/vant/steps/index",
+      "van-sticky": "./wxcomponents/vant/sticky/index",
+      "van-submit-bar": "./wxcomponents/vant/submit-bar/index",
+      "van-swipe-cell": "./wxcomponents/vant/swipe-cell/index",
+      "van-uploader": "./wxcomponents/vant/uploader/index",
+      "van-switch": "./wxcomponents/vant/switch/index",
+      "van-tab": "./wxcomponents/vant/tab/index",
+      "van-tabs": "./wxcomponents/vant/tabs/index",
+      "van-tabbar": "./wxcomponents/vant/tabbar/index",
+      "van-tabbar-item": "./wxcomponents/vant/tabbar-item/index",
+      "van-tag": "./wxcomponents/vant/tag/index",
+      "van-toast": "./wxcomponents/vant/toast/index",
+      "van-transition": "./wxcomponents/vant/transition/index",
+      "van-tree-select": "./wxcomponents/vant/tree-select/index",
+      "van-datetime-picker": "./wxcomponents/vant/datetime-picker/index",
+      "van-rate": "./wxcomponents/vant/rate/index",
+      "van-collapse": "./wxcomponents/vant/collapse/index",
+      "van-collapse-item": "./wxcomponents/vant/collapse-item/index",
+      "van-picker": "./wxcomponents/vant/picker/index",
+      "van-overlay": "./wxcomponents/vant/overlay/index",
+      "van-circle": "./wxcomponents/vant/circle/index",
+      "van-index-bar": "./wxcomponents/vant/index-bar/index",
+      "van-index-anchor": "./wxcomponents/vant/index-anchor/index",
+      "van-grid": "./wxcomponents/vant/grid/index",
+      "van-grid-item": "./wxcomponents/vant/grid-item/index",
+      "van-dropdown-menu": "./wxcomponents/vant/dropdown-menu/index",
+      "van-dropdown-item": "./wxcomponents/vant/dropdown-item/index",
+      "van-skeleton": "./wxcomponents/vant/skeleton/index",
+      "van-share-sheet": "./wxcomponents/vant/share-sheet/index",
+      "van-empty": "./wxcomponents/vant/empty/index"
+    }
+  }
+  //  "plugins": {
+  //   "chooseLocation": {
+  //   "version": "1.0.9",
+  //   "provider": "wx76a9a06e5b4e693e"
+  // }
+  //  },
+  //  "permission": {
+  //   "scope.userLocation": {
+  //   "desc": "你的位置信息将用于小程序定位"
+  //   }
+  //  }
+}

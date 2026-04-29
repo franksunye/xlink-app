@@ -1,0 +1,142 @@
+@font-face {
+  font-family: 'iconfont'; /* Project id 4055547 */
+  src: url('~@/static/fonts/iconfont.woff2?t=1684891874386') format('woff2'),
+    url('~@/static/fonts/iconfont.woff?t=1684891874386') format('woff'),
+    url('~@/static/fonts/iconfont.ttf?t=1684891874386') format('truetype');
+}
+
+.iconfont {
+  font-family: 'iconfont' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-dianhua:before {
+  content: '\e867';
+}
+
+.icon-shanchu1:before {
+  content: '\e7a7';
+}
+
+.icon-gengduo:before {
+  content: '\e810';
+}
+
+.icon-xiajiantou-zhankai:before {
+  content: '\e864';
+}
+
+.icon-dingdanhuorizhi:before {
+  content: '\e860';
+}
+
+.icon-tianjiazhaopian:before {
+  content: '\e861';
+}
+
+.icon-shaixuan:before {
+  content: '\e862';
+}
+
+.icon-weizhi1:before {
+  content: '\e863';
+}
+
+.icon-kefu:before {
+  content: '\e865';
+}
+
+.icon-yirenzheng:before {
+  content: '\e866';
+}
+
+.icon-yishoucang:before {
+  content: '\e85d';
+}
+
+.icon-shoucang1:before {
+  content: '\e85e';
+}
+
+.icon-jian:before {
+  content: '\e857';
+}
+
+.icon-jia:before {
+  content: '\e85a';
+}
+
+.icon-weixuanzezhong:before {
+  content: '\e85b';
+}
+
+.icon-yixuanzhong:before {
+  content: '\e85c';
+}
+
+.icon-guowangdingdan:before {
+  content: '\e859';
+}
+
+.icon-dingdanbianhao:before {
+  content: '\e84e';
+}
+
+.icon-dizhiguanli:before {
+  content: '\e84f';
+}
+
+.icon-yonghuguanli:before {
+  content: '\e850';
+}
+
+.icon-a-shangchuantupian1:before {
+  content: '\e852';
+}
+
+.icon-yinsixieyi:before {
+  content: '\e853';
+}
+
+.icon-youhuiquan:before {
+  content: '\e854';
+}
+
+.icon-guanyu:before {
+  content: '\e855';
+}
+
+.icon-yonghuxieyi:before {
+  content: '\e856';
+}
+
+.icon-a-gouwuche1:before {
+  content: '\e858';
+}
+
+.icon-bangzhu:before {
+  content: '\e7c5';
+}
+
+.icon-bianji:before {
+  content: '\e7c6';
+}
+
+.icon-shanchu:before {
+  content: '\e7c8';
+}
+
+.icon-dingwei-weizhi:before {
+  content: '\e7cd';
+}
+
+.icon-a-fenxiang1:before {
+  content: '\e7d0';
+}
+
+.icon-fenxiang:before {
+  content: '\e80c';
+}

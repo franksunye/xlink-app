@@ -1,0 +1,1040 @@
+{
+  "easycom": {},
+  "pages": [
+    {
+      "path": "pages/launch/launch",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "吉柿修房服务商",
+        // #ifdef MP-WEIXIN
+        "enablePullDownRefresh": true,
+        // #endif
+        // #ifdef APP-PLUS
+        "enablePullDownRefresh": false,
+        // #endif
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/account/account",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/serviceAppointment/serviceAppointments",
+      "style": {
+        // #ifdef MP-WEIXIN
+        "navigationBarTitleText": "工单列表",
+        // #endif
+        // #ifdef APP-PLUS
+        "navigationStyle": "custom",
+        // #endif
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/project/projects",
+      "style": {
+        // #ifdef MP-WEIXIN
+        "navigationBarTitleText": "项目列表",
+        // #endif
+        // #ifdef APP-PLUS
+        "navigationStyle": "custom",
+        // #endif
+        "enablePullDownRefresh": false
+      }
+    },
+    // {
+    //   "path": "pages/message/message",
+    //   "style": {
+    //     "navigationBarTitleText": "消息"
+    //   }
+    // },
+    {
+      "path": "pages/toolbox/toolbox",
+      "style": {
+        "navigationBarTitleText": "工具箱"
+      }
+    }
+  ],
+  "subpackages": [
+    {
+      "root": "subpackages", // 分包根目录
+      // "name": "subpackages", // 分包别名，分包预下载时可以使用
+      // 分包页面路径，相对于分包根目录
+      "pages": [
+        {
+          "path": "login/loginAuth",
+          "style": {
+            "navigationBarTitleText": "登录"
+          }
+        },
+        {
+          "path": "login/register",
+          "style": {
+            "navigationBarTitleText": "注册"
+          }
+        },
+        {
+          "path": "orgUser/userInfo",
+          "style": {
+            "navigationBarTitleText": "个人资料"
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointments",
+          "style": {
+            "enablePullDownRefresh": true,
+            "navigationBarTitleText": "工单列表"
+          }
+        },
+        {
+          "path": "serviceAppointment/serviceAppointment",
+          "style": {
+            "navigationBarTitleText": "工单详情"
+          }
+        },
+        {
+          "path": "serviceAppointment/constructionlog",
+          "style": {
+            "navigationBarTitleText": "施工日志"
+          }
+        },
+        {
+          "path": "serviceAppointment/logDetails",
+          "style": {
+            "navigationBarTitleText": "日志详情"
+          }
+        },
+        {
+          "path": "contact/contacts",
+          "style": {
+            "navigationBarTitleText": "联系人列表",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "contact/contact",
+          "style": {
+            "navigationBarTitleText": "联系人详情",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "inventory/inventories",
+          "style": {
+            "navigationBarTitleText": "产品库存",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "order/orders",
+          "style": {
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "order/order",
+          "style": {
+            "navigationBarTitleText": "",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "order/placeOrders",
+          "style": {
+            "navigationBarTitleText": "下单"
+          }
+        },
+        {
+          "path": "docManage/docManage",
+          "style": {
+            "navigationBarTitleText": "企业文档",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "noticeManage/noticeManage",
+          "style": {
+            "navigationBarTitleText": "企业公告",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "noticeManage/detail",
+          "style": {
+            "navigationBarTitleText": "企业公告",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "FAQManage/FAQManage",
+          "style": {
+            "navigationBarTitleText": "FAQ",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "extForm/extForm",
+          "style": {
+            // #ifdef MP-WEIXIN
+            "app-plus": {
+              "titleNView": false
+            }
+            // #endif
+          }
+        },
+        {
+          "path": "contract/extForm",
+          "style": {
+            // #ifdef MP-WEIXIN
+            "app-plus": {
+              "titleNView": false
+            }
+            // #endif
+          }
+        },
+        {
+          "path": "coupon/coupons",
+          "style": {
+            "enablePullDownRefresh": true,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "我的优惠券"
+          }
+        },
+        {
+          "path": "coupon/couponsList",
+          "style": {
+            "enablePullDownRefresh": true,
+            "backgroundTextStyle": "dark",
+            "navigationBarTitleText": "优惠券列表"
+          }
+        },
+        {
+          "path": "coupon/my",
+          "style": {
+            "navigationBarTitleText": "我的优惠券",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "coupon/record",
+          "style": {
+            "navigationBarTitleText": "使用记录",
+            "enablePullDownRefresh": false
+          }
+        },
+        {
+          "path": "contract/appendixes",
+          "style": {
+            "navigationBarTitleText": "合同附件"
+          }
+        },
+        {
+          "path": "webView/webView",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "orgUser/orgUsers",
+          "style": {
+            "navigationBarTitleText": "账号管理"
+          }
+        },
+        {
+          "path": "orgUser/yWorkers",
+          "style": {
+            "navigationBarTitleText": "工人管理"
+          }
+        },
+        {
+          "path": "orgUser/workers",
+          "style": {
+            "navigationBarTitleText": "工人"
+          }
+        },
+        {
+          "path": "orgUser/userSearch",
+          "style": {
+            "navigationBarTitleText": "搜索用户"
+          }
+        },
+        {
+          "path": "orgUser/org",
+          "style": {
+            "navigationBarTitleText": "组织"
+          }
+        },
+        {
+          "path": "orgUser/user",
+          "style": {
+            "navigationBarTitleText": "用户"
+          }
+        },
+        {
+          "path": "setting/setting",
+          "style": {
+            "navigationBarTitleText": "设置"
+          }
+        },
+        {
+          "path": "setting/changePassword",
+          "style": {
+            "navigationBarTitleText": "修改密码"
+          }
+        },
+        {
+          "path": "setting/changePhone",
+          "style": {
+            "navigationBarTitleText": "修改手机号"
+          }
+        },
+        {
+          "path": "mall/mall",
+          "style": {
+            "navigationBarTitleText": "商城"
+          }
+        },
+        {
+          "path": "mall/cart",
+          "style": {
+            "navigationBarTitleText": "购物车"
+          }
+        },
+        {
+          "path": "mall/placeOrder",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "mall/addresses",
+          "style": {
+            "navigationBarTitleText": "收货地址"
+          }
+        },
+        {
+          "path": "mall/address",
+          "style": {
+            "navigationBarTitleText": "收货地址"
+          }
+        },
+        {
+          "path": "product/products",
+          "style": {
+            "navigationBarTitleText": "产品中心"
+          }
+        },
+        {
+          "path": "product/myProducts",
+          "style": {
+            "navigationBarTitleText": "我的产品"
+          }
+        },
+        {
+          "path": "product/product",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "menu/menu",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "purchase/purchaseOrderItems",
+          "style": {
+            "navigationBarTitleText": "发货订单"
+          }
+        },
+        {
+          "path": "purchase/purchaseOrders",
+          "style": {
+            "navigationBarTitleText": "采购订单"
+          }
+        },
+        {
+          "path": "activities/activity",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "partner/partnerApplication",
+          "style": {
+            "navigationBarTitleText": "申请开通云店铺"
+          }
+        },
+        {
+          "path": "labour/labours",
+          "style": {
+            "navigationBarTitleText": "云用工"
+          }
+        },
+        {
+          "path": "labour/labour",
+          "style": {
+            "navigationBarTitleText": "工人详情",
+            "navigationBarBackgroundColor": "#FF6900",
+            "navigationBarTextStyle": "#ffffff"
+          }
+        },
+        {
+          "path": "labour/modify",
+          "style": {
+            "navigationBarTitleText": "修改工人信息"
+          }
+        },
+        {
+          "path": "channel/channel",
+          "style": {
+            "navigationBarTitleText": "渠道码管理"
+          }
+        },
+        {
+          "path": "channel/addChannel",
+          "style": {
+            "navigationBarTitleText": "添加渠道"
+          }
+        },
+        {
+          "path": "check/checkSheet",
+          "style": {
+            "navigationBarTitleText": "施工现场核查单"
+          }
+        },
+        {
+          "path": "check/checkSheetList",
+          "style": {
+            "navigationBarTitleText": "核查单列表",
+            "navigationBarBackgroundColor": "#525ff6",
+            "navigationBarTextStyle": "#ffffff"
+          }
+        },
+        {
+          "path": "store/storeDecoration",
+          "style": {
+            "navigationBarTitleText": "门店装修"
+          }
+        },
+        {
+          "path": "store/storeDetail",
+          "style": {
+            "navigationBarTitleText": "门店预览"
+          }
+        },
+        {
+          "path": "menu/storeMenu",
+          "style": {
+            // #ifdef MP-WEIXIN
+            "navigationStyle": "custom",
+            // #endif
+            // #ifdef APP-PLUS
+            "navigationBarBackgroundColor": "#ff6900",
+            "navigationBarTextStyle": "#ffffff",
+            // #endif
+            "navigationBarTitleText": "云店铺"
+          }
+        },
+        {
+          "path": "owner/owner",
+          "style": {
+            "navigationBarTitleText": "业主通"
+          }
+        },
+        {
+          "path": "report/report",
+          "style": {
+            "navigationBarTitleText": "老板通",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "report/data",
+          "style": {
+            "navigationBarTitleText": "数据统计"
+          }
+        },
+        {
+          "path": "study/courses",
+          "style": {
+            "navigationBarTitleText": "学习通"
+          }
+        },
+        {
+          "path": "study/course",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "web/web",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "message/messages",
+          "style": {
+            "navigationBarTitleText": "消息中心",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "message/message",
+          "style": {
+            "navigationBarTitleText": "消息",
+            "enablePullDownRefresh": true,
+            "backgroundColor": "#f0f3f6",
+            "backgroundTextStyle": "dark"
+          }
+        },
+        {
+          "path": "profit/profit",
+          "style": {
+            "navigationBarTitleText": "成本利润核算"
+          }
+        },
+        {
+          "path": "comment/comments",
+          "style": {
+            "navigationBarTitleText": "评价管理"
+          }
+        },
+        {
+          "path": "activities/activities",
+          "style": {
+            "navigationBarTitleText": "活动管理"
+          }
+        },
+        {
+          "path": "activities/activityDetail",
+          "style": {
+            "navigationBarTitleText": "活动详情页"
+          }
+        },
+        {
+          "path": "case/cases",
+          "style": {
+            "navigationBarTitleText": "服务案例"
+          }
+        },
+        {
+          "path": "map/map",
+          "style": {
+            "navigationBarTitleText": "开始送货"
+          }
+        },
+        {
+          "path": "map/communityMap",
+          "style": {
+            "navigationBarTitleText": "小区地图"
+          }
+        },
+        {
+          "path": "map/communityMap2",
+          "style": {
+            "navigationBarTitleText": "小区地图"
+          }
+        },
+        {
+          "path": "map/nearbyCustomers",
+          "style": {
+            "navigationBarTitleText": "附近的客户"
+          }
+        },
+        {
+          "path": "map/nearbyCustomers2",
+          "style": {
+            "navigationBarTitleText": "附近的客户"
+          }
+        },
+        {
+          "path": "serviceTerritory/myServiceTerritories",
+          "style": {
+            "navigationBarTitleText": "我的服务区域"
+          }
+        },
+        {
+          "path": "xiaoV/xiaoVBind",
+          "style": {
+            "navigationBarTitleText": "服务站绑定"
+          }
+        },
+        {
+          "path": "map/amap",
+          "style": {
+            "navigationBarTitleText": "定位"
+          }
+        },
+        {
+          "path": "wallet/partnerCredit",
+          "style": {
+            "navigationBarTitleText": "信用账户"
+          }
+        },
+        {
+          "path": "wallet/partnerCreditItem",
+          "style": {
+            "navigationBarTitleText": "金额明细"
+          }
+        },
+        {
+          "path": "wallet/recharge",
+          "style": {
+            "navigationBarTitleText": "账户充值"
+          }
+        },
+        {
+          "path": "wallet/rechargeRecord",
+          "style": {
+            "navigationBarTitleText": "充值记录"
+          }
+        },
+        {
+          "path": "metabase/metabase",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
+          "path": "serviceResource/distributionMap",
+          "style": {
+            "navigationBarTitleText": "服务资源分布图"
+          }
+        },
+        {
+          "path": "serviceAppointment/camera",
+          "style": {
+            "navigationBarTitleText": "工单拍照"
+          }
+        },
+        {
+          "path": "serviceAppointment/camera2",
+          "style": {
+            "navigationBarTitleText": "工单拍照"
+          }
+        },
+        {
+          "path": "serviceAppointment/speechText",
+          "style": {
+            "navigationBarTitleText": "录音文本"
+          }
+        },
+        {
+          "path": "tag/tag",
+          "style": {
+            "navigationBarTitleText": "客户标签"
+          }
+        },
+        {
+          "path": "serviceAppointment/addContacts",
+          "style": {
+            "navigationBarTitleText": "附加联系人"
+          }
+        },
+        {
+          "path": "showTemplate/showTemplate",
+          "style": {
+            "navigationBarTitleText": "案例名称"
+          }
+        },
+        {
+          "path": "showTemplate/EditShowTemplate",
+          "style": {
+            "navigationBarTitleText": "编辑模版"
+          }
+        },
+        {
+          "path": "showTemplate/TemplateSelection",
+          "style": {
+            "navigationBarTitleText": "我的案例"
+          }
+        },
+        {
+          "path": "agent/conversation",
+          "style": {
+            "navigationBarTitleText": "吉柿修房 Agent"
+          }
+        }
+      ],
+      "independent": false // 分包是否是独立分包
+    },
+    {
+      "root": "subpackages2",
+      "pages": [
+        {
+          "path": "lead/leads",
+          "style": {
+            "navigationBarTitleText": "线索列表"
+          }
+        },
+        {
+          "path": "customerProfile/customerProfile",
+          "style": {
+            "navigationBarTitleText": "AI分析"
+          }
+        },
+        {
+          "path": "lead/lead",
+          "style": {
+            "navigationBarTitleText": "线索详情"
+          }
+        },
+        {
+          "path": "allot/allot",
+          "style": {
+            "navigationBarTitleText": "待分派"
+          }
+        },
+        {
+          "path": "survey/index",
+          "style": {
+            "navigationBarTitleText": "测绘工具",
+            // #ifdef MP-WEIXIN
+            "usingComponents": {
+              "mp-half-screen-dialog": "weui-miniprogram/half-screen-dialog/half-screen-dialog",
+              "mp-cells": "weui-miniprogram/cells/cells",
+              "mp-cell": "weui-miniprogram/cell/cell"
+            },
+            // #endif
+            "navigationBarTitleText": "测绘工具"
+          }
+        },
+        {
+          "path": "survey/setting",
+          "style": {
+            // #ifdef MP-WEIXIN
+            "usingComponents": {
+              "mp-form": "weui-miniprogram/form/form",
+              "mp-cells": "weui-miniprogram/cells/cells",
+              "mp-cell": "weui-miniprogram/cell/cell"
+            },
+            // #endif
+            "navigationBarTitleText": "设置"
+          }
+        },
+        {
+          "path": "survey/overview",
+          "style": {
+            "navigationBarTitleText": "预览"
+          }
+        },
+        {
+          "path": "inspectionAppointment/inspectionAppointment",
+          "style": {
+            "navigationBarTitleText": "巡检单详情页"
+          }
+        },
+        {
+          "path": "inspectionAppointment/inspectionAppointments",
+          "style": {
+            "navigationBarTitleText": "巡检列表"
+          }
+        },
+        {
+          "path": "serviceResource/serviceResource",
+          "style": {
+            "navigationBarTitleText": "服务资源"
+          }
+        },
+        {
+          "path": "settleOptimiz/amount",
+          "style": {
+            "navigationBarTitleText": "员工分账汇总"
+          }
+        },
+        {
+          "path": "settleOptimiz/records",
+          "style": {
+            "navigationBarTitleText": "员工分账明细"
+          }
+        },
+        {
+          "path": "dashboard/rankingList",
+          "style": {
+            "navigationBarTitleText": "排行榜",
+            "navigationStyle": "custom"
+          }
+        },
+        {
+          "path": "punch/punchDetail",
+          "style": {
+            "navigationBarTitleText": "打卡确认"
+          }
+        },
+        {
+          "path": "punch/punchPeriod",
+          "style": {
+            "navigationBarTitleText": "打卡记录"
+          }
+        },
+        {
+          "path": "scoringIndicators/scoringIndicators",
+          "style": {
+            "navigationBarTitleText": "分单记录"
+          }
+        },
+        {
+          "path": "addWorker/addWorker",
+          "style": {
+            "navigationBarTitleText": "添加工人"
+          }
+        },
+        {
+          "path": "addWorker/newWorker",
+          "style": {
+            "navigationBarTitleText": "创建工人"
+          }
+        },
+        {
+          "path": "addWorker/addMaterial",
+          "style": {
+            "navigationBarTitleText": "材料和机措"
+          }
+        },
+        {
+          "path": "task/tasks",
+          "style": {
+            "navigationBarTitleText": "任务列表"
+          }
+        },
+        {
+          "path": "task/task",
+          "style": {
+            "navigationBarTitleText": "任务详情"
+          }
+        },
+        {
+          "path": "task/AIFollowUp",
+          "style": {
+            "navigationBarTitleText": "AI跟单"
+          }
+        },
+        {
+          "path": "addWorker/platformMaterials",
+          "style": {
+            "navigationBarTitleText": "平台材料"
+          }
+        },
+        {
+          "path": "myIndicatorScore/myIndicatorScore",
+          "style": {
+            "navigationBarTitleText": "我的指标得分"
+          }
+        },
+        {
+          "path": "schedule/schedule",
+          "style": {
+            "navigationStyle": "custom",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "project/project",
+          "style": {
+            "navigationBarTitleText": "项目详情",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "project/projectProfit",
+          "style": {
+            "navigationBarTitleText": "项目明细",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "callRecord/callRecords",
+          "style": {
+            "navigationBarTitleText": "通话记录",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "callRecord/callRecord",
+          "style": {
+            "navigationBarTitleText": "通话详情",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "callRecord/callRecordEval",
+          "style": {
+            "navigationBarTitleText": "通话水平评估",
+            "disableScroll": true
+          }
+        }
+        // {
+        //   "path": "myIndicatorScore/myIndicatorScore",
+        //   "style": {
+        //     "navigationBarTitleText": "我的指标得分"
+        //   }
+        // }
+        // {
+        //   "path": "workOrder/workOrders",
+        //   "style": {
+        //     "enablePullDownRefresh": true,
+        //     "navigationBarTitleText": "售后工单列表"
+        //   }
+        // },
+        // {
+        //   "path": "workOrder/workOrder",
+        //   "style": {
+        //     "navigationBarTitleText": "售后工单详情"
+        //   }
+        // },
+      ],
+      "independent": false // 分包是否是独立分包
+    }
+    // {
+    //   "root": "h5",
+    //   "pages": [
+    //     {
+    //       "path": "registerPartner",
+    //       "style": {
+    //         "navigationBarTitleText": "注册服务商"
+    //       }
+    //     }
+    //   ]
+    // }
+  ],
+  // 分包预载配置
+  "preloadRule": {
+    // 当我们进入了pages/index/index页面以后就会预下载subpackages
+    "pages/index/index": {
+      "network": "all", //在指定网络下预下载，可选值为：all（不限网络）、wifi（仅wifi下预下载）
+      "packages": ["subpackages"] //进入页面后预下载分包
+    }
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#B9B9B9",
+    "selectedColor": "#323333",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index"
+      },
+      {
+        "pagePath": "pages/account/account"
+      },
+      {
+        "pagePath": "pages/serviceAppointment/serviceAppointments"
+      },
+      {
+        "pagePath": "pages/project/projects"
+      },
+      {
+        "pagePath": "pages/toolbox/toolbox"
+      }
+    ],
+    "position": "bottom"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于派单定位"
+    },
+    "scope.userLocationBackground": {
+      "desc": "将用于记录您的上下班打卡"
+    }
+  },
+  "requiredPrivateInfos": ["getLocation", "onLocationChange", "startLocationUpdateBackground"],
+  "globalStyle": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "吉柿修房服务商",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+      "van-action-sheet": "./wxcomponents/vant/action-sheet/index",
+      "van-area": "./wxcomponents/vant/area/index",
+      "van-button": "./wxcomponents/vant/button/index",
+      "van-card": "./wxcomponents/vant/card/index",
+      "van-cell": "./wxcomponents/vant/cell/index",
+      "van-cell-group": "./wxcomponents/vant/cell-group/index",
+      "van-checkbox": "./wxcomponents/vant/checkbox/index",
+      "van-checkbox-group": "./wxcomponents/vant/checkbox-group/index",
+      "van-col": "./wxcomponents/vant/col/index",
+      "van-count-down": "./wxcomponents/vant/count-down/index",
+      "van-dialog": "./wxcomponents/vant/dialog/index",
+      "van-divider": "./wxcomponents/vant/divider/index",
+      "van-field": "./wxcomponents/vant/field/index",
+      "van-goods-action": "./wxcomponents/vant/goods-action/index",
+      "van-goods-action-icon": "./wxcomponents/vant/goods-action-icon/index",
+      "van-goods-action-button": "./wxcomponents/vant/goods-action-button/index",
+      "van-icon": "./wxcomponents/vant/icon/index",
+      "van-image": "./wxcomponents/vant/image/index",
+      "van-loading": "./wxcomponents/vant/loading/index",
+      "van-nav-bar": "./wxcomponents/vant/nav-bar/index",
+      "van-notice-bar": "./wxcomponents/vant/notice-bar/index",
+      "van-notify": "./wxcomponents/vant/notify/index",
+      "van-panel": "./wxcomponents/vant/panel/index",
+      "van-popup": "./wxcomponents/vant/popup/index",
+      "van-progress": "./wxcomponents/vant/progress/index",
+      "van-radio": "./wxcomponents/vant/radio/index",
+      "van-radio-group": "./wxcomponents/vant/radio-group/index",
+      "van-row": "./wxcomponents/vant/row/index",
+      "van-search": "./wxcomponents/vant/search/index",
+      "van-sidebar": "./wxcomponents/vant/sidebar/index",
+      "van-sidebar-item": "./wxcomponents/vant/sidebar-item/index",
+      "van-slider": "./wxcomponents/vant/slider/index",
+      "van-stepper": "./wxcomponents/vant/stepper/index",
+      "van-steps": "./wxcomponents/vant/steps/index",
+      "van-sticky": "./wxcomponents/vant/sticky/index",
+      "van-submit-bar": "./wxcomponents/vant/submit-bar/index",
+      "van-swipe-cell": "./wxcomponents/vant/swipe-cell/index",
+      "van-uploader": "./wxcomponents/vant/uploader/index",
+      "van-switch": "./wxcomponents/vant/switch/index",
+      "van-tab": "./wxcomponents/vant/tab/index",
+      "van-tabs": "./wxcomponents/vant/tabs/index",
+      "van-tabbar": "./wxcomponents/vant/tabbar/index",
+      "van-tabbar-item": "./wxcomponents/vant/tabbar-item/index",
+      "van-tag": "./wxcomponents/vant/tag/index",
+      "van-toast": "./wxcomponents/vant/toast/index",
+      "van-transition": "./wxcomponents/vant/transition/index",
+      "van-tree-select": "./wxcomponents/vant/tree-select/index",
+      "van-datetime-picker": "./wxcomponents/vant/datetime-picker/index",
+      "van-rate": "./wxcomponents/vant/rate/index",
+      "van-collapse": "./wxcomponents/vant/collapse/index",
+      "van-collapse-item": "./wxcomponents/vant/collapse-item/index",
+      "van-picker": "./wxcomponents/vant/picker/index",
+      "van-overlay": "./wxcomponents/vant/overlay/index",
+      "van-circle": "./wxcomponents/vant/circle/index",
+      "van-index-bar": "./wxcomponents/vant/index-bar/index",
+      "van-index-anchor": "./wxcomponents/vant/index-anchor/index",
+      "van-grid": "./wxcomponents/vant/grid/index",
+      "van-grid-item": "./wxcomponents/vant/grid-item/index",
+      "van-dropdown-menu": "./wxcomponents/vant/dropdown-menu/index",
+      "van-dropdown-item": "./wxcomponents/vant/dropdown-item/index",
+      "van-skeleton": "./wxcomponents/vant/skeleton/index",
+      "van-empty": "./wxcomponents/vant/empty/index",
+      "van-calendar": "./wxcomponents/vant/calendar/index",
+      "van-cascader": "./wxcomponents/vant/cascader/index",
+      "van-share-sheet": "./wxcomponents/vant/share-sheet/index"
+    }
+  },
+  "condition": {
+    //模式配置，仅开发期间生效
+    "current": 0, //当前激活的模式(list 的索引项)
+    "list": [
+      {
+        "name": "", //模式名称
+        "path": "", //启动页面，必选
+        "query": "" //启动参数，在页面的onLoad函数里面得到
+      }
+    ]
+  }
+}

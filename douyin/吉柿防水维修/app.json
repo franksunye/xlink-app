@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "pages/landingPage/landingPage"
+  ],
+  "window": {
+    "navigationBarTitleText": "吉柿防水维修",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTextStyle": "black"
+  }
+}

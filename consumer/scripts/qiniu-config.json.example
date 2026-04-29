@@ -1,0 +1,6 @@
+{
+  "accessKey": "YOUR_ACCESS_KEY",
+  "secretKey": "YOUR_SECRET_KEY",
+  "bucket": "YOUR_BUCKET_NAME",
+  "cdnDomain": "https://pub.fsgo365.cn"
+}
