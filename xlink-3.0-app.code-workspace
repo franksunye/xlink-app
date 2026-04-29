@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../xlink/docs"
+		},
+		{
+			"path": "../xlink/code/app"
 		}
 	],
 	"settings": {
