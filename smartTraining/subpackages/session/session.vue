@@ -272,9 +272,9 @@ const app = getApp();
 var common = require('../../resources/js/common.js');
 
 const env = typeof process !== 'undefined' && process.env ? process.env : {};
-const AKID = env.UNI_APP_ALIBABA_CLOUD_ACCESS_KEY_ID || '';
-const AKKEY = env.UNI_APP_ALIBABA_CLOUD_ACCESS_KEY_SECRET || '';
-const APPKEY = env.UNI_APP_ALIBABA_CLOUD_APP_KEY || '';
+const AKID = env.VUE_APP_ALIBABA_CLOUD_ACCESS_KEY_ID || '';
+const AKKEY = env.VUE_APP_ALIBABA_CLOUD_ACCESS_KEY_SECRET || '';
+const APPKEY = env.VUE_APP_ALIBABA_CLOUD_APP_KEY || '';
 const getToken = require('../../resources/utils/token.js').getToken;
 const sleep = require('../../resources/utils/util.js').sleep;
 const uploadToSaver = require('../../resources/utils/util.js').uploadToSaver;
