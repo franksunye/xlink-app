@@ -1,0 +1,9 @@
+{
+  "name": "xlink-business-3-concept",
+  "version": "0.1.0",
+  "private": true,
+  "description": "XLink Business 3.0 UX concept app for WeChat Mini Program feedback.",
+  "scripts": {
+    "check:json": "node scripts/check-json.js"
+  }
+}

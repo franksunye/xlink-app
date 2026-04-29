@@ -1,0 +1,90 @@
+:root {
+  --xlink-bg: #f5f7fa;
+  --xlink-panel: #ffffff;
+  --xlink-panel-soft: #eef4f6;
+  --xlink-text: #182338;
+  --xlink-muted: #6b7485;
+  --xlink-line: #dce3ea;
+  --xlink-primary: #176b87;
+  --xlink-primary-dark: #114f66;
+  --xlink-green: #2f855a;
+  --xlink-amber: #b7791f;
+  --xlink-red: #c53030;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24rpx;
+  background: var(--xlink-bg);
+}
+
+.section {
+  margin-top: 24rpx;
+}
+
+.panel {
+  border: 1rpx solid var(--xlink-line);
+  border-radius: 8rpx;
+  background: var(--xlink-panel);
+}
+
+.section-title {
+  color: var(--xlink-text);
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 44rpx;
+}
+
+.muted {
+  color: var(--xlink-muted);
+}
+
+.primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84rpx;
+  border-radius: 8rpx;
+  background: var(--xlink-primary);
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80rpx;
+  border: 1rpx solid var(--xlink-line);
+  border-radius: 8rpx;
+  background: #ffffff;
+  color: var(--xlink-primary);
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.status-chip.todo {
+  background: #fff7e6;
+  color: var(--xlink-amber);
+}
+
+.status-chip.doing {
+  background: #e6f4f8;
+  color: var(--xlink-primary);
+}
+
+.status-chip.done {
+  background: #e7f6ee;
+  color: var(--xlink-green);
+}
