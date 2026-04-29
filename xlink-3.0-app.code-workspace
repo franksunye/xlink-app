@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../xlink/code/cloud"
+		},
+		{
+			"path": "../xlink/code/cloud_ui"
+		},
+		{
+			"path": "../xlink/docs"
+		}
+	],
+	"settings": {
+		"svn.enabled": false,
+		"git.autoRepositoryDetection": "openEditors"
+	}
+}
