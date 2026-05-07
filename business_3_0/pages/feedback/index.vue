@@ -65,8 +65,8 @@ export default {
   display: block;
   margin-top: 10rpx;
   color: #6b7485;
-  font-size: 24rpx;
-  line-height: 34rpx;
+  font-size: 26rpx;
+  line-height: 36rpx;
 }
 
 .score-row {
@@ -80,7 +80,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 72rpx;
+  min-height: 80rpx;
   border: 1rpx solid #dce3ea;
   border-radius: 8rpx;
   color: #6b7485;

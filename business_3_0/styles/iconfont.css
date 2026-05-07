@@ -1,0 +1,10 @@
+@font-face {
+  font-family: 'XLinkIcons';
+  src:
+    url('./static/iconfont/xlink-icons.woff2') format('woff2'),
+    url('./static/iconfont/xlink-icons.woff') format('woff'),
+    url('./static/iconfont/xlink-icons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}

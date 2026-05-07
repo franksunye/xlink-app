@@ -10,6 +10,15 @@
   --xlink-green: #2f855a;
   --xlink-amber: #b7791f;
   --xlink-red: #c53030;
+  --xlink-font-sm: 24rpx;
+  --xlink-font-base: 28rpx;
+  --xlink-font-lg: 32rpx;
+  --xlink-font-xl: 36rpx;
+  --xlink-line-sm: 34rpx;
+  --xlink-line-base: 40rpx;
+  --xlink-line-lg: 44rpx;
+  --xlink-control-base: 88rpx;
+  --xlink-radius-base: 12rpx;
 }
 
 .page {
@@ -24,15 +33,15 @@
 
 .panel {
   border: 1rpx solid var(--xlink-line);
-  border-radius: 8rpx;
+  border-radius: var(--xlink-radius-base);
   background: var(--xlink-panel);
 }
 
 .section-title {
   color: var(--xlink-text);
-  font-size: 32rpx;
+  font-size: var(--xlink-font-lg);
   font-weight: 700;
-  line-height: 44rpx;
+  line-height: var(--xlink-line-lg);
 }
 
 .muted {
@@ -43,11 +52,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 84rpx;
-  border-radius: 8rpx;
+  min-height: var(--xlink-control-base);
+  border-radius: var(--xlink-radius-base);
   background: var(--xlink-primary);
   color: #ffffff;
-  font-size: 28rpx;
+  font-size: var(--xlink-font-base);
   font-weight: 700;
 }
 
@@ -55,22 +64,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80rpx;
+  min-height: var(--xlink-control-base);
   border: 1rpx solid var(--xlink-line);
-  border-radius: 8rpx;
+  border-radius: var(--xlink-radius-base);
   background: #ffffff;
   color: var(--xlink-primary);
-  font-size: 28rpx;
+  font-size: var(--xlink-font-base);
   font-weight: 700;
 }
 
 .status-chip {
   display: inline-flex;
   align-items: center;
-  min-height: 40rpx;
+  min-height: 44rpx;
   padding: 0 16rpx;
   border-radius: 999rpx;
-  font-size: 22rpx;
+  font-size: var(--xlink-font-sm);
   font-weight: 700;
 }
 

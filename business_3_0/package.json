@@ -4,6 +4,10 @@
   "private": true,
   "description": "XLink Business 3.0 UX concept app for WeChat Mini Program feedback.",
   "scripts": {
+    "build:icons": "fantasticon src/icons -o static/iconfont -n xlink-icons -t woff2 woff ttf -g json --font-height 512 --normalize true --descent 64 --silent",
     "check:json": "node scripts/check-json.js"
+  },
+  "devDependencies": {
+    "fantasticon": "^4.1.0"
   }
 }

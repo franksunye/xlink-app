@@ -10,11 +10,14 @@ export default {
 
 <style>
 @import './styles/theme.css';
+@import './styles/iconfont.css';
 
 page {
   background: #f5f7fa;
   color: #182338;
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 view,
@@ -30,6 +33,12 @@ button {
   margin: 0;
   line-height: 1;
   background: transparent;
+  font: inherit;
+}
+
+input,
+textarea {
+  font: inherit;
 }
 
 button::after {

@@ -51,7 +51,7 @@ export default {
 }
 
 .project-card {
-  padding: 24rpx;
+  padding: 28rpx;
 }
 
 .project-head {
@@ -73,13 +73,13 @@ export default {
   display: block;
   margin-top: 8rpx;
   color: #6b7485;
-  font-size: 24rpx;
-  line-height: 32rpx;
+  font-size: 26rpx;
+  line-height: 36rpx;
 }
 
 .owner {
   color: #176b87;
-  font-size: 26rpx;
+  font-size: 28rpx;
   font-weight: 800;
   line-height: 36rpx;
 }
@@ -107,7 +107,7 @@ export default {
 
 .progress-text {
   color: #182338;
-  font-size: 26rpx;
+  font-size: 28rpx;
   font-weight: 800;
   text-align: right;
 }
@@ -122,8 +122,8 @@ export default {
 
 .risk-row .muted,
 .risk {
-  font-size: 24rpx;
-  line-height: 34rpx;
+  font-size: 26rpx;
+  line-height: 36rpx;
 }
 
 .risk {
