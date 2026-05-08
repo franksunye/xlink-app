@@ -467,6 +467,8 @@
                         round
                         plain
                         :data-filename="item.exts.bjdPDFurl"
+                        data-doctype="quotation"
+                        :data-doctime="item.updateTime || item.createTime"
                         custom-class="c-m-l-20"
                         @click.native.stop="download"
                         :data-event="{ id: '_s3FoFuJXd' }"
@@ -492,6 +494,8 @@
                         round
                         plain
                         :data-filename="item.exts.warrentyYearPDFurl"
+                        data-doctype="warranty"
+                        :data-doctime="item.updateTime || item.createTime"
                         custom-class="c-m-l-20"
                         @click.native.stop="download"
                         :data-event="{ id: 'UDQmvrw7Ix' }"
@@ -912,6 +916,8 @@
                         size="small"
                         @click="download"
                         :data-filename="item.qiniuUrls[item.qiniuUrls.length - 1]"
+                        data-doctype="contract"
+                        :data-doctime="item.updateTime || item.createTime"
                         v-if="item.qiniuUrls && item.qiniuUrls[item.qiniuUrls.length - 1]"
                         custom-class="c-m-l-20"
                         :data-event="{ id: 'kmPhjjMReD' }"
@@ -1222,7 +1228,9 @@
                         type="default"
                         plain
                         :data-filename="form.surveyPDFUrl"
-                        @click="download"
+                        data-doctype="survey"
+                        :data-doctime="form.updateTime || form.createTime"
+                        @click.native.stop="download"
                         :data-event="{ id: 'ES_yeFNt-u' }"
                       >
                         查看报告
@@ -2288,6 +2296,7 @@
                 :data-event="{ id: 'I2q-kme8RL' }"
               >
                 <view v-if="item.surveyPDFUrl" :data-event="{ id: 'I2q-kme8RL' }">
+                  <!-- #ifdef APP-PLUS -->
                   <van-button
                     plain
                     round
@@ -2299,6 +2308,7 @@
                   >
                     下载文件
                   </van-button>
+                  <!-- #endif -->
                   <van-button
                     plain
                     round
@@ -2306,6 +2316,8 @@
                     icon="orders-o"
                     custom-class="c-m-l-20"
                     :data-filename="item.surveyPDFUrl"
+                    data-doctype="survey"
+                    :data-doctime="item.updateTime || item.createTime"
                     @click="download"
                     :data-event="{ id: 'xT60THkLaN' }"
                   >
@@ -2324,6 +2336,7 @@
                   </van-button>
                 </view>
                 <view v-if="item.qiniuUrl" :data-event="{ id: 'I2q-kme8RL' }">
+                  <!-- #ifdef APP-PLUS -->
                   <van-button
                     size="small"
                     round
@@ -2335,6 +2348,7 @@
                   >
                     下载文件
                   </van-button>
+                  <!-- #endif -->
                   <van-button
                     size="small"
                     round
@@ -2343,6 +2357,8 @@
                     custom-class="c-m-l-20"
                     @click="download"
                     :data-filename="item.qiniuUrl"
+                    :data-doctype="item.name == '验收报告' ? 'acceptance' : 'survey'"
+                    :data-doctime="item.updateTime || item.createTime"
                     :data-event="{ id: '2yhhTJVbOT' }"
                   >
                     查看文件
@@ -2364,6 +2380,7 @@
                   style="margin-bottom: 10px"
                   :data-event="{ id: 'I2q-kme8RL' }"
                 >
+                  <!-- #ifdef APP-PLUS -->
                   <van-button
                     size="small"
                     round
@@ -2375,6 +2392,7 @@
                   >
                     下载报价单
                   </van-button>
+                  <!-- #endif -->
                   <van-button
                     size="small"
                     round
@@ -2383,6 +2401,8 @@
                     custom-class="c-m-l-20"
                     @click="download"
                     :data-filename="item.bjdPDFurl"
+                    data-doctype="quotation"
+                    :data-doctime="item.updateTime || item.createTime"
                     :data-event="{ id: 'EICqEqv5nc' }"
                   >
                     查看报价单
@@ -2400,6 +2420,7 @@
                   </van-button>
                 </view>
                 <view v-if="item.warrentyYearPDFurl" :data-event="{ id: 'I2q-kme8RL' }">
+                  <!-- #ifdef APP-PLUS -->
                   <van-button
                     size="small"
                     round
@@ -2411,6 +2432,7 @@
                   >
                     下载质保单
                   </van-button>
+                  <!-- #endif -->
                   <van-button
                     size="small"
                     round
@@ -2419,6 +2441,8 @@
                     custom-class="c-m-l-20"
                     @click="download"
                     :data-filename="item.warrentyYearPDFurl"
+                    data-doctype="warranty"
+                    :data-doctime="item.updateTime || item.createTime"
                     :data-event="{ id: 'hK46HeMPN6' }"
                   >
                     查看质保单
@@ -5637,6 +5661,7 @@
 const app = getApp();
 var common = require('../../resources/js/common.js');
 var areajs = require('../../resources/js/area.js');
+var documentPreview = require('../../resources/js/documentPreview.js');
 
 // canvas 相关变量
 var content = null;
@@ -9970,32 +9995,43 @@ export default {
         });
       }
     },
+    formatDocumentDate() {
+      const date = new Date();
+      const rawMonth = `${date.getMonth() + 1}`;
+      const rawDay = `${date.getDate()}`;
+      const month = rawMonth.length === 1 ? `0${rawMonth}` : rawMonth;
+      const day = rawDay.length === 1 ? `0${rawDay}` : rawDay;
+      return `${date.getFullYear()}${month}${day}`;
+    },
+    getDocumentMeta(e) {
+      const dataset = e && e.currentTarget && e.currentTarget.dataset ? e.currentTarget.dataset : {};
+      return {
+        docType: dataset.doctype || 'file',
+        orderNum: this.SAFormData.orderNum || this.id || this.formatDocumentDate(),
+        customerName: this.SAFormData.name || '',
+        docTime: dataset.doctime || ''
+      };
+    },
     // 查看文件
     download(e, url) {
       if (!url && common.osg.isRepeatClick('download')) {
         return;
       }
-      let filePath = url || e.currentTarget.dataset.filename;
-      if (
-        filePath.indexOf('.jpg') != -1 ||
-        filePath.indexOf('.jpeg') != -1 ||
-        filePath.indexOf('.png') != -1 ||
-        filePath.indexOf('.gif') != -1
-      ) {
-        //图片预览
-        wx.previewImage({
-          current: filePath, // 当前显示图片的http链接
-          urls: [filePath] // 需要预览的图片http链接列表
-        });
+      const dataset = e && e.currentTarget && e.currentTarget.dataset ? e.currentTarget.dataset : {};
+      let filePath = url || dataset.filename;
+      if (!filePath) {
+        return;
+      }
+      if (documentPreview.isImageFile(filePath)) {
+        documentPreview.previewImage(filePath);
       } else {
-        //文件下载
-        wx.downloadFile({
-          url: filePath,
-          success: function (res) {
-            wx.openDocument({
-              filePath: res.tempFilePath
-            });
-          }
+        const documentMeta = this.getDocumentMeta(e);
+        documentPreview.openDocument({
+          docType: documentMeta.docType,
+          orderNum: documentMeta.orderNum,
+          customerName: documentMeta.customerName,
+          docTime: documentMeta.docTime,
+          url: filePath
         });
       }
     },
@@ -11838,7 +11874,15 @@ export default {
       );
     },
     viewAcceptance(item) {
-      this.saveFile(null, item.acceptanceUrl);
+      this.download({
+        currentTarget: {
+          dataset: {
+            filename: item.acceptanceUrl,
+            doctype: 'acceptance',
+            doctime: item.updateTime || item.createTime || ''
+          }
+        }
+      });
       this.md({ act: 'acceptance_preview', type: item.signImageUrl ? '查看' : '预览' });
     },
     copyAcceptance(url) {

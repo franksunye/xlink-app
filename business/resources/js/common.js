@@ -2,7 +2,8 @@ import permision from './permission.js';
 import md5Encode from './md5.js';
 import areajs from './area.js';
 const env = typeof process !== 'undefined' && process.env ? process.env : {};
-var _host = env.VUE_APP_XLINK_API_HOST || 'https://xlinkbeta.fsgo365.cn';
+var _host =
+  env.NODE_ENV === 'production' ? 'https://xlink.fsgo365.cn' : 'https://xlinkbeta.fsgo365.cn';
 
 var rootUri = _host + '/fsgo/wm/';
 // var rootUri = _host + '/xlink/wm/';
