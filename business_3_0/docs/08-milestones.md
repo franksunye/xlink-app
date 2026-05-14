@@ -4,7 +4,7 @@
 
 ## POC 竖切顺序
 
-（先做 1～2 个能证明 **Next.js + Vercel** 架构选择的切片；体验对齐 [archive `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)；**低代码拆解与外部集成波次**见 [06-evolution-and-poc-waves.md](./06-evolution-and-poc-waves.md)。**POC 波次 1 的验收范围**见 [09-v0.1-scope.md](./09-v0.1-scope.md)。）
+（先做 1～2 个能证明 **Next.js + Vercel** 架构选择的切片；体验对齐 [archive `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)；**低代码拆解与外部集成波次**见 [06-evolution-and-poc-waves.md](./06-evolution-and-poc-waves.md)。**POC 波次 1 的验收范围**见 [09-v0.1-scope.md](./09-v0.1-scope.md)。**版本线、范围冻结、验收清单与打标前文档**见 [10-release-and-acceptance.md](./10-release-and-acceptance.md)。）
 
 | 顺序 | 切片内容 | 目标产出 | 对应文档 / 代码落点 |
 | --- | --- | --- | --- |
@@ -25,6 +25,17 @@
 | 与 cloud 分期与脱离 | [05-integration-strategy.md](./05-integration-strategy.md) |
 | 低代码拆解与 POC 波次 | [06-evolution-and-poc-waves.md](./06-evolution-and-poc-waves.md) |
 | Web v0.1 范围 | [09-v0.1-scope.md](./09-v0.1-scope.md) |
+| 版本线、验收与文档治理 | [10-release-and-acceptance.md](./10-release-and-acceptance.md) |
+| 设计侧发布变更记录 | [changelog.md](./changelog.md) |
+
+## 版本 · 范围文档 · 验收
+
+> 流程、清单与出口门禁详见 **[10-release-and-acceptance.md](./10-release-and-acceptance.md)**。
+
+| 版本 | 范围文档（冻结快照） | 验收 |
+| --- | --- | --- |
+| v0.1（POC / 波次 1） | [09-v0.1-scope.md](./09-v0.1-scope.md) | [10 §4](./10-release-and-acceptance.md#4-验收清单模板可发布版本) |
+| v0.2（建议 / POC 波次 2） | `NN-v0.2-scope.md`（发布前新建） | 同 [10](./10-release-and-acceptance.md) |
 
 ## 备注
 
