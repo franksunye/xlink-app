@@ -7,8 +7,8 @@
 - [x] 登录与身份 — [login.md](./login.md)（对齐 [archive 概念版登录](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) + Mock）  
 - [x] 任务（工单）主链路 — [work-orders.md](./work-orders.md)（对齐 archive `mock.js` 中 dashboard / workOrders）  
 - [x] 项目（Tab「工具」）— [projects.md](./projects.md)  
-- [ ] 体验反馈 — `feedback.md`（可选；`submitFeedback` + 本地存储）  
-- [ ] 安全提醒 — `security-alert.md`（可选）
+- [ ] 体验反馈 — `feedback.md`（**v0.1 不规划**；延至商用准备阶段；`submitFeedback` + 本地存储）  
+- [ ] 安全提醒 — `security-alert.md`（**v0.1 不规划**；同上）
 
 ## 备注
 

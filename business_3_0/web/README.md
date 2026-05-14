@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+设计与 **管家关键屏观感**验收请对照 archive 分支概念版：<https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0>（细则见上一级 `business_3_0/docs/09-v0.1-scope.md`）。
+
 ## Getting Started
 
 First, run the development server:

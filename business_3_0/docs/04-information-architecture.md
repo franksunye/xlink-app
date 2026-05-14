@@ -11,16 +11,16 @@
 
 概念版 `pages` 数组顺序（首屏为登录栈，主应用为 Tab）：
 
-| 顺序 | 概念路径 | 标题 / 用途 | Next.js 建议路由 |
-| --- | --- | --- | --- |
-| 1 | `pages/login/index` | 登录（启动页 → 方式选择 → 表单） | `/login` |
-| 2 | `pages/security-alert/index` | 安全提醒 | `/security-alert` |
-| 3 | `pages/index/index` | 工作台 | `/` 或 `/home` |
-| 4 | `pages/work-orders/index` | 任务列表 | `/work-orders` |
-| 5 | `pages/work-orders/detail` | 任务详情 | `/work-orders/[id]` |
-| 6 | `pages/projects/index` | Tab 文案为「工具」，页面标题为「项目」 | `/projects`（或 Web 上统一为「项目」命名） |
-| 7 | `pages/account/index` | 我的 | `/account` |
-| 8 | `pages/feedback/index` | 体验反馈 | `/feedback` |
+| 顺序 | 概念路径 | 标题 / 用途 | Next.js 建议路由 | v0.1 Web |
+| --- | --- | --- | --- | --- |
+| 1 | `pages/login/index` | 登录（启动页 → 方式选择 → 表单） | `/login` | **含**：主路径与视觉验收对齐概念版 |
+| 2 | `pages/security-alert/index` | 安全提醒 | `/security-alert` | **不含**：延至 **小规模商用就绪**（商用准备阶段再评估）；[09](./09-v0.1-scope.md) 已从 v0.1 划出 |
+| 3 | `pages/index/index` | 工作台 | `/` 或 `/home` | **含** |
+| 4 | `pages/work-orders/index` | 任务列表 | `/work-orders` | **含** |
+| 5 | `pages/work-orders/detail` | 任务详情 | `/work-orders/[id]` | **含** |
+| 6 | `pages/projects/index` | Tab 文案为「工具」，页面标题为「项目」 | `/projects`（或 Web 上统一为「项目」命名） | **含** |
+| 7 | `pages/account/index` | 我的 | `/account` | **含**（壳） |
+| 8 | `pages/feedback/index` | 体验反馈 | `/feedback` | **不含**：延至商用准备阶段（同 security-alert）；[09](./09-v0.1-scope.md) 已从 v0.1 划出 |
 
 ## 顶层导航（Tab → Web 底部或侧栏）
 
@@ -33,10 +33,10 @@
 | 工具 | `pages/projects/index` | 概念版为 **项目列表**（`getProjects`） | `/projects`（Tab） | Tab 名「工具」与内容「项目」不一致：**Web 首期建议统一为「项目」**，避免用户认知分裂 |
 | 我的 | `pages/account/index` | 账号与设置入口 | `/account`（Tab） | 对应 `business`「我的」；具体子项随迭代补 |
 
-**非 Tab 入口**
+**非 Tab 入口（整机 IA 图景；v0.1 是否落地另见「v0.1 Web」列）**
 
-- **体验反馈**：`/feedback`（从工作台快捷区等进入，与概念版一致）。  
-- **安全提醒**：`/security-alert`（与登录栈衔接，规则待定）。
+- **体验反馈** `/feedback`：**概念版与设计参照**中为工作台快捷入口之一；**v0.1 不交付**该路由与流程，延至商用准备阶段。  
+- **安全提醒** `/security-alert`：与登录栈衔接；**v0.1 不交付**，延至商用准备阶段。
 
 ## 关键列表与详情
 
@@ -53,7 +53,7 @@
 
 ### 工作台（首页）
 
-- **指标卡片、今日任务、快捷操作**：对齐 `getDashboard` 结构；快捷项里部分为 `toast` 演示、部分 `route` 跳转任务或反馈，Web 复刻时保持同一 **交互类型**（跳转 vs 占位提示）。
+- **指标卡片、今日任务、快捷操作**：对齐 `getDashboard` 结构；快捷项里部分为 `toast` 演示、部分 `route` 跳转任务；若概念版指向 **反馈**路由，Web v0.1 按 [09](./09-v0.1-scope.md)**不实现跳转**或 **toast**，保持 **交互类型**可辨（占位 vs 真跳转）。
 
 ## 外部稿（可选）
 

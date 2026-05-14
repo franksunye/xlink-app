@@ -7,7 +7,7 @@
 | 项 | 选择 | 说明 |
 | --- | --- | --- |
 | 框架 | **Next.js** | App Router 等具体约定在脚手架落地时定；与 archive 上 uni-app 概念版解耦。 |
-| 托管 | **Vercel** | 主分支与 **Preview 部署**支撑高频迭代；不作为现网 `business` 小程序的替代发布，直至团队另有约定。 |
+| 托管 | **Vercel** | 主分支与 **Preview 部署**（释义：每次推送或 PR 的 **临时 HTTPS 演示链接**，见 [09-v0.1-scope](./09-v0.1-scope.md)「术语：Vercel Preview」）支撑高频迭代；不作为现网 `business` 小程序的替代发布，直至团队另有约定。 |
 | 早期形态 | **SPA + PWA** | 以**客户端路由为主的单页体验**为默认；`manifest`、Service Worker **可按迭代逐步加能力**，但**缓存分层与失效策略须从第一天设计**（见下文「缓存与 PWA」），避免后期大规模重构。 |
 | 非目标（当前阶段） | **不以微信小程序为主迭代面** | 小程序发版节奏慢；现网 **`business/`** 仍为业务与行为对照基准。 |
 | 体验参照 | **`archive/business-3-0-wip` / `business_3_0`** | [GitHub 目录](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)：IA/页面粒度可参考，实现用 Web 重写。 |
@@ -51,7 +51,7 @@
 
 | POC 主题 | 要验证的问题 | 成功标准 | 失败时 |
 | --- | --- | --- | --- |
-| Next.js 竖切（登录占位 + 工单列表/详情壳） | 路由、布局、Mock 数据层是否与「管家主路径」文档一致 | Vercel Preview 可演示主路径骨架 | 调整目录结构或数据层，不放弃 Next 方向 |
+| Next.js 竖切（登录占位 + 工单列表/详情壳） | 路由、布局、Mock 数据层是否与「管家主路径」文档一致 | **仓库已接通 Vercel** 时，Preview 可演示主路径骨架（未接通则以本地 + 构建为准，见 [09](./09-v0.1-scope.md)） | 调整目录结构或数据层，不放弃 Next 方向 |
 | 缓存与 PWA 基线 | BFF 路由的缓存分类、客户端数据层 `staleTime`、SW 是否排除 `/api/*` | 文档 + 模板代码中有显式策略，避免「默认可缓存」 | 收紧策略而非删除 PWA 方向 |
 |  |  |  |  |
 
