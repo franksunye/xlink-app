@@ -5,7 +5,7 @@
 ## 范围
 
 - **角色**：服务商侧用户（概念版以「张工」等 mock 文案演示）。  
-- **与现网**：真实登录语义以 `business` + `cloud` 为准；**首期 Web 以 Mock 跑通 IA**，真对接时经 BFF Adapter 接入（见 [integration-strategy](../integration-strategy.md)）。
+- **与现网**：真实登录语义以 `business` + `cloud` 为准；**首期 Web 以 Mock 跑通 IA**，真对接时经 BFF Adapter 接入（见 [integration-strategy](../05-integration-strategy.md)）。
 
 ## 触发与结束条件
 
@@ -24,7 +24,7 @@
 ## 与 Mock / BFF 的边界
 
 - 概念版 **无** `mock.js` 内独立 `login()` export；会话由 **前端本地步骤 + switchTab** 完成。  
-- **Next 建议**：`POST /api/auth/login`（或 session cookie）由 BFF 返回 **mock 用户上下文**（`userId`、`displayName`、`role`），与 [nonfunctional](../nonfunctional-and-poc.md) 缓存策略一致（该接口默认 **不可被 SW 缓存**）。  
+- **Next 建议**：`POST /api/auth/login`（或 session cookie）由 BFF 返回 **mock 用户上下文**（`userId`、`displayName`、`role`），与 [nonfunctional](../07-nonfunctional-and-poc.md) 缓存策略一致（该接口默认 **不可被 SW 缓存**）。  
 - 真接入后：Adapter 调现网登录接口，仍只经 BFF 暴露 3.0 契约字段。
 
 ## 异常与边界

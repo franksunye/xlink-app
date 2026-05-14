@@ -8,7 +8,7 @@
 
 ## 第 1 轮：定位与边界（Why / What 不做什么）
 
-见 [vision.md](./vision.md)。尽量包含：
+见 [02-vision.md](./02-vision.md)。尽量包含：
 
 - **一句话目标**：3.0 对用户或团队「要变好」的是什么，避免同时列多个并列主目标。
 - **不变量**：与现网必须一致的具体项（角色、工单/项目等核心对象、与后端契约、合规要求）。
@@ -18,7 +18,7 @@
 
 ## 第 2 轮：人物与场景（Who / When）
 
-见 [personas-and-scenarios.md](./personas-and-scenarios.md)。
+见 [03-personas-and-scenarios.md](./03-personas-and-scenarios.md)。
 
 - 主要角色、设备与网络假设。
 - 每角色若干条带上下文的故事；若 IA 或交互会变，写清「业务结果不变，变的是哪类体验」。
@@ -27,7 +27,7 @@
 
 ## 第 3 轮：信息架构与导航（Where）
 
-见 [information-architecture.md](./information-architecture.md)。
+见 [04-information-architecture.md](./04-information-architecture.md)。
 
 - 顶层导航、关键列表与详情；与现网对照时的合并/拆分/改名。
 - 可附外部线框或文档链接。
@@ -46,7 +46,7 @@
 
 ## 第 5 轮：非功能与技术意图（How hard / How risky）
 
-见 [nonfunctional-and-poc.md](./nonfunctional-and-poc.md)。
+见 [07-nonfunctional-and-poc.md](./07-nonfunctional-and-poc.md)。
 
 - 性能与体积、可观测与发布、技术 POC 方向；每条 POC 配成功标准与失败时是否放弃。
 
@@ -54,7 +54,7 @@
 
 ## 第 6 轮：里程碑与文档落点（When / Where）
 
-见 [milestones.md](./milestones.md)。
+见 [08-milestones.md](./08-milestones.md)。
 
 - POC 竖切顺序、与本文档目录的对应关系。
 

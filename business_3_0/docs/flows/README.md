@@ -12,4 +12,4 @@
 
 ## 备注
 
-- 流程与 **IA** 对应关系见 [information-architecture.md](../information-architecture.md)。
+- 流程与 **IA** 对应关系见 [04-information-architecture.md](../04-information-architecture.md)。

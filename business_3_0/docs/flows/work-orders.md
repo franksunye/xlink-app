@@ -4,13 +4,13 @@
 
 ## 范围
 
-- **角色**：管家 / 服务商工程师（与 [personas](../personas-and-scenarios.md) 一致）。  
+- **角色**：管家 / 服务商工程师（与 [personas](../03-personas-and-scenarios.md) 一致）。  
 - **对象**：概念版 **任务** = 3.0 首期对齐的 **服务工单** 体验壳；字段语义最终对齐 `business` + `cloud`。
 
 ## 触发与结束条件
 
 - **触发**：从 Tab「任务」或首页入口进入列表；从列表点击一行进入详情。  
-- **结束（单任务视角）**：详情内完成当前 mock 所定义的「主行动」（如联系客户、查看记录）；真工作流节点待 [spec](../integration-strategy.md) 与 cloud 对齐后补。
+- **结束（单任务视角）**：详情内完成当前 mock 所定义的「主行动」（如联系客户、查看记录）；真工作流节点待 [spec](../05-integration-strategy.md) 与 cloud 对齐后补。
 
 ## 主路径
 
@@ -29,7 +29,7 @@
 | --- | --- |
 | 未知 `id` | mock 回退到第一条；Web 可改为 404 页 |
 | 空列表 | 展示空状态；可链到创建工单（若后续开放） |
-| 网络失败 | 与 PWA 缓存策略一致：列表类可按 [nonfunctional](../nonfunctional-and-poc.md) 使用短 stale + 重试 |
+| 网络失败 | 与 PWA 缓存策略一致：列表类可按 [nonfunctional](../07-nonfunctional-and-poc.md) 使用短 stale + 重试 |
 
 ## 备注
 

@@ -1,6 +1,6 @@
 # 低代码拆解、领域模块、外部集成与 POC 波次
 
-> 2026-05-15：把产品拆解思考与 **POC 波次** 对齐，便于排期与依赖管理。技术栈与脱离策略仍以 [integration-strategy](./integration-strategy.md)、[vision](./vision.md) 为准。
+> 2026-05-15：把产品拆解思考与 **POC 波次** 对齐，便于排期与依赖管理。技术栈与脱离策略仍以 [05-integration-strategy](./05-integration-strategy.md)、[02-vision](./02-vision.md) 为准。
 
 ## 1. 低代码平台：拆解与简化
 
@@ -30,7 +30,7 @@
 | **电话** | 中高 | 能力占位 + 与现网通话记录/活动类数据对齐时再接 |
 | **客服** | 中 | 可晚于支付/签约 |
 
-## 4. POC 波次（与 [milestones](./milestones.md) 一致方向）
+## 4. POC 波次（与 [08-milestones](./08-milestones.md) 一致方向）
 
 | 波次 | 目标 | 主要内容 |
 | --- | --- | --- |
@@ -41,7 +41,7 @@
 
 ## 5. 管理端 cloud_ui
 
-- **不急**：现网有旧版可用；3.0 **首期聚焦** Web 服务商侧（与 [IA](./information-architecture.md) 一致）。  
+- **不急**：现网有旧版可用；3.0 **首期聚焦** Web 服务商侧（与 [IA](./04-information-architecture.md) 一致）。  
 - **cloud_ui 进 3.0** 作为单独波次或独立应用，待 Web 主路径与 `cloud` 契约稳定后再排。
 
 ## 备注
