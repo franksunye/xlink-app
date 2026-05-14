@@ -1,6 +1,6 @@
 # Business 3.0 Web（Next.js）
 
-`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线。UI 色板、渐变 Hero、卡片阴影、任务列表 Tab/卡片与详情版式 **对齐** archive 概念版（分支 [`archive/business-3-0-wip` / `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 中 `styles/theme.css` 与 `pages/index`、`pages/work-orders` 等）；Tab 图标为矢量近似，非逐像素复刻小程序 PNG。**登录**为启动页 → 选择方式（验证码 / 密码 / 快捷）→ 表单，与概念版 `pages/login` 一致；**工作台**支持「任务优先 / 数据概览」双方案，在 **我的** 中切换，持久化键与小程序相同：`localStorage['business_3_home_variant']`（`task` | `metrics`）。范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)。
+`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线；**v0.2** 起工单列表/详情支持可选 **cloud 只读 Adapter**（见 [../docs/13-v0.2-scope.md](../docs/13-v0.2-scope.md)）。UI 色板、渐变 Hero、卡片阴影、任务列表 Tab/卡片与详情版式 **对齐** archive 概念版（分支 [`archive/business-3-0-wip` / `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 中 `styles/theme.css` 与 `pages/index`、`pages/work-orders` 等）；Tab 图标为矢量近似，非逐像素复刻小程序 PNG。**登录**为启动页 → 选择方式（验证码 / 密码 / 快捷）→ 表单，与概念版 `pages/login` 一致；**工作台**支持「任务优先 / 数据概览」双方案，在 **我的** 中切换，持久化键与小程序相同：`localStorage['business_3_home_variant']`（`task` | `metrics`）。范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)（v0.1）与 [../docs/13-v0.2-scope.md](../docs/13-v0.2-scope.md)（v0.2）。
 
 ## Vercel（推荐配置）
 
@@ -8,6 +8,7 @@
 2. **Root Directory**：`business_3_0/web`（必填；错配会导致空部署或构建失败）。
 3. **Domains**：在 Vercel → Domains 为 Production / Preview 绑定团队域名（可与 `*.vercel.app` 并存）。
 4. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
+5. **cloud 只读联调（可选，v0.2）**：`USE_CLOUD_READ` = `1` 或 `true`；`XLINK_CLOUD_READ_BASE_URL` = cloud 网关根（含应用前缀，无尾斜杠），例如 `https://your-dev-host/app`。BFF 将 **转发浏览器 Cookie**；Mock 登录与 cloud 会话未打通时通常会 **降级为 Mock**（响应头 `X-Xlink-Read-Source: mock-fallback`）。
 
 **基 URL（当前）**
 
@@ -18,7 +19,7 @@
 
 ## 手动验收
 
-见 [docs/acceptance-v0.1.md](./docs/acceptance-v0.1.md)（对齐 [10-release-and-acceptance.md](../docs/10-release-and-acceptance.md) §4）。
+见 [docs/acceptance-v0.1.md](./docs/acceptance-v0.1.md)（v0.1）、[docs/acceptance-v0.2.md](./docs/acceptance-v0.2.md)（v0.2）；均对齐 [10-release-and-acceptance.md](../docs/10-release-and-acceptance.md) §4。
 
 ## BFF `Cache-Control`（与 [07-nonfunctional-and-poc.md](../docs/07-nonfunctional-and-poc.md) 一致）
 

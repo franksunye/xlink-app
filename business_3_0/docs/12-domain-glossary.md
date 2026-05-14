@@ -28,6 +28,8 @@
 **与路由/UI 用语**：URL 使用 `/work-orders`；界面可对用户称 **「任务」**。文档与类型名统一为 **`WorkOrder`**，避免在 spec 中混用「订单」指代工单。  
 **与客户地基的关系**：持久化模型宜具备 **`accountId` / `contactId`**（见 §2）；当前 Mock 中 `customer` 等字符串为 **过渡展示**，对接 CRM 后以引用关系为准。
 
+**只读流程节点（v0.2）**：可选 BFF 字段 **`readonlyWorkflowNodes`**（`{ id, label, state: 'done'|'current'|'pending' }[]`）为 **展示用读模型**，用于工单详情「流程节点（只读）」区块；语义对齐现网工作流 **阶段感**，持久化真源仍在 cloud 工作流侧，Adapter 负责映射。
+
 ---
 
 ### 1.2 服务预约 `ServiceAppointment`

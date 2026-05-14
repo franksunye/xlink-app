@@ -27,6 +27,7 @@
 | 版本线、验收与文档治理 | [10-release-and-acceptance.md](./10-release-and-acceptance.md) |
 | 现场服务域：业界参照与边界 | [11-field-service-reference.md](./11-field-service-reference.md) |
 | **领域词汇表（对象与字段真源）** | [12-domain-glossary.md](./12-domain-glossary.md) |
+| Web v0.2 范围（POC 波次 2） | [13-v0.2-scope.md](./13-v0.2-scope.md) |
 | 设计侧发布变更记录 | [changelog.md](./changelog.md) |
 
 ## 沟通时可用的格式（复制）

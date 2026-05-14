@@ -146,6 +146,15 @@ export type WorkOrder = {
   materials?: { title: string; desc: string; tone: string }[];
   /** 服务预约列表（BFF/Mock 真源之一）；缺省时仍可仅用顶层 appointment/timeText。v0.1 详情页可不展示独立区块。 */
   appointments?: ServiceAppointment[];
+  /** v0.2：详情「流程节点（只读）」数据；Mock 可由 BFF 注入静态演示，cloud 由 Adapter 映射 */
+  readonlyWorkflowNodes?: ReadonlyWorkflowNode[];
+};
+
+/** 与 `lib/work-order-cloud-read` 对齐导出，供 UI 引用 */
+export type ReadonlyWorkflowNode = {
+  id: string;
+  label: string;
+  state: "done" | "current" | "pending";
 };
 
 /** 主预约：显式 `isPrimary` 优先，否则取 `sequence` 最小的一条 */
@@ -755,6 +764,19 @@ export function filterWorkOrders(
 
 export function getWorkOrderById(id: string): WorkOrder | undefined {
   return mockWorkOrders.find((w) => w.id === id);
+}
+
+const DEFAULT_READONLY_WORKFLOW_NODES: ReadonlyWorkflowNode[] = [
+  { id: "n1", label: "建档", state: "done" },
+  { id: "n2", label: "勘案", state: "done" },
+  { id: "n3", label: "报价", state: "current" },
+  { id: "n4", label: "签约", state: "pending" },
+];
+
+/** v0.2：Mock 或未带回节点列表时注入只读节点演示 */
+export function withDefaultReadonlyWorkflowNodes(w: WorkOrder): WorkOrder {
+  if (w.readonlyWorkflowNodes && w.readonlyWorkflowNodes.length > 0) return w;
+  return { ...w, readonlyWorkflowNodes: DEFAULT_READONLY_WORKFLOW_NODES };
 }
 
 export const mockUser = {

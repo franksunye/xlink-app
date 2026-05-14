@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { type WorkOrder, type WorkOrderActivity } from "@/lib/mock-data";
+import { type WorkOrder, type WorkOrderActivity, type ReadonlyWorkflowNode } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson } from "@/lib/fetch-json";
 import {
@@ -109,6 +109,10 @@ export default function WorkOrderDetailPage() {
           ))}
         </div>
       </section>
+
+      {w.readonlyWorkflowNodes && w.readonlyWorkflowNodes.length > 0 ? (
+        <ReadonlyWorkflowNodesSection nodes={w.readonlyWorkflowNodes} />
+      ) : null}
 
       <section
         className={`rounded-2xl border-2 p-4 shadow-sm ${currentCardShellClass(tone)} ${
@@ -226,6 +230,40 @@ export default function WorkOrderDetailPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function ReadonlyWorkflowNodesSection({ nodes }: { nodes: ReadonlyWorkflowNode[] }) {
+  return (
+    <section className="rounded-2xl border border-[#e4e9f1] bg-white p-4 shadow-[0_10px_34px_rgba(22,40,72,0.07)]">
+      <span className={`text-xs font-black ${sectionEyebrowClass("blue")}`}>流程节点</span>
+      <p className="mt-1 text-xs leading-relaxed text-[#687386]">只读占位，对照现网服务工单阶段；不接节点表单与提交。</p>
+      <ol className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-stretch">
+        {nodes.map((n, idx) => {
+          const isLast = idx === nodes.length - 1;
+          const pill =
+            n.state === "done"
+              ? "border-[#ccefdc] bg-[#f7fffa] text-[#18ae65]"
+              : n.state === "current"
+                ? "border-[#cfe3ff] bg-[#fbfdff] text-[#1478ff] ring-1 ring-[#cfe3ff]"
+                : "border-[#edf1f6] bg-[#f8fafc] text-[#8d95a5]";
+          return (
+            <li key={n.id} className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-[48%]">
+              <span
+                className={`inline-flex min-h-[2.5rem] flex-1 items-center justify-center rounded-xl border px-3 py-2 text-center text-xs font-black ${pill}`}
+              >
+                {n.label}
+              </span>
+              {!isLast ? (
+                <span className="hidden shrink-0 text-[#c5ced9] sm:inline" aria-hidden>
+                  →
+                </span>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+    </section>
   );
 }
 
