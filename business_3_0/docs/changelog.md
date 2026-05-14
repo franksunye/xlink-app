@@ -4,6 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
+| 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) 新增 §6：架构视角下可识别边界、高内聚/松耦合与依赖方向。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md)：§1 命名分层（展示名 vs 领域实体）；§1.3 工单活动 / `FollowRecord`→`WorkOrderActivity` 演进说明。 |
 | 2026-05-14 | 领域地基 | [12-domain-glossary](./12-domain-glossary.md) 增补 §2：`User`、`Account`、`Contact`、`ServiceResource`、`AssignedResource`、`WorkType` 及第二梯队预留；章节重编号。 |
 | 2026-05-14 | 领域地基 | 新增 [12-domain-glossary](./12-domain-glossary.md)：工单 / 服务预约 / 跟进 / 工作台聚合等字段真源与变更纪律；索引与 09/11/mock-data 头注释引用。 |
