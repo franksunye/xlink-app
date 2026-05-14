@@ -85,6 +85,24 @@ export type FollowRecord = {
   photos?: string[];
 };
 
+/** 单次上门服务预约（工单可挂多段上门 / FSM 子实体占位） */
+export type ServiceAppointment = {
+  id: string;
+  /** 与后端 FSM 对齐的粗粒度状态码，Mock 阶段为可读字符串即可 */
+  status: string;
+  /** 对外展示的时间窗文案（与历史 `appointment` / `timeText` 一致） */
+  windowText: string;
+  scheduledStart?: string;
+  scheduledEnd?: string;
+  /** 与工单默认地址不同时填写 */
+  address?: string;
+  assignee: string;
+  /** 同一工单内排序，数值小靠前 */
+  sequence?: number;
+  /** 列表卡片与摘要字段以本条为准（唯一主预约） */
+  isPrimary?: boolean;
+};
+
 export type WorkOrder = {
   id: string;
   /** 概念版「部位」chip，默认屋顶 */
@@ -125,7 +143,31 @@ export type WorkOrder = {
   orderInfoTitle?: string;
   orderInfo?: { label: string; value: string }[] | null;
   materials?: { title: string; desc: string; tone: string }[];
+  /** 服务预约列表；缺省时仍可仅用顶层 appointment/timeText */
+  appointments?: ServiceAppointment[];
 };
+
+/** 主预约：显式 `isPrimary` 优先，否则取 `sequence` 最小的一条 */
+export function primaryAppointment(w: WorkOrder): ServiceAppointment | undefined {
+  const list = w.appointments;
+  if (!list?.length) return undefined;
+  const explicit = list.find((a) => a.isPrimary);
+  if (explicit) return explicit;
+  return [...list].sort((a, b) => (a.sequence ?? 999) - (b.sequence ?? 999))[0];
+}
+
+/** 从主预约同步顶层 `appointment` / `timeText` / `assignee` / `address`，避免双真源漂移 */
+function syncWorkOrderFromPrimary(w: WorkOrder): WorkOrder {
+  const p = primaryAppointment(w);
+  if (!p) return w;
+  return {
+    ...w,
+    appointment: p.windowText,
+    timeText: p.windowText,
+    assignee: p.assignee,
+    address: p.address ?? w.address,
+  };
+}
 
 export type Project = {
   id: string;
@@ -271,7 +313,7 @@ export const mockDashboard: Dashboard = {
   todayResult: { amount: "135,450", orders: 8 },
 };
 
-export const mockWorkOrders: WorkOrder[] = [
+const mockWorkOrdersSeed: WorkOrder[] = [
   {
     id: "WO-3001",
     taskType: "联系客户",
@@ -345,6 +387,16 @@ export const mockWorkOrders: WorkOrder[] = [
       "客户提交装修防水咨询",
       "系统识别为高意向客户",
       "等待服务商电话联系",
+    ],
+    appointments: [
+      {
+        id: "SA-3001-1",
+        status: "pending_contact",
+        windowText: "今天 10:00 前",
+        assignee: "张工",
+        sequence: 1,
+        isPrimary: true,
+      },
     ],
   },
   {
@@ -440,6 +492,26 @@ export const mockWorkOrders: WorkOrder[] = [
       "客户提交渗漏照片",
       "客服完成初筛",
       "维修师傅已确认上门时间",
+    ],
+    appointments: [
+      {
+        id: "SA-3002-1",
+        status: "completed",
+        windowText: "4月12日 14:00-16:00（初勘）",
+        assignee: "张工",
+        scheduledStart: "2026-04-12T14:00:00+08:00",
+        scheduledEnd: "2026-04-12T16:00:00+08:00",
+        sequence: 1,
+        isPrimary: false,
+      },
+      {
+        id: "SA-3002-2",
+        status: "scheduled",
+        windowText: "今天 14:30",
+        assignee: "陈工",
+        sequence: 2,
+        isPrimary: true,
+      },
     ],
   },
   {
@@ -539,6 +611,16 @@ export const mockWorkOrders: WorkOrder[] = [
       "已完成现场勘查",
       "客户正在比较方案",
       "需要继续跟进方案",
+    ],
+    appointments: [
+      {
+        id: "SA-3003-1",
+        status: "scheduled",
+        windowText: "明天 11:00",
+        assignee: "张工",
+        sequence: 1,
+        isPrimary: true,
+      },
     ],
   },
   {
@@ -640,8 +722,20 @@ export const mockWorkOrders: WorkOrder[] = [
       "客户已确认报价",
       "建议今天 16:00 前完成",
     ],
+    appointments: [
+      {
+        id: "SA-3004-1",
+        status: "pending_sign",
+        windowText: "今天 16:00 前",
+        assignee: "张工",
+        sequence: 1,
+        isPrimary: true,
+      },
+    ],
   },
 ];
+
+export const mockWorkOrders: WorkOrder[] = mockWorkOrdersSeed.map(syncWorkOrderFromPrimary);
 
 export const mockProjects: Project[] = [
   {
