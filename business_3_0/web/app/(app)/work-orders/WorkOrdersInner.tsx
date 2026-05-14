@@ -189,7 +189,9 @@ function TaskCard({ order }: { order: WorkOrder }) {
           </p>
           <div className="mt-2 flex items-center justify-between gap-2">
             <span className="truncate text-base font-black text-[#101827]">{order.customer}</span>
-            <span className="shrink-0 text-[11px] text-[#64748b]">工单附近客户 2</span>
+            <span className="shrink-0 text-[11px] text-[#64748b]">
+              工单附近客户 {order.nearbyCustomers ?? 2}
+            </span>
           </div>
           <p className="mt-1 text-right text-[11px] text-[#64748b]">🚗 {order.distance}</p>
         </div>

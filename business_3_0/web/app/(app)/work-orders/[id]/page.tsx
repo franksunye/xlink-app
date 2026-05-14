@@ -90,9 +90,7 @@ export default function WorkOrderDetailPage() {
           {w.tags.map((t) => (
             <span
               key={t.text}
-              className={`rounded-md px-2 py-0.5 text-xs font-black ${
-                t.tone === "red" ? "bg-[#ffe8e9] text-[#ff4052]" : "bg-[#eef5ff] text-[#2563eb]"
-              }`}
+              className={`rounded-md px-2 py-0.5 text-xs font-black ${detailTagClass(t.tone)}`}
             >
               {t.text}
             </span>
@@ -212,10 +210,18 @@ export default function WorkOrderDetailPage() {
           {tab === "records" ? <RecordList records={w.followRecords} timeline={w.timeline} /> : null}
           {tab === "customer" ? <CustomerRows w={w} /> : null}
           {tab === "order" ? (
-            <EmptyPane title="暂无订单信息" desc="当前任务还未进入下单阶段，确认方案后会生成订单信息。" />
+            w.orderInfo && w.orderInfo.length > 0 ? (
+              <InfoRows title={w.orderInfoTitle ?? "订单信息"} rows={w.orderInfo} />
+            ) : (
+              <EmptyPane title="暂无订单信息" desc="当前任务还未进入下单阶段，确认方案后会生成订单信息。" />
+            )
           ) : null}
           {tab === "materials" ? (
-            <EmptyPane title="暂无资料" desc="当前任务暂未产生现场照片、勘察记录或报价方案。" />
+            w.materials && w.materials.length > 0 ? (
+              <MaterialsList items={w.materials} />
+            ) : (
+              <EmptyPane title="暂无资料" desc="当前任务暂未产生现场照片、勘察记录或报价方案。" />
+            )
           ) : null}
         </div>
       </section>
@@ -272,9 +278,15 @@ function RecordRow({ r }: { r: FollowRecord }) {
   const badgeTone =
     r.tone === "orange"
       ? "bg-[#fff0dc] text-[#ff8a1a]"
-      : r.tone === "gray"
-        ? "bg-[#edf1f6] text-[#687386]"
-        : "bg-[#e8f2ff] text-[#1478ff]";
+      : r.tone === "green"
+        ? "bg-[#e8f8ef] text-[#18ae65]"
+        : r.tone === "purple"
+          ? "bg-[#efeaff] text-[#7459e8]"
+          : r.tone === "red"
+            ? "bg-[#ffe8e9] text-[#ff4052]"
+            : r.tone === "gray"
+              ? "bg-[#edf1f6] text-[#687386]"
+              : "bg-[#e8f2ff] text-[#1478ff]";
   return (
     <li className="flex gap-3">
       <div className="flex w-8 flex-col items-center">
@@ -297,23 +309,77 @@ function RecordRow({ r }: { r: FollowRecord }) {
   );
 }
 
+function detailTagClass(tone: string) {
+  if (tone === "red") return "bg-[#ffe8e9] text-[#ff4052]";
+  if (tone === "orange") return "bg-[#fff0dc] text-[#ff8a1a]";
+  if (tone === "green") return "bg-[#e8f8ef] text-[#18ae65]";
+  if (tone === "purple") return "bg-[#efeaff] text-[#7459e8]";
+  return "bg-[#eef5ff] text-[#2563eb]";
+}
+
 function CustomerRows({ w }: { w: WorkOrder }) {
-  const rows = [
-    { label: "客户姓名", value: w.customer },
-    { label: "服务地址", value: w.address },
-    { label: "客户编号", value: w.customerNo ?? w.id },
-  ];
+  const rows =
+    w.customerInfo && w.customerInfo.length > 0
+      ? w.customerInfo
+      : [
+          { label: "客户姓名", value: w.customer },
+          { label: "服务地址", value: w.address },
+          { label: "客户编号", value: w.customerNo ?? w.id },
+        ];
+  return <InfoRows rows={rows} />;
+}
+
+function InfoRows({
+  rows,
+  title,
+}: {
+  rows: { label: string; value: string }[];
+  title?: string;
+}) {
   return (
-    <ul>
-      {rows.map((row) => (
-        <li
-          key={row.label}
-          className="flex items-center justify-between gap-3 border-b border-[#edf1f6] py-3 text-sm last:border-0"
-        >
-          <span className="text-[#7a8394]">{row.label}</span>
-          <span className="max-w-[60%] text-right font-black text-[#192234]">{row.value}</span>
-        </li>
-      ))}
+    <div>
+      {title ? <h4 className="mb-1 text-xs font-black text-[#697386]">{title}</h4> : null}
+      <ul>
+        {rows.map((row) => (
+          <li
+            key={row.label}
+            className="flex items-center justify-between gap-3 border-b border-[#edf1f6] py-3 text-sm last:border-0"
+          >
+            <span className="text-[#7a8394]">{row.label}</span>
+            <span className="max-w-[60%] text-right font-black text-[#192234]">{row.value}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function MaterialsList({
+  items,
+}: {
+  items: NonNullable<WorkOrder["materials"]>;
+}) {
+  return (
+    <ul className="space-y-3">
+      {items.map((m) => {
+        const stripe =
+          m.tone === "orange"
+            ? "border-l-orange-400"
+            : m.tone === "green"
+              ? "border-l-emerald-500"
+              : m.tone === "purple"
+                ? "border-l-violet-500"
+                : "border-l-blue-500";
+        return (
+          <li
+            key={m.title}
+            className={`rounded-lg border border-[#edf1f6] border-l-4 bg-[#fbfcfe] py-3 pl-3 pr-3 ${stripe}`}
+          >
+            <p className="text-sm font-black text-[#101827]">{m.title}</p>
+            <p className="mt-1 text-xs leading-relaxed text-[#687386]">{m.desc}</p>
+          </li>
+        );
+      })}
     </ul>
   );
 }
