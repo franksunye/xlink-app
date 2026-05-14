@@ -209,7 +209,7 @@ export default function WorkOrderDetailPage() {
           ))}
         </div>
         <div className="p-3">
-          {tab === "records" ? <RecordList records={w.followRecords} /> : null}
+          {tab === "records" ? <RecordList records={w.followRecords} timeline={w.timeline} /> : null}
           {tab === "customer" ? <CustomerRows w={w} /> : null}
           {tab === "order" ? (
             <EmptyPane title="暂无订单信息" desc="当前任务还未进入下单阶段，确认方案后会生成订单信息。" />
@@ -219,31 +219,43 @@ export default function WorkOrderDetailPage() {
           ) : null}
         </div>
       </section>
-
-      <section className="rounded-2xl border border-[#e4e9f1] bg-white p-4 shadow-sm">
-        <h3 className="text-xs font-black text-[#697386]">时间线</h3>
-        <ol className="mt-2 space-y-1 pl-4 text-sm text-[#4e596d]">
-          {w.timeline.map((step) => (
-            <li key={step} className="list-decimal">
-              {step}
-            </li>
-          ))}
-        </ol>
-      </section>
     </div>
   );
 }
 
-function RecordList({ records }: { records: FollowRecord[] }) {
-  if (!records.length) {
+function RecordList({ records, timeline }: { records: FollowRecord[]; timeline: string[] }) {
+  const hasRecords = records.length > 0;
+  const hasTimeline = timeline.length > 0;
+
+  if (!hasRecords && !hasTimeline) {
     return <p className="py-6 text-center text-sm text-[#8d95a5]">暂无跟进记录</p>;
   }
+
   return (
-    <ul className="space-y-0">
-      {records.map((r) => (
-        <RecordRow key={r.id} r={r} />
-      ))}
-    </ul>
+    <div>
+      {hasRecords ? (
+        <ul className="space-y-0">
+          {records.map((r) => (
+            <RecordRow key={r.id} r={r} />
+          ))}
+        </ul>
+      ) : (
+        <p className="py-4 text-center text-sm text-[#8d95a5]">暂无跟进记录</p>
+      )}
+
+      {hasTimeline ? (
+        <div className={hasRecords ? "mt-6 border-t border-[#edf1f6] pt-4" : "pt-1"}>
+          <h4 className="text-xs font-black text-[#697386]">时间线</h4>
+          <ol className="mt-2 space-y-1 pl-4 text-sm text-[#4e596d]">
+            {timeline.map((step) => (
+              <li key={step} className="list-decimal">
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
