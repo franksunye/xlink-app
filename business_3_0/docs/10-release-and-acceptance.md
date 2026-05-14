@@ -47,7 +47,7 @@
 | # | 项 | 通过标准 |
 | --- | --- | --- |
 | 1 | **构建** | `cd business_3_0/web && npm run build` 无错误退出 |
-| 2 | **Preview URL（若已接平台）** | **若**本仓库已关联 Vercel（或团队约定等价环境）：存在 **有效** Preview/部署链接，且可与本次 tag/提交关联；**未关联时不作为**本版验收阻塞项（与 [09-v0.1-scope](./09-v0.1-scope.md)「术语：Vercel Preview」一致） |
+| 2 | **部署 URL（Vercel + 域名，若已接平台）** | **若**本仓库已关联 Vercel **且** 已在项目中配置 **生产 / 预览** 所用域名：存在与本次 tag/提交对应的 **有效 HTTPS 链接**（自定义域或平台默认域均可），可演示主路径；**未关联或未配域时不作为**本版验收阻塞项（与 [09-v0.1-scope](./09-v0.1-scope.md)「术语」与「域名与每次部署」两节一致） |
 | 3 | **手动脚本** | 按对应 `NN-vX.Y-scope.md` 中「成功标准」与 [flows/](./flows/) 走通主路径（v0.1：`login` mock → 工作台 → 任务列表/详情 → 项目列表等） |
 | 4 | **视觉验收（管家关键屏）** | **工作台、工单列表/详情、项目列表、登录** 对照 [archive 概念版 `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)：**留白与间距、字体层级、区块主次**与概念版基调一致（见 [09-v0.1-scope](./09-v0.1-scope.md)「管家侧视觉 / UX 验收」；不要求与 uni-app 全屏像素逐点等同） |
 | 5 | **缓存头抽查** | 对 **静态壳** / **BFF JSON** / **登录或用户私有接口** 各抽 1～2 个代表路径，核对与 [07](./07-nonfunctional-and-poc.md) 分层一致（非「全开 `public` 长缓存」） |

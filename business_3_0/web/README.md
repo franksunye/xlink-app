@@ -2,6 +2,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 设计与 **管家关键屏观感**验收请对照 archive 分支概念版：<https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0>（细则见上一级 `business_3_0/docs/09-v0.1-scope.md`）。
 
+## 部署与域名（Vercel）
+
+团队在 **Vercel 项目 → Domains** 中为 **Production** 与/或 **Preview** 绑定自有域名后，每次 Git 推送或 PR 都会生成对应环境的 **HTTPS 部署**，便于直接打开体验（可与默认 `*.vercel.app` 并存）。**请勿**将密钥写入仓库；生产/预览基 URL 可写在团队 Wiki 或本段下方占位（配好后由维护者更新）。
+
 ## Getting Started
 
 First, run the development server:
