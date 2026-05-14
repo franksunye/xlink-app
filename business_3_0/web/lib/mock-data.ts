@@ -136,7 +136,6 @@ export type WorkOrder = {
     contextDesc: string;
   };
   followRecords: FollowRecord[];
-  timeline: string[];
   /** 概念版列表「工单附近客户」计数 */
   nearbyCustomers?: number;
   customerInfo?: { label: string; value: string }[];
@@ -383,11 +382,6 @@ const mockWorkOrdersSeed: WorkOrder[] = [
         badge: "系统",
       },
     ],
-    timeline: [
-      "客户提交装修防水咨询",
-      "系统识别为高意向客户",
-      "等待服务商电话联系",
-    ],
     appointments: [
       {
         id: "SA-3001-1",
@@ -487,11 +481,6 @@ const mockWorkOrdersSeed: WorkOrder[] = [
         tone: "blue",
         badge: "电话",
       },
-    ],
-    timeline: [
-      "客户提交渗漏照片",
-      "客服完成初筛",
-      "维修师傅已确认上门时间",
     ],
     appointments: [
       {
@@ -607,11 +596,6 @@ const mockWorkOrdersSeed: WorkOrder[] = [
         badge: "记录",
       },
     ],
-    timeline: [
-      "已完成现场勘查",
-      "客户正在比较方案",
-      "需要继续跟进方案",
-    ],
     appointments: [
       {
         id: "SA-3003-1",
@@ -716,11 +700,6 @@ const mockWorkOrdersSeed: WorkOrder[] = [
         badge: "勘察",
         photos: ["地面", "墙角", "管根"],
       },
-    ],
-    timeline: [
-      "已完成现场勘察",
-      "客户已确认报价",
-      "建议今天 16:00 前完成",
     ],
     appointments: [
       {

@@ -216,7 +216,7 @@ export default function WorkOrderDetailPage() {
           ))}
         </div>
         <div className="p-3">
-          {tab === "records" ? <RecordList records={w.followRecords} timeline={w.timeline} /> : null}
+          {tab === "records" ? <RecordList records={w.followRecords} /> : null}
           {tab === "customer" ? <CustomerRows w={w} /> : null}
           {tab === "order" ? (
             w.orderInfo && w.orderInfo.length > 0 ? (
@@ -238,39 +238,17 @@ export default function WorkOrderDetailPage() {
   );
 }
 
-function RecordList({ records, timeline }: { records: FollowRecord[]; timeline: string[] }) {
-  const hasRecords = records.length > 0;
-  const hasTimeline = timeline.length > 0;
-
-  if (!hasRecords && !hasTimeline) {
+function RecordList({ records }: { records: FollowRecord[] }) {
+  if (records.length === 0) {
     return <p className="py-6 text-center text-sm text-[#8d95a5]">暂无跟进记录</p>;
   }
 
   return (
-    <div>
-      {hasRecords ? (
-        <ul className="space-y-0">
-          {records.map((r) => (
-            <RecordRow key={r.id} r={r} />
-          ))}
-        </ul>
-      ) : (
-        <p className="py-4 text-center text-sm text-[#8d95a5]">暂无跟进记录</p>
-      )}
-
-      {hasTimeline ? (
-        <div className={hasRecords ? "mt-6 border-t border-[#edf1f6] pt-4" : "pt-1"}>
-          <h4 className="text-xs font-black text-[#697386]">时间线</h4>
-          <ol className="mt-2 space-y-1 pl-4 text-sm text-[#4e596d]">
-            {timeline.map((step) => (
-              <li key={step} className="list-decimal">
-                {step}
-              </li>
-            ))}
-          </ol>
-        </div>
-      ) : null}
-    </div>
+    <ul className="space-y-0">
+      {records.map((r) => (
+        <RecordRow key={r.id} r={r} />
+      ))}
+    </ul>
   );
 }
 
