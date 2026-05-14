@@ -8,7 +8,7 @@
 2. **Root Directory**：`business_3_0/web`（必填；错配会导致空部署或构建失败）。
 3. **Domains**：在 Vercel → Domains 为 Production / Preview 绑定团队域名（可与 `*.vercel.app` 并存）。
 4. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
-5. **cloud 只读联调（可选，v0.2）**：`USE_CLOUD_READ` = `1` 或 `true`；`XLINK_CLOUD_READ_BASE_URL` = **与 cloud_ui `rootUri` 一致** 的 API 根（**含 `/api`**、无尾斜杠），例如 `http://127.0.0.1:8070/api`。Adapter 使用 **`POST`** **`basic/workOrder/query.do` / `findById.do`** + `x-www-form-urlencoded`，与现网一致。鉴权：`XLINK_CLOUD_READ_AUTH_TOKEN`（服务端，等同 cloud_ui `X-Auth-Token`）或浏览器 `localStorage['xlink_cloud_read_token']`（`fetchJson` 会以 `x-xlink-cloud-token` 传到 BFF）。可达 dev 上可运行 **`npm run verify:cloud-read`**（需同时设置 Base URL 与 Token）做契约复验。未配置或不可达时 **降级 Mock**（`X-Xlink-Read-Source: mock-fallback`）。
+5. **cloud 只读联调（可选，v0.2）**：`USE_CLOUD_READ` = `1` 或 `true`；`XLINK_CLOUD_READ_BASE_URL` = **与目标前端 API 根一致**（`cloud_ui`：`…/api`；**beta / business**：`https://xlinkbeta.fsgo365.cn/fsgo/wm`，见 `code/app/business/docs/architecture/env-topology.md`）。鉴权二选一或并用：**`XLINK_CLOUD_READ_AUTH_TOKEN`**（`X-Auth-Token`）与/或 **`XLINK_CLOUD_READ_JSESSIONID`**（`JSESSIONID`，来自 `index/phoneLogin.do` 的 `data.token`，获取方式见 `code/app/business/docs/api-test-tooling.md`）。浏览器可写 `localStorage['xlink_cloud_read_token']` / `['xlink_cloud_read_jsession']` 由 `fetchJson` 转发。可达环境上运行 **`npm run verify:cloud-read`** 做契约复验。未配置或不可达时 **降级 Mock**（`X-Xlink-Read-Source: mock-fallback`）。
 
 **基 URL（当前）**
 

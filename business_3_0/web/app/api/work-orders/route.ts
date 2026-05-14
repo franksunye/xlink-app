@@ -19,13 +19,17 @@ export async function GET(req: NextRequest) {
     req.headers.get("x-xlink-cloud-token")?.trim() ||
     req.headers.get("X-Xlink-Cloud-Token")?.trim() ||
     null;
+  const cloudJSession =
+    req.headers.get("x-xlink-jsessionid")?.trim() ||
+    req.headers.get("X-Xlink-Jsessionid")?.trim() ||
+    null;
 
   let sourceList = mockWorkOrders;
   const headers = new Headers();
 
   if (isCloudReadConfigured()) {
-    const cloudList = await cloudFetchWorkOrders(cookie, cloudToken);
-    if (cloudList && cloudList.length > 0) {
+    const cloudList = await cloudFetchWorkOrders(cookie, cloudToken, cloudJSession);
+    if (cloudList !== null) {
       sourceList = cloudList;
       headers.set("X-Xlink-Read-Source", "cloud");
     } else {

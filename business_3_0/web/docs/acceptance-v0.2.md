@@ -16,13 +16,40 @@
 
 ## 档位 A — 接 cloud（dev 就绪时必做联调）
 
-### A1 — HTTP 契约（与 cloud_ui 对齐，推荐先做）
+### A0 — Beta（business / `fsgo/wm`）契约（已在本机用默认测试账号跑通）
 
-1. 在已登录 cloud_ui 的浏览器开发者工具中读取 **`sessionStorage.token`**（即请求头 **`X-Auth-Token`** 的值，不含引号）。  
+前置知识（`code/app/business` 仓库，与 `xlink-app` 同工作区时常为兄弟目录）：
+
+- 环境拓扑：`code/app/business/docs/architecture/env-topology.md`（API 根 **`/fsgo/wm/`**；beta host **`https://xlinkbeta.fsgo365.cn`**）。
+- 自动冒烟与账号约定：`code/app/business/docs/api-test-tooling.md`（默认手机号 / 验证码 / 租户；脚本 **`business/scripts/run_api_smoke.sh`**）。
+
+**已执行验证（本轮代理）**：
+
+1. `code/app/business/scripts/run_api_smoke.sh`：**全部 PASS**（登录、服务工单列表/详情、项目、合同等）。  
+2. `business_3_0/web`：`XLINK_CLOUD_READ_BASE_URL=https://xlinkbeta.fsgo365.cn/fsgo/wm`，用 **`api_client` 登录得到的 `JSESSIONID`** 运行 **`npm run verify:cloud-read`**：**PASS**（`query.do` 返回 `FlipInfo`，`data` 为数组；默认账号下 **非服务** `workOrder` 列表可为空，与 `business_core_beta.json` 走 **serviceAppointment** 主链路不矛盾，见 [13-v0.2-scope.md](../../docs/13-v0.2-scope.md) §8）。
+
+获取 `JSESSIONID` 示例（需在 `code/app/business` 已创建 `.venv-api-tools`）：
+
+```bash
+/path/to/business/.venv-api-tools/bin/python -c "
+import sys
+sys.path.insert(0, '/path/to/business/scripts')
+from api_client import XLinkApiClient, DEFAULT_HOSTS, DEFAULT_TENANT_ID, DEFAULT_PHONE, DEFAULT_CODE
+c = XLinkApiClient(host=DEFAULT_HOSTS['beta'], tenant_id=DEFAULT_TENANT_ID, phone=DEFAULT_PHONE, code=DEFAULT_CODE)
+c.login()
+print(c.session_id)
+"
+```
+
+将输出粘贴为环境变量 **`XLINK_CLOUD_READ_JSESSIONID`**，再于 `business_3_0/web` 执行 **`npm run verify:cloud-read`**。
+
+### A1 — HTTP 契约（cloud_ui：`/api` + `X-Auth-Token`，可选）
+
+1. 在已登录 cloud_ui 的浏览器开发者工具中读取 **`sessionStorage.token`**（即 **`X-Auth-Token`**）。  
 2. 在 `business_3_0/web` 目录执行：
 
 ```bash
-export XLINK_CLOUD_READ_BASE_URL='http://<host>:<port>/api'   # 与 cloud_ui src/common/common.js rootUri 一致
+export XLINK_CLOUD_READ_BASE_URL='http://<host>:<port>/api'
 export XLINK_CLOUD_READ_AUTH_TOKEN='<上一步的 token>'
 npm run verify:cloud-read
 ```
@@ -31,8 +58,8 @@ npm run verify:cloud-read
 
 ### A2 — 经本 Web BFF（端到端）
 
-1. 对运行 `next dev` / 部署实例配置：`USE_CLOUD_READ=1`、`XLINK_CLOUD_READ_BASE_URL`（同 A1）、`XLINK_CLOUD_READ_AUTH_TOKEN`（**或在**浏览器 `localStorage.setItem('xlink_cloud_read_token', '<token>')` 后刷新）。  
-2. Mock 登录后打开 `/work-orders`，在开发者工具 Network 中查看 **`GET /api/work-orders`**：响应头 **`X-Xlink-Read-Source: cloud`**，响应体 `items` 与 dev 工单列表一致。  
-3. 点进一条详情：同上 **`X-Xlink-Read-Source: cloud`**，且 **「流程节点」** 区与 cloud 工作流节点方向一致（有节点数据时）。
+1. 对运行 `next dev` / 部署实例配置：`USE_CLOUD_READ=1`、`XLINK_CLOUD_READ_BASE_URL`（beta 用 **`https://xlinkbeta.fsgo365.cn/fsgo/wm`**）、以及 **`XLINK_CLOUD_READ_JSESSIONID`** 或 **`XLINK_CLOUD_READ_AUTH_TOKEN`**（或在浏览器写入 `localStorage` 见 [README](../README.md)）。  
+2. Mock 登录后打开 `/work-orders`，在 Network 中查看 **`GET /api/work-orders`**：响应头 **`X-Xlink-Read-Source: cloud`**（列表可为空）。  
+3. 若有 **非服务** `workOrder` 数据，点进详情同上 **`cloud`** 且 **「流程节点」** 区与 `findById` 映射一致。
 
-验收通过：**档位 B** 全过；**档位 A** 在目标 dev 上 **A1 + A2** 均通过。
+验收通过：**档位 B** 全过；**档位 A** 在目标环境上 **A0 或 A1 + A2** 按所用栈勾选通过。

@@ -15,9 +15,28 @@ function cloudReadBaseUrl(): string | null {
   }
 }
 
-/** 与 cloud_ui `common.js` rootUri 一致：须含 `/api` 等前缀，例如 `http://host:8070/api` */
+/**
+ * Base URL 须与目标前端一致，例如：
+ * - cloud_ui 本地：`http://host:8070/api`
+ * - business / beta：`https://xlinkbeta.fsgo365.cn/fsgo/wm`（见 `code/app/business/docs/architecture/env-topology.md`）
+ */
 export function isCloudReadConfigured(): boolean {
   return cloudReadEnabledFromEnv() && Boolean(cloudReadBaseUrl());
+}
+
+/** 合并 Cookie：支持 beta `JSESSIONID`（`phoneLogin` 的 `data.token`，见 business `api_client.py`） */
+export function buildCloudCookieHeader(
+  incomingCookie: string | null | undefined,
+  forwardedJSessionId: string | null | undefined
+): string | null {
+  const fromEnv = process.env.XLINK_CLOUD_READ_JSESSIONID?.trim();
+  const sid = fromEnv || forwardedJSessionId?.trim();
+  let c = (incomingCookie ?? "").trim();
+  if (sid) {
+    c = c.replace(/(?:^|;)\s*JSESSIONID=[^;]*/gi, "").replace(/^;\s*|\s*;\s*$/g, "").trim();
+    c = (c ? `${c}; ` : "") + `JSESSIONID=${sid}`;
+  }
+  return c.length > 0 ? c : null;
 }
 
 type FlipLike = { data?: unknown[] };
@@ -133,12 +152,13 @@ function authTokenForCloud(forwardedToken: string | null | undefined): string | 
   return t || null;
 }
 
-/** cloud_ui 同款：POST + `application/x-www-form-urlencoded` + `.do` 路径 */
+/** POST + `application/x-www-form-urlencoded` + `.do`（cloud_ui / business 一致） */
 async function fetchCloudForm(
   path: string,
   body: URLSearchParams,
-  cookie: string | null,
-  forwardedAuthToken: string | null
+  incomingCookie: string | null,
+  forwardedAuthToken: string | null,
+  forwardedJSessionId: string | null
 ): Promise<{ ok: boolean; json: unknown }> {
   const base = cloudReadBaseUrl();
   if (!base) return { ok: false, json: null };
@@ -147,6 +167,7 @@ async function fetchCloudForm(
     Accept: "application/json, text/plain, */*",
     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
   };
+  const cookie = buildCloudCookieHeader(incomingCookie, forwardedJSessionId);
   if (cookie) headers.Cookie = cookie;
   const tok = authTokenForCloud(forwardedAuthToken);
   if (tok) headers["X-Auth-Token"] = tok;
@@ -181,14 +202,16 @@ function workOrderQueryBody(): URLSearchParams {
 /** 分页查询 cloud 工单列表，映射为 `WorkOrder[]` */
 export async function cloudFetchWorkOrders(
   cookie: string | null,
-  forwardedAuthToken?: string | null
+  forwardedAuthToken?: string | null,
+  forwardedJSessionId?: string | null
 ): Promise<WorkOrder[] | null> {
   if (!isCloudReadConfigured()) return null;
   const { ok, json } = await fetchCloudForm(
     "basic/workOrder/query.do",
     workOrderQueryBody(),
     cookie,
-    forwardedAuthToken ?? null
+    forwardedAuthToken ?? null,
+    forwardedJSessionId ?? null
   );
   if (!ok || !json || typeof json !== "object") return null;
   const data = (json as FlipLike).data;
@@ -206,7 +229,8 @@ export async function cloudFetchWorkOrders(
 export async function cloudFetchWorkOrderById(
   id: string,
   cookie: string | null,
-  forwardedAuthToken?: string | null
+  forwardedAuthToken?: string | null,
+  forwardedJSessionId?: string | null
 ): Promise<WorkOrder | null> {
   if (!isCloudReadConfigured()) return null;
   const body = new URLSearchParams();
@@ -215,7 +239,8 @@ export async function cloudFetchWorkOrderById(
     "basic/workOrder/findById.do",
     body,
     cookie,
-    forwardedAuthToken ?? null
+    forwardedAuthToken ?? null,
+    forwardedJSessionId ?? null
   );
   if (!ok || !json || typeof json !== "object") return null;
   const rs = json as ReturnStatusLike;

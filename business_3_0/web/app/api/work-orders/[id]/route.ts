@@ -22,10 +22,14 @@ export async function GET(
     req.headers.get("x-xlink-cloud-token")?.trim() ||
     req.headers.get("X-Xlink-Cloud-Token")?.trim() ||
     null;
+  const cloudJSession =
+    req.headers.get("x-xlink-jsessionid")?.trim() ||
+    req.headers.get("X-Xlink-Jsessionid")?.trim() ||
+    null;
   const headers = new Headers();
 
   if (isCloudReadConfigured()) {
-    const cloudOrder = await cloudFetchWorkOrderById(id, cookie, cloudToken);
+    const cloudOrder = await cloudFetchWorkOrderById(id, cookie, cloudToken, cloudJSession);
     if (cloudOrder) {
       headers.set("X-Xlink-Read-Source", "cloud");
       return jsonResponse(withDefaultReadonlyWorkflowNodes(cloudOrder), { headers });
