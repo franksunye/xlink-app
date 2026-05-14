@@ -8,13 +8,14 @@
 | --- | --- | --- |
 | 框架 | **Next.js** | App Router 等具体约定在脚手架落地时定；与 archive 上 uni-app 概念版解耦。 |
 | 托管 | **Vercel** | 主分支与 **Preview 部署**支撑高频迭代；不作为现网 `business` 小程序的替代发布，直至团队另有约定。 |
+| 早期形态 | **SPA + PWA** | 以**客户端路由为主的单页体验**为默认；`manifest`、Service Worker（缓存与离线范围）按迭代逐步启用，避免第一期过度工程化。 |
 | 非目标（当前阶段） | **不以微信小程序为主迭代面** | 小程序发版节奏慢；现网 **`business/`** 仍为业务与行为对照基准。 |
 | 体验参照 | **`archive/business-3-0-wip` / `business_3_0`** | [GitHub 目录](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)：IA/页面粒度可参考，实现用 Web 重写。 |
 
 ## 性能与体积
 
-- Web 首屏与列表：是否对标 `business` 小程序某类网络环境，待定量化指标。
-- 
+- SPA：首包与按需拆分的体积预算待定；是否与 `business` 弱网对标后续量化。
+- PWA：缓存策略与「离线可用范围」（仅壳 / 含只读列表等）待定，须与业务数据新鲜度一致。
 
 ## 可观测与发布
 
@@ -32,4 +33,5 @@
 
 ## 备注
 
+- **Next.js 与 SPA**：早期以 **客户端路由 + 客户端数据获取** 为主即可满足 SPA 形态；若某屏需 SEO 或首屏极致优化，再单独引入 SSR/SSG，不作为早期默认。
 - 若后续需要 **小程序壳** 仅做容器嵌入 Web（Hybrid），可作为独立 POC，不改变「主迭代在 Web」的默认。

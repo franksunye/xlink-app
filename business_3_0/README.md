@@ -12,6 +12,7 @@
 
 - **体验与 IA 的第一步参照**：分支 [`archive/business-3-0-wip`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 上的 `business_3_0/`（uni-app 概念小程序）已接近「想改动的第一步样子」，用于对照页面与流程，**不作为最终技术栈**。
 - **主技术栈**：**Next.js**，部署在 **Vercel**（利用预览环境、迭代节奏优于以微信小程序为主交付）。
+- **早期应用形态**：**单页应用（SPA）** 式交互，并作为 **PWA**（Web App Manifest、Service Worker 等按阶段启用），先跑通壳与主路径，再视需要引入多页/SSR 等形态。
 - **不以小程序为 3.0 主迭代面**：现网 **`business/`** 仍以小程序/App 为准做**业务与行为对照**；3.0 工程以 Web 为主推进，后续若需要小程序形态再作为单独发布面评估。
 
 ## 文档
