@@ -1,17 +1,28 @@
 @import "tailwindcss";
 
+/* 对齐 archive `business_3_0/styles/theme.css` + 概念版页内样式（蓝主色工作台 / #1478ff Tab 选中） */
 :root {
-  --xlink-bg: #f5f7fa;
+  --xlink-bg: #f5f7fb;
+  --xlink-page: #f7f9fc;
   --xlink-panel: #ffffff;
   --xlink-panel-soft: #eef4f6;
-  --xlink-text: #182338;
+  --xlink-text: #101827;
+  --xlink-text-strong: #111827;
   --xlink-muted: #6b7485;
-  --xlink-line: #dce3ea;
+  --xlink-muted-2: #8b94a3;
+  --xlink-line: #e2e7ef;
+  --xlink-line-2: #e6edf6;
   --xlink-primary: #1478ff;
-  --xlink-primary-dark: #106cff;
-  --xlink-green: #2f855a;
+  --xlink-primary-dark: #0068f4;
+  --xlink-green: #18ae65;
   --xlink-amber: #b7791f;
-  --xlink-red: #c53030;
+  --xlink-red: #ff4052;
+  --xlink-hero-1: #0876ff;
+  --xlink-hero-2: #0068f4;
+  --xlink-hero-3: #0b84ff;
+  --xlink-tab-inactive: #7b8496;
+  --xlink-card-shadow: 0 12px 32px rgba(31, 52, 86, 0.07);
+  --xlink-card-shadow-lg: 0 18px 50px rgba(28, 48, 82, 0.07);
   --background: var(--xlink-bg);
   --foreground: var(--xlink-text);
 }
@@ -25,6 +36,79 @@
 
 body {
   font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 通用卡片（概念版 .card / .panel） */
+.xlink-card {
+  border-radius: 14px;
+  background: var(--xlink-panel);
+  box-shadow: var(--xlink-card-shadow-lg);
+}
+
+.xlink-card-soft {
+  border-radius: 14px;
+  border: 1px solid var(--xlink-line-2);
+  background: var(--xlink-panel);
+  box-shadow: var(--xlink-card-shadow);
+}
+
+/* 工作台 Hero（概念版 .hero） */
+.xlink-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  padding: 2.5rem 1.25rem 3.75rem;
+  background: linear-gradient(
+    135deg,
+    var(--xlink-hero-1) 0%,
+    var(--xlink-hero-2) 44%,
+    var(--xlink-hero-3) 100%
+  );
+  color: #fff;
+}
+
+.xlink-hero::after {
+  content: "";
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  bottom: -36px;
+  height: 56px;
+  border-radius: 50% 50% 0 0;
+  background: var(--xlink-bg);
+}
+
+.xlink-hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.xlink-hero-circles {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.xlink-hero-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* 主按钮（登录 / 强 CTA） */
+.primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #006cff 0%, #1382ff 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  box-shadow: 0 14px 28px rgba(0, 108, 255, 0.26);
 }
 
 .panel {
@@ -33,18 +117,4 @@ body {
   background: var(--xlink-panel);
 }
 
-.primary-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(
-    90deg,
-    var(--xlink-primary-dark) 0%,
-    var(--xlink-primary) 100%
-  );
-  color: #fff;
-  font-weight: 700;
-  font-size: 15px;
-}
+/* 任务列表卡片左侧条由 Tailwind + lib/ui-tones 控制 */

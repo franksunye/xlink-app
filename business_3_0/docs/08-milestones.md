@@ -16,7 +16,7 @@
 | 主题 | 文件 |
 | --- | --- |
 | 分步说明与沟通节奏 | [01-handoff.md](./01-handoff.md) |
-| 第 1 轮 | [02-vision.md](./02-vision.md) |
+| 第 1 轮 | [02-vision.md](./02-vision.md)（含 **FSM 核心领域**与领域设计对标业界最佳实践之基线） |
 | 第 2 轮 | [03-personas-and-scenarios.md](./03-personas-and-scenarios.md) |
 | 第 3 轮 | [04-information-architecture.md](./04-information-architecture.md) |
 | 第 4 轮 | [flows/](./flows/) |

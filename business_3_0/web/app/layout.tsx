@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/AppProviders";
@@ -14,6 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#1478ff",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
@@ -22,7 +26,6 @@ export const metadata: Metadata = {
   },
   description: "XLink Business 3.0 服务商工作台（演示）",
   applicationName: "修链 · 服务商",
-  themeColor: "#2563eb",
   openGraph: {
     title: "修链 · 服务商",
     description: "XLink Business 3.0 服务商工作台（演示）",

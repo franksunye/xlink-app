@@ -12,4 +12,8 @@ export function dashboardQueryKey() {
   return ["/api/dashboard"] as const;
 }
 
-export type WorkOrdersListResponse = { items: import("@/lib/mock-data").WorkOrder[]; filter: string | null };
+export type WorkOrdersListResponse = {
+  items: import("@/lib/mock-data").WorkOrder[];
+  filter: string | null;
+  tabs: { key: string; label: string; count: number }[];
+};

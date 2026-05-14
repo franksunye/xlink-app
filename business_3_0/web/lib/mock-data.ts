@@ -67,6 +67,8 @@ export type Dashboard = {
   homeTasks: HomeTask[];
   taskOverview: TaskOverview[];
   quickActions: QuickAction[];
+  /** 与概念版工作台「今日结果」一致 */
+  todayResult: { amount: string; orders: number };
 };
 
 export type FollowRecord = {
@@ -83,6 +85,9 @@ export type FollowRecord = {
 
 export type WorkOrder = {
   id: string;
+  /** 概念版「部位」chip，默认屋顶 */
+  part?: string;
+  customerNo?: string;
   taskType: string;
   title: string;
   customer: string;
@@ -251,11 +256,14 @@ export const mockDashboard: Dashboard = {
       route: "feedback",
     },
   ],
+  todayResult: { amount: "135,450", orders: 8 },
 };
 
 export const mockWorkOrders: WorkOrder[] = [
   {
     id: "WO-3001",
+    part: "屋顶",
+    customerNo: "C10003001",
     taskType: "联系客户",
     title: "装修防水咨询",
     customer: "王先生",
@@ -313,6 +321,8 @@ export const mockWorkOrders: WorkOrder[] = [
   },
   {
     id: "WO-3002",
+    part: "屋面",
+    customerNo: "C10003002",
     taskType: "待上门",
     title: "屋面渗漏检修",
     customer: "赵女士",

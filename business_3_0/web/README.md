@@ -1,6 +1,6 @@
 # Business 3.0 Web（Next.js）
 
-`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线。视觉验收对照 archive 概念版：<https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0>；范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)。
+`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线。UI 色板、渐变 Hero、卡片阴影、任务列表 Tab/卡片与详情版式 **对齐** archive 概念版（分支 [`archive/business-3-0-wip` / `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 中 `styles/theme.css` 与 `pages/index`、`pages/work-orders` 等）；Tab 图标为矢量近似，非逐像素复刻小程序 PNG。范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)。
 
 ## Vercel（推荐配置）
 

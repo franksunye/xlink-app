@@ -2,19 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconAccount, IconHome, IconProjects, IconTasks } from "@/components/TabBarIcons";
 
 const tabs = [
-  { href: "/", label: "首页" },
-  { href: "/work-orders", label: "任务" },
-  { href: "/projects", label: "项目" },
-  { href: "/account", label: "我的" },
+  { href: "/", label: "首页", Icon: IconHome },
+  { href: "/work-orders", label: "任务", Icon: IconTasks },
+  { href: "/projects", label: "项目", Icon: IconProjects },
+  { href: "/account", label: "我的", Icon: IconAccount },
 ] as const;
 
 export function AppTabBar() {
   const pathname = usePathname();
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--xlink-line)] bg-[var(--xlink-panel)] pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#e6edf6] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(22,40,72,0.06)]"
       aria-label="主导航"
     >
       <div className="mx-auto flex max-w-lg justify-around">
@@ -27,16 +28,11 @@ export function AppTabBar() {
             <Link
               key={t.href}
               href={t.href}
-              className={`flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-2 text-xs font-medium ${
-                active
-                  ? "text-[var(--xlink-primary)]"
-                  : "text-[var(--xlink-muted)]"
+              className={`flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-1.5 text-[10px] font-bold ${
+                active ? "text-[var(--xlink-primary)]" : "text-[var(--xlink-tab-inactive)]"
               }`}
             >
-              <span
-                className={`h-1 w-8 rounded-full ${active ? "bg-[var(--xlink-primary)]" : "bg-transparent"}`}
-                aria-hidden
-              />
+              <t.Icon active={active} />
               {t.label}
             </Link>
           );

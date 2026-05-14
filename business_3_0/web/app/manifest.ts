@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "XLink Business 3.0 服务商工作台（演示）",
     start_url: "/",
     display: "standalone",
-    background_color: "#f4f6fb",
-    theme_color: "#2563eb",
+    background_color: "#f5f7fb",
+    theme_color: "#1478ff",
     lang: "zh-CN",
     icons: [
       {

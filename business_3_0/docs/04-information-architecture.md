@@ -7,6 +7,10 @@
 - 概念版页面注册与 TabBar：分支 `archive/business-3-0-wip` 下 [`business_3_0/pages.json`](https://github.com/franksunye/xlink-app/blob/archive/business-3-0-wip/business_3_0/pages.json)（GitHub 浏览）。  
 - 与现网 `business/` 的差异：**业务语义仍以后者为准**；本 IA 描述的是 **3.0 Web 首期** 的导航与页面壳，名称可在 Web 上优化，但能力边界需可映射回工单/项目等真实对象。
 
+## 领域设计基线（FSM）
+
+团队认定本系统的 **核心领域为 FSM（有限状态机）**：信息架构与路由服务于 **显式、可对齐现网码表** 的对象与流程生命周期，**不**取代领域层的状态与迁移真源。所有领域相关设计须与业界最优秀的 FSM / 工作流建模实践 **对齐或对照评审**；原则与表述真源见 [02-vision](./02-vision.md)「核心领域与领域设计基线（FSM）」。
+
 ## 全局路由顺序（非 Tab，栈式）
 
 概念版 `pages` 数组顺序（首屏为登录栈，主应用为 Tab）：
