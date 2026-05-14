@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE, isValidSessionToken } from "@/lib/auth";
+import { CACHE_API_PRIVATE } from "@/lib/http";
 
 const PUBLIC_PATHS = new Set(["/login"]);
 
@@ -19,7 +20,13 @@ export function middleware(request: NextRequest) {
 
   if (pathname.startsWith("/api/")) {
     if (!authed) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "unauthorized" },
+        {
+          status: 401,
+          headers: { "Cache-Control": CACHE_API_PRIVATE },
+        }
+      );
     }
     return NextResponse.next();
   }

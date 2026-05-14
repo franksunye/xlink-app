@@ -23,7 +23,7 @@
 12. **项目列表**：通过底部 Tab「项目」进入 `/projects`，可见项目卡片与进度条；加载中应有骨架、失败可重试。
 13. **我的 / 退出**：在 `/account` 可切换首页方案；点「退出登录」后回到 `/login`；再访问 `/` 应再次要求登录。
 14. **401 数据**：清除站点 Cookie 后，在**新标签**直接请求受保护 API（或对 `/api/dashboard` 发未带 Cookie 的请求），应返回 **401**。
-15. **（可选，线上）HTTPS**：在已部署环境重复关键步骤，确认地址栏为 **HTTPS**。
-16. **（可选）响应头 / SW**：页面应有基础安全头；`/api/*` 的 `Cache-Control` 为 `private, no-store, must-revalidate`；生产环境 SW 对 `/api/*` 为 network-only。
+15. **（可选，线上）HTTPS**：在已部署环境重复关键步骤，确认地址栏为 **HTTPS**。生产基 URL：`https://app.xiulian.com.cn`；Vercel 默认域：`https://xlink-app.vercel.app`。
+16. **（可选）响应头 / SW**：`/api/*`（含未登录 **401**）响应头 `Cache-Control` 应为 **`private, no-store, must-revalidate`**（与 `lib/http.ts` 一致；`middleware` 对未授权 API 已同步该头）。`public/sw.js` 对 `/api/*` 使用 `fetch(..., { cache: "no-store" })`，不做 API 缓存。另可抽查 `strict-transport-security`、`x-content-type-options`、`x-frame-options` 等安全头（由 `next.config` + 平台叠加）。
 
 验收通过：以上 **1～14** 无阻塞缺陷；**15～16** 在适用环境执行并通过。

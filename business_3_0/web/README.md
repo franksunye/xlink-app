@@ -9,12 +9,12 @@
 3. **Domains**：在 Vercel → Domains 为 Production / Preview 绑定团队域名（可与 `*.vercel.app` 并存）。
 4. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
 
-**基 URL（配好后由维护者更新）**
+**基 URL（当前）**
 
 | 环境 | 基 URL |
 | --- | --- |
-| Production | `https://（团队生产域或 vercel.app）` |
-| Preview | `https://（团队预览域或 PR 预览链）` |
+| 生产（自定义域） | `https://app.xiulian.com.cn` |
+| Vercel 项目默认域 | `https://xlink-app.vercel.app` |
 
 ## 手动验收
 
