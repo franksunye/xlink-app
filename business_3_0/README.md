@@ -12,12 +12,17 @@
 
 - **体验与 IA 的第一步参照**：分支 [`archive/business-3-0-wip`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 上的 `business_3_0/`（uni-app 概念小程序）已接近「想改动的第一步样子」，用于对照页面与流程，**不作为最终技术栈**。
 - **主技术栈**：**Next.js**，部署在 **Vercel**（利用预览环境、迭代节奏优于以微信小程序为主交付）。
-- **早期应用形态**：**单页应用（SPA）** 式交互，并作为 **PWA**（`manifest`、Service Worker 等按阶段启用）。**缓存与失效策略须从第一天与 PWA 一并设计**（避免仅后期补缓存导致源站压力与复杂重构），详见 **[docs/nonfunctional-and-poc.md](docs/nonfunctional-and-poc.md)** 中「缓存与 PWA」一节。
+- **早期应用形态**：**单页应用（SPA）** 式交互，并作为 **PWA**（`manifest`、Service Worker 等按阶段启用）。**缓存与失效策略须从第一天与 PWA 一并设计**（避免仅后期补缓存导致源站压力与复杂重构），详见 **[docs/07-nonfunctional-and-poc.md](docs/07-nonfunctional-and-poc.md)** 中「缓存与 PWA」一节。
 - **不以小程序为 3.0 主迭代面**：现网 **`business/`** 仍以小程序/App 为准做**业务与行为对照**；3.0 工程以 Web 为主推进，后续若需要小程序形态再作为单独发布面评估。
 
 ## 文档
 
-设计类说明放在 **`docs/`**，与实现代码分开维护。分轮补全与沟通节奏见 **[docs/handoff.md](docs/handoff.md)**；与现网 **cloud 分期、脱离方式**见 **[docs/integration-strategy.md](docs/integration-strategy.md)**；**低代码拆解与 POC 波次**见 **[docs/evolution-and-poc-waves.md](docs/evolution-and-poc-waves.md)**；入口索引见 **[docs/README.md](docs/README.md)**。
+设计类说明放在 **`docs/`**，与实现代码分开维护。分轮补全与沟通节奏见 **[docs/01-handoff.md](docs/01-handoff.md)**；与现网 **cloud 分期、脱离方式**见 **[docs/05-integration-strategy.md](docs/05-integration-strategy.md)**；**低代码拆解与 POC 波次**见 **[docs/06-evolution-and-poc-waves.md](docs/06-evolution-and-poc-waves.md)**；入口索引见 **[docs/00-README.md](docs/00-README.md)**。
+
+## 工程实现（Next.js）
+
+- 应用目录：**[web/](web/)**（`create-next-app` 默认模板；后续按 [docs/08-milestones.md](docs/08-milestones.md) 补路由、BFF、Mock 与 PWA 基线）。  
+- 本地开发：`cd web && npm run dev`。
 
 ## 与历史尝试的关系
 
