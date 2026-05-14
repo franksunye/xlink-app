@@ -1,0 +1,28 @@
+name: Business 3.0 Web
+
+on:
+  push:
+    paths:
+      - "business_3_0/web/**"
+      - ".github/workflows/business-3-0-web.yml"
+  pull_request:
+    paths:
+      - "business_3_0/web/**"
+      - ".github/workflows/business-3-0-web.yml"
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: business_3_0/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: business_3_0/web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

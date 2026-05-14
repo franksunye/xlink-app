@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --xlink-bg: #f5f7fa;
+  --xlink-panel: #ffffff;
+  --xlink-panel-soft: #eef4f6;
+  --xlink-text: #182338;
+  --xlink-muted: #6b7485;
+  --xlink-line: #dce3ea;
+  --xlink-primary: #1478ff;
+  --xlink-primary-dark: #106cff;
+  --xlink-green: #2f855a;
+  --xlink-amber: #b7791f;
+  --xlink-red: #c53030;
+  --background: var(--xlink-bg);
+  --foreground: var(--xlink-text);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+.panel {
+  border: 1px solid var(--xlink-line);
+  border-radius: 12px;
+  background: var(--xlink-panel);
+}
+
+.primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    var(--xlink-primary-dark) 0%,
+    var(--xlink-primary) 100%
+  );
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
 }

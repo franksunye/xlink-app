@@ -4,4 +4,4 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
-| （待定） | v0.1 | POC 波次 1：Web 脚手架、Mock 主路径、缓存/SW 基线；范围见 [09-v0.1-scope](./09-v0.1-scope.md)。 |
+| 2026-05-14 | v0.1.0 | POC 波次 1 发布：Next + BFF Mock 管家主路径、TanStack Query、httpOnly 登录壳、安全响应头、PWA manifest、SW 排除 `/api` 宽泛缓存、CI 与验收脚本；范围见 [09-v0.1-scope](./09-v0.1-scope.md)。 |

@@ -1,42 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Business 3.0 Web（Next.js）
 
-设计与 **管家关键屏观感**验收请对照 archive 分支概念版：<https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0>（细则见上一级 `business_3_0/docs/09-v0.1-scope.md`）。
+`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线。视觉验收对照 archive 概念版：<https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0>；范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)。
 
-## 部署与域名（Vercel）
+## Vercel（推荐配置）
 
-团队在 **Vercel 项目 → Domains** 中为 **Production** 与/或 **Preview** 绑定自有域名后，每次 Git 推送或 PR 都会生成对应环境的 **HTTPS 部署**，便于直接打开体验（可与默认 `*.vercel.app` 并存）。**请勿**将密钥写入仓库；生产/预览基 URL 可写在团队 Wiki 或本段下方占位（配好后由维护者更新）。
+1. **New Project** 指向本仓库（monorepo 根为仓库根目录）。
+2. **Root Directory**：`business_3_0/web`（必填；错配会导致空部署或构建失败）。
+3. **Domains**：在 Vercel → Domains 为 Production / Preview 绑定团队域名（可与 `*.vercel.app` 并存）。
+4. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
 
-## Getting Started
+**基 URL（配好后由维护者更新）**
 
-First, run the development server:
+| 环境 | 基 URL |
+| --- | --- |
+| Production | `https://（团队生产域或 vercel.app）` |
+| Preview | `https://（团队预览域或 PR 预览链）` |
+
+## 手动验收
+
+见 [docs/acceptance-v0.1.md](./docs/acceptance-v0.1.md)（对齐 [10-release-and-acceptance.md](../docs/10-release-and-acceptance.md) §4）。
+
+## BFF `Cache-Control`（与 [07-nonfunctional-and-poc.md](../docs/07-nonfunctional-and-poc.md) 一致）
+
+| 路径 | 策略 | 说明 |
+| --- | --- | --- |
+| `GET /api/dashboard` | `private, no-store, must-revalidate` | 用户态聚合，不公共缓存 |
+| `GET /api/work-orders`、`GET /api/work-orders/[id]` | 同上 | 列表/详情 |
+| `GET /api/projects` | 同上 | 项目列表 |
+| `POST /api/auth/login` | 同上（且 `Set-Cookie`） | 禁止长期 public 缓存 |
+| `POST /api/auth/logout` | 同上 | 清 Cookie |
+
+实现：`lib/http.ts` 的 `jsonResponse` 默认注入；登录路由显式同策略。
+
+## Service Worker
+
+- 生产环境注册 `public/sw.js`（见 `components/ServiceWorkerRegister.tsx`）。
+- **不对 `/api/*` 做缓存**：`fetch` 使用 `cache: 'no-store'`，其余请求直转发（无 precache 列表）。变更须评审。
+
+## 本地开发
 
 ```bash
+cd business_3_0/web
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+浏览器打开 <http://localhost:3000>。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 质量闸门
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+CI：仓库根目录 `.github/workflows/business-3-0-web.yml`（变更 `business_3_0/web/**` 时跑 lint + build）。
