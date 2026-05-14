@@ -4,7 +4,7 @@
 
 ## POC 竖切顺序
 
-（先做 1～2 个能证明 **Next.js + Vercel** 架构选择的切片；体验可对齐 [archive `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)，实现为 Web 重写。）
+（先做 1～2 个能证明 **Next.js + Vercel** 架构选择的切片；体验对齐 [archive `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)；**低代码拆解与外部集成波次**见 [evolution-and-poc-waves.md](./evolution-and-poc-waves.md)。）
 
 | 顺序 | 切片内容 | 目标产出 | 对应文档 / 代码落点 |
 | --- | --- | --- | --- |
@@ -23,6 +23,7 @@
 | 第 5 轮 | [nonfunctional-and-poc.md](./nonfunctional-and-poc.md) |
 | 第 6 轮 | 本文件 |
 | 与 cloud 分期与脱离 | [integration-strategy.md](./integration-strategy.md) |
+| 低代码拆解与 POC 波次 | [evolution-and-poc-waves.md](./evolution-and-poc-waves.md) |
 
 ## 备注
 

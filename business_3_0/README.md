@@ -17,7 +17,7 @@
 
 ## 文档
 
-设计类说明放在 **`docs/`**，与实现代码分开维护。分轮补全与沟通节奏见 **[docs/handoff.md](docs/handoff.md)**；与现网 **cloud 分期、脱离方式**见 **[docs/integration-strategy.md](docs/integration-strategy.md)**；入口索引见 **[docs/README.md](docs/README.md)**。
+设计类说明放在 **`docs/`**，与实现代码分开维护。分轮补全与沟通节奏见 **[docs/handoff.md](docs/handoff.md)**；与现网 **cloud 分期、脱离方式**见 **[docs/integration-strategy.md](docs/integration-strategy.md)**；**低代码拆解与 POC 波次**见 **[docs/evolution-and-poc-waves.md](docs/evolution-and-poc-waves.md)**；入口索引见 **[docs/README.md](docs/README.md)**。
 
 ## 与历史尝试的关系
 
