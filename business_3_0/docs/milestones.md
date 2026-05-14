@@ -4,12 +4,12 @@
 
 ## POC 竖切顺序
 
-（先做 1～2 个能证明架构选择的切片，例如：登录 + 工单列表只读 + 详情。）
+（先做 1～2 个能证明 **Next.js + Vercel** 架构选择的切片；体验可对齐 [archive `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)，实现为 Web 重写。）
 
 | 顺序 | 切片内容 | 目标产出 | 对应文档 / 代码落点 |
 | --- | --- | --- | --- |
-| 1 |  |  |  |
-| 2 |  |  |  |
+| 1 | Next.js 工程脚手架 + Vercel 预览；Mock 数据层；**管家**「待办 → 工单列表 → 详情壳」路由与布局 | 每次 push 可打开 Preview 演示主路径骨架 | 代码落点：待在本仓库 `business_3_0/` 下或后续约定的子目录创建（实现阶段定） |
+| 2 | 与第 4 轮流程文档对齐的节点/表单占位或只读展示 | 可对照 `business` 服务工单语义走通 UI 空壳 | [flows/](./flows/) 定稿后对齐 |
 
 ## 文档目录约定（本仓库）
 

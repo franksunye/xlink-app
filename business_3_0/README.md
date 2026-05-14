@@ -8,13 +8,19 @@
 - **技术可变**：工程结构、运行时选型、分层方式、性能与可维护性等，允许并鼓励通过 **POC → 收敛 → 落地** 的方式逐步推进，避免一次性大改无法验证。
 - **演进节奏**：以可演示、可回滚的小步为主；每一步应能说明「相对 `business/` 解决了什么技术问题或债务」，而不是仅换栈。
 
+## 交付形态与技术选型（当前共识）
+
+- **体验与 IA 的第一步参照**：分支 [`archive/business-3-0-wip`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 上的 `business_3_0/`（uni-app 概念小程序）已接近「想改动的第一步样子」，用于对照页面与流程，**不作为最终技术栈**。
+- **主技术栈**：**Next.js**，部署在 **Vercel**（利用预览环境、迭代节奏优于以微信小程序为主交付）。
+- **不以小程序为 3.0 主迭代面**：现网 **`business/`** 仍以小程序/App 为准做**业务与行为对照**；3.0 工程以 Web 为主推进，后续若需要小程序形态再作为单独发布面评估。
+
 ## 文档
 
 设计类说明放在 **`docs/`**，与实现代码分开维护。分轮补全与沟通节奏见 **[docs/handoff.md](docs/handoff.md)**；入口索引见 **[docs/README.md](docs/README.md)**。
 
 ## 与历史尝试的关系
 
-此前基于「概念版 / mock 优先」方向的探索代码保留在分支 **`archive/business-3-0-wip`**，需要对照或迁移时可从该分支检出 `business_3_0/`。新 3.0 路线以**业务对齐现网**为前提，历史分支仅作参考，不预设为最终架构。
+此前基于「概念版 / mock 优先」方向的探索代码保留在分支 **`archive/business-3-0-wip`**（[GitHub 上 `business_3_0` 目录](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)）：适合作为**页面与流程的第一步参照**；主干上的新实现改为 **Next.js + Vercel**，不再沿用该分支的 uni-app / 小程序技术栈。新 3.0 路线以**业务对齐现网**为前提，历史分支不预设为最终架构。
 
 ## 与 `business/` 的关系
 

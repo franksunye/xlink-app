@@ -12,7 +12,7 @@
 
 | 角色 | 说明 | 设备 / 入口假设 |
 | --- | --- | --- |
-| **管家** | 首页「管家驾驶舱」、接单与签约等指标；待办按工单状态跳转列表（见 `pages/index/index.vue` 中 `currentRole._id == '8050029062726074247'`）。 | 微信小程序 / App（服务商端） |
+| **管家** | 首页「管家驾驶舱」、接单与签约等指标；待办按工单状态跳转列表（见 `pages/index/index.vue` 中 `currentRole._id == '8050029062726074247'`）。 | **现网**：微信小程序 / App。**3.0**：首期以 **Web（Next.js，Vercel）** 承载同一业务场景，IA 可参照 [archive 概念版](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0)。 |
 | **内勤** | 与工单信息渠道等逻辑关联（见 `subpackages/extForm/extForm.vue` 注释中的角色 ID）。 | 同上 |
 | **工队** | 服务工单中选工队、施工相关能力（见 `serviceAppointment.vue` 等）。 | 同上 |
 | **业主** | 报价单、材料交割单等「发送 / 确认」类交互（见 `serviceAppointment.vue` 文案与流程）。 | 业主侧触点（小程序/H5 等以现网为准） |

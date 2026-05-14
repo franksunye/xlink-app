@@ -31,5 +31,8 @@
 ## 外部稿（可选）
 
 - 线框 / 设计稿链接：
+- **概念版 IA 参照**（非技术栈）：[`archive/business-3-0-wip` / `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 的 `pages/` 与导航拆分；落地为 **Next.js** 时用 **路由与布局** 替代小程序 Tab/分包结构。
 
 ## 备注
+
+- 第 3 轮定稿时宜标明：哪些入口保留与 `business` 管家首页一致的业务含义，哪些仅做 Web 化重排。
