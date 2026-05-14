@@ -25,6 +25,7 @@
 | 低代码拆解与 POC 波次 | [06-evolution-and-poc-waves.md](./06-evolution-and-poc-waves.md) |
 | Web v0.1 范围（POC 波次 1） | [09-v0.1-scope.md](./09-v0.1-scope.md) |
 | 版本线、验收与文档治理 | [10-release-and-acceptance.md](./10-release-and-acceptance.md) |
+| 现场服务域：业界参照与边界 | [11-field-service-reference.md](./11-field-service-reference.md) |
 | 设计侧发布变更记录 | [changelog.md](./changelog.md) |
 
 ## 沟通时可用的格式（复制）
