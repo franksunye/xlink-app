@@ -1,12 +1,31 @@
 import type { ReadonlyWorkflowNode, WorkOrder } from "@/lib/mock-data";
 
+/** business / beta 小程序 API 根（与 `code/app/business` 一致） */
+const DEFAULT_BETA_WM_API_ROOT = "https://xlinkbeta.fsgo365.cn/fsgo/wm";
+
+function isVercelRuntime(): boolean {
+  return process.env.VERCEL === "1" || process.env.VERCEL === "true";
+}
+
+/** 设为 `0` / `false` 时，不在 Vercel 上自动启用 cloud 读、也不自动填 beta Base URL */
+function vercelCloudDefaultsDisabled(): boolean {
+  const d = process.env.XLINK_CLOUD_VERCEL_DEFAULTS?.toLowerCase();
+  return d === "0" || d === "false" || d === "no";
+}
+
 function cloudReadEnabledFromEnv(): boolean {
   const v = process.env.USE_CLOUD_READ?.toLowerCase();
-  return v === "1" || v === "true" || v === "yes";
+  if (v === "0" || v === "false" || v === "no") return false;
+  if (v === "1" || v === "true" || v === "yes") return true;
+  if (isVercelRuntime() && !vercelCloudDefaultsDisabled()) return true;
+  return false;
 }
 
 function cloudReadBaseUrl(): string | null {
-  const u = process.env.XLINK_CLOUD_READ_BASE_URL?.trim();
+  let u = process.env.XLINK_CLOUD_READ_BASE_URL?.trim();
+  if (!u && isVercelRuntime() && !vercelCloudDefaultsDisabled()) {
+    u = DEFAULT_BETA_WM_API_ROOT;
+  }
   if (!u) return null;
   try {
     return new URL(u.endsWith("/") ? u.slice(0, -1) : u).toString().replace(/\/$/, "");

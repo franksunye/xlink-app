@@ -4,7 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
-| 2026-05-14 | web v0.2.2 | beta 联通：`JSESSIONID`（`XLINK_CLOUD_READ_JSESSIONID` / `x-xlink-jsessionid` / `localStorage xlink_cloud_read_jsession`）；Base `https://xlinkbeta.fsgo365.cn/fsgo/wm`；空 `workOrder` 列表仍标 `X-Xlink-Read-Source: cloud`；`verify:cloud-read` 支持 Token 或 Session。 |
+| 2026-05-14 | web v0.2.3 | Vercel：`vercel.json`、`.env.example`；`VERCEL=1` 时默认启用 cloud 读且 Base 指向 **beta** `https://xlinkbeta.fsgo365.cn/fsgo/wm`（可用 `XLINK_CLOUD_VERCEL_DEFAULTS=0` 关闭）；README 增补 `vercel env` 示例。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.9：合同与支付为商务/资金域，与工单执行分离；奠基期外键优先。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.8：服务产品（工艺+人材机）与报价分层，对照 FSL Work Type / Price Book。 |
 | 2026-05-14 | web | `FollowRecord`→`WorkOrderActivity`，`followRecords`→`activities`（Mock、BFF JSON、详情页）；文档 04/09/12/flows 同步。 |

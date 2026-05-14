@@ -7,8 +7,25 @@
 1. **New Project** 指向本仓库（monorepo 根为仓库根目录）。
 2. **Root Directory**：`business_3_0/web`（必填；错配会导致空部署或构建失败）。
 3. **Domains**：在 Vercel → Domains 为 Production / Preview 绑定团队域名（可与 `*.vercel.app` 并存）。
-4. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
-5. **cloud 只读联调（可选，v0.2）**：`USE_CLOUD_READ` = `1` 或 `true`；`XLINK_CLOUD_READ_BASE_URL` = **与目标前端 API 根一致**（`cloud_ui`：`…/api`；**beta / business**：`https://xlinkbeta.fsgo365.cn/fsgo/wm`，见 `code/app/business/docs/architecture/env-topology.md`）。鉴权二选一或并用：**`XLINK_CLOUD_READ_AUTH_TOKEN`**（`X-Auth-Token`）与/或 **`XLINK_CLOUD_READ_JSESSIONID`**（`JSESSIONID`，来自 `index/phoneLogin.do` 的 `data.token`，获取方式见 `code/app/business/docs/api-test-tooling.md`）。浏览器可写 `localStorage['xlink_cloud_read_token']` / `['xlink_cloud_read_jsession']` 由 `fetchJson` 转发。可达环境上运行 **`npm run verify:cloud-read`** 做契约复验。未配置或不可达时 **降级 Mock**（`X-Xlink-Read-Source: mock-fallback`）。
+4. **项目内约定**：根目录已放 **`vercel.json`**（`framework: nextjs`）；环境变量清单见 **`.env.example`**。
+5. **cloud 读默认走 beta（Vercel 运行时）**：当 **`VERCEL=1`** 且未设置 **`XLINK_CLOUD_VERCEL_DEFAULTS=0`** 时，若未显式配置 `USE_CLOUD_READ` / `XLINK_CLOUD_READ_BASE_URL`，则 **自动** `USE_CLOUD_READ` 视为开启、`XLINK_CLOUD_READ_BASE_URL` 为 **`https://xlinkbeta.fsgo365.cn/fsgo/wm`**（与 `code/app/business` 小程序栈一致）。覆盖方式：在 Vercel 环境变量中显式设置上述键，或设置 `XLINK_CLOUD_VERCEL_DEFAULTS=0` 恢复为纯 Mock（直至你自行配置其它 Base）。
+6. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
+7. **cloud 鉴权（敏感，仅 Dashboard / CLI）**：在 Vercel 为 **Production** 与 **Preview** 配置 **`XLINK_CLOUD_READ_JSESSIONID`** 和/或 **`XLINK_CLOUD_READ_AUTH_TOKEN`**（含义见下；勿写入仓库）。浏览器联调可写 `localStorage['xlink_cloud_read_jsession']` / `['xlink_cloud_read_token']`（`fetchJson` 会转发到 BFF）。未配置会话时 BFF 仍会 **降级 Mock**（`X-Xlink-Read-Source: mock-fallback`）。
+
+**快速写入非敏感变量（CLI 示例）**：
+
+```bash
+cd business_3_0/web
+vercel link   # 若尚未关联项目
+echo "https://xlinkbeta.fsgo365.cn/fsgo/wm" | vercel env add XLINK_CLOUD_READ_BASE_URL production
+echo "https://xlinkbeta.fsgo365.cn/fsgo/wm" | vercel env add XLINK_CLOUD_READ_BASE_URL preview
+echo "1" | vercel env add USE_CLOUD_READ production
+echo "1" | vercel env add USE_CLOUD_READ preview
+# 敏感：在 Dashboard 粘贴或由 CI 注入，勿用 echo 进 shell 历史
+# vercel env add XLINK_CLOUD_READ_JSESSIONID production
+```
+
+**cloud 只读变量说明（与 v0.2 一致）**：`USE_CLOUD_READ`；`XLINK_CLOUD_READ_BASE_URL`（`cloud_ui` 用 `…/api`，**beta / business** 用 `https://xlinkbeta.fsgo365.cn/fsgo/wm`）；`XLINK_CLOUD_READ_JSESSIONID`（`index/phoneLogin.do` 的 `data.token`）；`XLINK_CLOUD_READ_AUTH_TOKEN`（`cloud_ui` 的 `X-Auth-Token`）。获取 JSESSIONID 见 `code/app/business/docs/api-test-tooling.md`。本地契约脚本：`npm run verify:cloud-read`。
 
 **基 URL（当前）**
 
