@@ -22,5 +22,8 @@
 | 第 4 轮 | [flows/](./flows/) |
 | 第 5 轮 | [nonfunctional-and-poc.md](./nonfunctional-and-poc.md) |
 | 第 6 轮 | 本文件 |
+| 与 cloud 分期与脱离 | [integration-strategy.md](./integration-strategy.md) |
 
 ## 备注
+
+- 与 **cloud / cloud_ui 分期接入与脱离** 的策略见 [integration-strategy.md](./integration-strategy.md)。

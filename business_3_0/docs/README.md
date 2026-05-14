@@ -21,7 +21,7 @@
 | 第 3 轮 — 信息架构与导航 | [information-architecture.md](./information-architecture.md) |
 | 第 4 轮 — 核心流程 | [flows/README.md](./flows/README.md)、[flows/\_template.md](./flows/_template.md) |
 | 第 5 轮 — 非功能与技术 POC | [nonfunctional-and-poc.md](./nonfunctional-and-poc.md) |
-| 第 6 轮 — 里程碑与落点 | [milestones.md](./milestones.md) |
+| 架构 — 与 cloud 分期 | [integration-strategy.md](./integration-strategy.md) |
 
 ## 沟通时可用的格式（复制）
 
