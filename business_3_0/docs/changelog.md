@@ -4,6 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
+| 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.9：合同与支付为商务/资金域，与工单执行分离；奠基期外键优先。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.8：服务产品（工艺+人材机）与报价分层，对照 FSL Work Type / Price Book。 |
 | 2026-05-14 | web | `FollowRecord`→`WorkOrderActivity`，`followRecords`→`activities`（Mock、BFF JSON、详情页）；文档 04/09/12/flows 同步。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md)：文首「奠基期原则」— 底层实体简洁、扩展后置；§1.3/§5/§6.1 与之一致。 |
