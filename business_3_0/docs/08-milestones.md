@@ -8,7 +8,7 @@
 
 | 顺序 | 切片内容 | 目标产出 | 对应文档 / 代码落点 |
 | --- | --- | --- | --- |
-| 1 | Next.js **SPA + PWA** 脚手架 + Vercel 预览；Mock 数据层；**管家**主路径壳；**首轮即含缓存基线**（BFF `Cache-Control` 分类、客户端数据层 stale/去重、SW 对 `/api` 的默认排除或显式规则） | Preview 可演示 + 文档化缓存策略（见 [07-nonfunctional-and-poc](./07-nonfunctional-and-poc.md)「缓存与 PWA」） | 代码落点：待在本仓库 `business_3_0/` 下或后续约定的子目录创建（实现阶段定） |
+| 1 | Next.js **SPA + PWA** 脚手架 + Vercel 预览；Mock 数据层；**管家**主路径壳；**首轮即含缓存基线**（BFF `Cache-Control` 分类、客户端数据层 stale/去重、SW 对 `/api` 的默认排除或显式规则） | Preview 可演示 + 文档化缓存策略（见 [07-nonfunctional-and-poc](./07-nonfunctional-and-poc.md)「缓存与 PWA」） | 代码落点：**[web/](../web/)**（脚手架已建；路由与 BFF 待补） |
 | 2 | 与第 4 轮流程文档对齐的节点/表单占位或只读展示 | 可对照 `business` 服务工单语义走通 UI 空壳 | [flows/](./flows/) 定稿后对齐 |
 
 ## 文档目录约定（本仓库）
