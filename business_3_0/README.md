@@ -10,7 +10,7 @@
 
 ## 文档
 
-设计类说明放在 **`docs/`**，与实现代码分开维护。
+设计类说明放在 **`docs/`**，与实现代码分开维护。分轮补全与沟通节奏见 **[docs/handoff.md](docs/handoff.md)**；入口索引见 **[docs/README.md](docs/README.md)**。
 
 ## 与历史尝试的关系
 
