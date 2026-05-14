@@ -21,7 +21,7 @@
 
 ## 工程实现（Next.js）
 
-- 应用目录：**[web/](web/)**（`create-next-app` 默认模板；后续按 [docs/08-milestones.md](docs/08-milestones.md) 补路由、BFF、Mock 与 PWA 基线）。  
+- 应用目录：**[web/](web/)**（`create-next-app` 默认模板；POC 波次 1 / v0.1 路由与 Mock 范围见 **[docs/09-v0.1-scope.md](docs/09-v0.1-scope.md)**，里程碑总览见 [docs/08-milestones.md](docs/08-milestones.md)）。  
 - 本地开发：`cd web && npm run dev`。
 
 ## 与历史尝试的关系
