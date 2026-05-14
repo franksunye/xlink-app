@@ -1,6 +1,7 @@
 /**
  * Mock payloads aligned with archive concept `services/api/mock.js` shapes
  * (see xlink-app branch archive/business-3-0-wip).
+ * Domain vocabulary & field semantics: ../docs/12-domain-glossary.md
  */
 
 export type DashboardEntry = {
