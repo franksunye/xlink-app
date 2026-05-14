@@ -1,12 +1,13 @@
 {
   "name": "web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify:cloud-read": "bash scripts/verify-cloud-read.sh"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.10",

@@ -4,7 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
-| 2026-05-14 | v0.2.0 | POC 波次 2：工单 BFF **cloud 只读 Adapter**（`USE_CLOUD_READ` + `XLINK_CLOUD_READ_BASE_URL`）、详情 **只读流程节点** 区；范围 [13](./13-v0.2-scope.md)；验收 [web/docs/acceptance-v0.2.md](../web/docs/acceptance-v0.2.md)。 |
+| 2026-05-14 | web v0.2.1 | cloud 读 Adapter 对齐 cloud_ui：**POST** `*.do`、`x-www-form-urlencoded`、**`X-Auth-Token`**（`XLINK_CLOUD_READ_AUTH_TOKEN` / `x-xlink-cloud-token` / `localStorage xlink_cloud_read_token`）；`npm run verify:cloud-read` 契约脚本。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.9：合同与支付为商务/资金域，与工单执行分离；奠基期外键优先。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.8：服务产品（工艺+人材机）与报价分层，对照 FSL Work Type / Price Book。 |
 | 2026-05-14 | web | `FollowRecord`→`WorkOrderActivity`，`followRecords`→`activities`（Mock、BFF JSON、详情页）；文档 04/09/12/flows 同步。 |

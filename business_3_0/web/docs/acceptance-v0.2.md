@@ -14,10 +14,25 @@
 3. **构建**：`npm run build` 无错误退出；`npm run lint` 无新增阻塞问题。
 4. **缓存头**：`GET /api/work-orders` 与 `GET /api/work-orders/[id]` 仍为 **`Cache-Control: private, no-store, must-revalidate`**（与 v0.1 一致）。
 
-## 档位 A — 接 cloud（可选，dev 就绪时）
+## 档位 A — 接 cloud（dev 就绪时必做联调）
 
-1. 配置环境变量：`USE_CLOUD_READ=1`，`XLINK_CLOUD_READ_BASE_URL` = 可访问的 cloud 网关根（**含**应用与模块路径前缀，无尾斜杠；须与现网实际路径拼接后可达 `basic/workOrder/query`）。
-2. 浏览器先以 **cloud 有效会话** 登录同一 dev 域（使请求携带 cloud Cookie），再打开本 Web 的 `/login` 完成 Mock 登录后访问 `/work-orders`（注意：Mock 会话 Cookie 与 cloud 会话 **未必**同源；若列表仍为 Mock 数据，查看响应头 **`X-Xlink-Read-Source`**：`mock-fallback` 为预期降级）。
-3. 当 **`X-Xlink-Read-Source: cloud`** 时：列表字段与 cloud 工单一致；点进详情后节点区与 cloud `findById` 映射一致或合理近似。
+### A1 — HTTP 契约（与 cloud_ui 对齐，推荐先做）
 
-验收通过：**档位 B** 全过；档位 A 按团队 dev 就绪情况勾选记录。
+1. 在已登录 cloud_ui 的浏览器开发者工具中读取 **`sessionStorage.token`**（即请求头 **`X-Auth-Token`** 的值，不含引号）。  
+2. 在 `business_3_0/web` 目录执行：
+
+```bash
+export XLINK_CLOUD_READ_BASE_URL='http://<host>:<port>/api'   # 与 cloud_ui src/common/common.js rootUri 一致
+export XLINK_CLOUD_READ_AUTH_TOKEN='<上一步的 token>'
+npm run verify:cloud-read
+```
+
+3. 期望终端输出 **`PASS`**，且 `query.do` 返回 JSON 根级 **`data` 为数组**；若列表非空，脚本会继续请求 **`findById.do`** 且 `status===1`。
+
+### A2 — 经本 Web BFF（端到端）
+
+1. 对运行 `next dev` / 部署实例配置：`USE_CLOUD_READ=1`、`XLINK_CLOUD_READ_BASE_URL`（同 A1）、`XLINK_CLOUD_READ_AUTH_TOKEN`（**或在**浏览器 `localStorage.setItem('xlink_cloud_read_token', '<token>')` 后刷新）。  
+2. Mock 登录后打开 `/work-orders`，在开发者工具 Network 中查看 **`GET /api/work-orders`**：响应头 **`X-Xlink-Read-Source: cloud`**，响应体 `items` 与 dev 工单列表一致。  
+3. 点进一条详情：同上 **`X-Xlink-Read-Source: cloud`**，且 **「流程节点」** 区与 cloud 工作流节点方向一致（有节点数据时）。
+
+验收通过：**档位 B** 全过；**档位 A** 在目标 dev 上 **A1 + A2** 均通过。

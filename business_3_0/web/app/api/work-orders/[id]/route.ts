@@ -18,10 +18,14 @@ export async function GET(
   }
   const { id } = await context.params;
   const cookie = req.headers.get("cookie");
+  const cloudToken =
+    req.headers.get("x-xlink-cloud-token")?.trim() ||
+    req.headers.get("X-Xlink-Cloud-Token")?.trim() ||
+    null;
   const headers = new Headers();
 
   if (isCloudReadConfigured()) {
-    const cloudOrder = await cloudFetchWorkOrderById(id, cookie);
+    const cloudOrder = await cloudFetchWorkOrderById(id, cookie, cloudToken);
     if (cloudOrder) {
       headers.set("X-Xlink-Read-Source", "cloud");
       return jsonResponse(withDefaultReadonlyWorkflowNodes(cloudOrder), { headers });

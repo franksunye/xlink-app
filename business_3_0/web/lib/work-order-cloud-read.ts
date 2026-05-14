@@ -15,6 +15,7 @@ function cloudReadBaseUrl(): string | null {
   }
 }
 
+/** 与 cloud_ui `common.js` rootUri 一致：须含 `/api` 等前缀，例如 `http://host:8070/api` */
 export function isCloudReadConfigured(): boolean {
   return cloudReadEnabledFromEnv() && Boolean(cloudReadBaseUrl());
 }
@@ -125,20 +126,35 @@ export function mapCloudRowToWorkOrder(
   };
 }
 
-async function fetchJson(
+function authTokenForCloud(forwardedToken: string | null | undefined): string | null {
+  const envTok = process.env.XLINK_CLOUD_READ_AUTH_TOKEN?.trim();
+  if (envTok) return envTok;
+  const t = forwardedToken?.trim();
+  return t || null;
+}
+
+/** cloud_ui 同款：POST + `application/x-www-form-urlencoded` + `.do` 路径 */
+async function fetchCloudForm(
   path: string,
-  cookie: string | null
+  body: URLSearchParams,
+  cookie: string | null,
+  forwardedAuthToken: string | null
 ): Promise<{ ok: boolean; json: unknown }> {
   const base = cloudReadBaseUrl();
   if (!base) return { ok: false, json: null };
   const url = new URL(path.startsWith("/") ? path.slice(1) : path, `${base}/`);
-  const headers: HeadersInit = {
-    Accept: "application/json",
+  const headers: Record<string, string> = {
+    Accept: "application/json, text/plain, */*",
+    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
   };
   if (cookie) headers.Cookie = cookie;
+  const tok = authTokenForCloud(forwardedAuthToken);
+  if (tok) headers["X-Auth-Token"] = tok;
+
   const res = await fetch(url.toString(), {
-    method: "GET",
+    method: "POST",
     headers,
+    body: body.toString(),
     cache: "no-store",
   });
   const text = await res.text();
@@ -151,10 +167,29 @@ async function fetchJson(
   return { ok: res.ok, json };
 }
 
+/** 与 cloud_ui `WorkOrders.vue` getSA 一致的最小查询参数（仅读列表） */
+function workOrderQueryBody(): URLSearchParams {
+  const p = new URLSearchParams();
+  p.set("page", "1");
+  p.set("rows", "50");
+  p.set("sortField", "createTime");
+  p.set("sortOrder", "desc");
+  p.set("in:state|integer#and", "1");
+  return p;
+}
+
 /** 分页查询 cloud 工单列表，映射为 `WorkOrder[]` */
-export async function cloudFetchWorkOrders(cookie: string | null): Promise<WorkOrder[] | null> {
+export async function cloudFetchWorkOrders(
+  cookie: string | null,
+  forwardedAuthToken?: string | null
+): Promise<WorkOrder[] | null> {
   if (!isCloudReadConfigured()) return null;
-  const { ok, json } = await fetchJson("basic/workOrder/query?page=1&size=50", cookie);
+  const { ok, json } = await fetchCloudForm(
+    "basic/workOrder/query.do",
+    workOrderQueryBody(),
+    cookie,
+    forwardedAuthToken ?? null
+  );
   if (!ok || !json || typeof json !== "object") return null;
   const data = (json as FlipLike).data;
   if (!Array.isArray(data)) return null;
@@ -170,12 +205,17 @@ export async function cloudFetchWorkOrders(cookie: string | null): Promise<WorkO
 /** findById：合并 workOrder + workflowNode 列表 */
 export async function cloudFetchWorkOrderById(
   id: string,
-  cookie: string | null
+  cookie: string | null,
+  forwardedAuthToken?: string | null
 ): Promise<WorkOrder | null> {
   if (!isCloudReadConfigured()) return null;
-  const { ok, json } = await fetchJson(
-    `basic/workOrder/findById?id=${encodeURIComponent(id)}`,
-    cookie
+  const body = new URLSearchParams();
+  body.set("id", id);
+  const { ok, json } = await fetchCloudForm(
+    "basic/workOrder/findById.do",
+    body,
+    cookie,
+    forwardedAuthToken ?? null
   );
   if (!ok || !json || typeof json !== "object") return null;
   const rs = json as ReturnStatusLike;

@@ -15,12 +15,16 @@ export async function GET(req: NextRequest) {
   }
   const filter = req.nextUrl.searchParams.get("filter");
   const cookie = req.headers.get("cookie");
+  const cloudToken =
+    req.headers.get("x-xlink-cloud-token")?.trim() ||
+    req.headers.get("X-Xlink-Cloud-Token")?.trim() ||
+    null;
 
   let sourceList = mockWorkOrders;
   const headers = new Headers();
 
   if (isCloudReadConfigured()) {
-    const cloudList = await cloudFetchWorkOrders(cookie);
+    const cloudList = await cloudFetchWorkOrders(cookie, cloudToken);
     if (cloudList && cloudList.length > 0) {
       sourceList = cloudList;
       headers.set("X-Xlink-Read-Source", "cloud");
