@@ -1,6 +1,6 @@
 # Business 3.0 Web（Next.js）
 
-`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线。UI 色板、渐变 Hero、卡片阴影、任务列表 Tab/卡片与详情版式 **对齐** archive 概念版（分支 [`archive/business-3-0-wip` / `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 中 `styles/theme.css` 与 `pages/index`、`pages/work-orders` 等）；Tab 图标为矢量近似，非逐像素复刻小程序 PNG。范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)。
+`business_3_0/web`：**Next.js App Router + BFF（Route Handlers）+ Mock 数据**，v0.1 管家主路径与体验向生产基线。UI 色板、渐变 Hero、卡片阴影、任务列表 Tab/卡片与详情版式 **对齐** archive 概念版（分支 [`archive/business-3-0-wip` / `business_3_0`](https://github.com/franksunye/xlink-app/tree/archive/business-3-0-wip/business_3_0) 中 `styles/theme.css` 与 `pages/index`、`pages/work-orders` 等）；Tab 图标为矢量近似，非逐像素复刻小程序 PNG。**登录**为启动页 → 选择方式（验证码 / 密码 / 快捷）→ 表单，与概念版 `pages/login` 一致；**工作台**支持「任务优先 / 数据概览」双方案，在 **我的** 中切换，持久化键与小程序相同：`localStorage['business_3_home_variant']`（`task` | `metrics`）。范围见 [../docs/09-v0.1-scope.md](../docs/09-v0.1-scope.md)。
 
 ## Vercel（推荐配置）
 

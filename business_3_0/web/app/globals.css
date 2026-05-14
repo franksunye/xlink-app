@@ -117,4 +117,11 @@ body {
   background: var(--xlink-panel);
 }
 
+/* 登录栈背景（概念版 .login-page） */
+.login-page-skin {
+  background:
+    radial-gradient(circle at 50% 16%, rgba(20, 120, 242, 0.08), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 57%, #f4f8ff 100%);
+}
+
 /* 任务列表卡片左侧条由 Tailwind + lib/ui-tones 控制 */

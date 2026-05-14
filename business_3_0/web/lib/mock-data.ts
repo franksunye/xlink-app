@@ -36,6 +36,8 @@ export type TaskOverview = {
 export type QuickAction = {
   label: string;
   iconName: string;
+  /** 方案 B（数据概览）紧凑快捷行展示用，与概念版 `action.icon` 一致 */
+  icon: string;
   tone: string;
   desc: string;
   toast?: string;
@@ -229,6 +231,7 @@ export const mockDashboard: Dashboard = {
     {
       label: "客户",
       iconName: "customer",
+      icon: "👤",
       tone: "blue",
       desc: "客户管理",
       toast: "客户模块演示中",
@@ -236,6 +239,7 @@ export const mockDashboard: Dashboard = {
     {
       label: "新建工单",
       iconName: "orderAdd",
+      icon: "＋",
       tone: "green",
       desc: "创建服务需求",
       route: "tasks",
@@ -244,6 +248,7 @@ export const mockDashboard: Dashboard = {
     {
       label: "新建签约",
       iconName: "proposal",
+      icon: "📋",
       tone: "orange",
       desc: "创建报价方案",
       toast: "新建方案演示中",
@@ -251,6 +256,7 @@ export const mockDashboard: Dashboard = {
     {
       label: "回款登记",
       iconName: "wallet",
+      icon: "￥",
       tone: "purple",
       desc: "记录回款信息",
       route: "feedback",
