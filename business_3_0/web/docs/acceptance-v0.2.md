@@ -23,7 +23,7 @@
 - 环境拓扑：`code/app/business/docs/architecture/env-topology.md`（API 根 **`/fsgo/wm/`**；beta host **`https://xlinkbeta.fsgo365.cn`**）。
 - 自动冒烟与账号约定：`code/app/business/docs/api-test-tooling.md`（默认手机号 / 验证码 / 租户；脚本 **`business/scripts/run_api_smoke.sh`**）。
 
-**已执行验证（本轮代理）**：
+**已执行验证（联网环境）**：
 
 1. `code/app/business/scripts/run_api_smoke.sh`：**全部 PASS**（登录、服务工单列表/详情、项目、合同等）。  
 2. `business_3_0/web`：`XLINK_CLOUD_READ_BASE_URL=https://xlinkbeta.fsgo365.cn/fsgo/wm`，用 **`api_client` 登录得到的 `JSESSIONID`** 运行 **`npm run verify:cloud-read`**：**PASS**（`query.do` 返回 `FlipInfo`，`data` 为数组；默认账号下 **非服务** `workOrder` 列表可为空，与 `business_core_beta.json` 走 **serviceAppointment** 主链路不矛盾，见 [13-v0.2-scope.md](../../docs/13-v0.2-scope.md) §8）。
