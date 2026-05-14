@@ -8,6 +8,7 @@
 #   export XLINK_CLOUD_READ_BASE_URL='https://xlinkbeta.fsgo365.cn/fsgo/wm'
 #   export XLINK_CLOUD_READ_JSESSIONID='<python api_client login 后 session_id>'
 #   npm run verify:cloud-read
+# 校验路径：basic/serviceAppointment/querySAWorkflowNode.do（与 business 小程序 `serviceAppointments` SANode 一致）
 set -euo pipefail
 BASE="${XLINK_CLOUD_READ_BASE_URL:?set XLINK_CLOUD_READ_BASE_URL (e.g. https://xlinkbeta.fsgo365.cn/fsgo/wm)}"
 BASE="${BASE%/}"
@@ -27,9 +28,10 @@ if [[ -n "${JSESS}" ]]; then
   AUTH_HEADERS+=(-H "Cookie: JSESSIONID=${JSESS}")
 fi
 
-body_list='page=1&rows=5&sortField=createTime&sortOrder=desc&in%3Astate%7Cinteger%23and=1'
-echo "== POST ${BASE}/basic/workOrder/query.do =="
-code=$(curl -sS -o /tmp/xlink-wolist.json -w "%{http_code}" -X POST "${BASE}/basic/workOrder/query.do" \
+# 与 business 小程序 `serviceAppointments.vue` SANode 列表一致（非 cloud_ui `workOrder/query`）
+body_list='page=1&rows=5&sortField=updateTime&sortOrder=desc&orderState=all&is%3Astate%7Cinteger%23and=1'
+echo "== POST ${BASE}/basic/serviceAppointment/querySAWorkflowNode.do =="
+code=$(curl -sS -o /tmp/xlink-wolist.json -w "%{http_code}" -X POST "${BASE}/basic/serviceAppointment/querySAWorkflowNode.do" \
   -H 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
   "${AUTH_HEADERS[@]}" \
   --data-binary "${body_list}")
@@ -52,13 +54,13 @@ if command -v jq >/dev/null 2>&1; then
   if [[ "${len}" -lt 1 ]]; then
     echo "WARN: empty list (auth ok but no rows); still considered HTTP contract OK"
   fi
-  first_id=$(jq -r '.data[0]._id // .data[0].id // empty' /tmp/xlink-wolist.json)
+  first_id=$(jq -r '.data[0].data._id // .data[0]._id // .data[0].id // empty' /tmp/xlink-wolist.json)
   if [[ -n "${first_id}" && "${first_id}" != "null" ]]; then
-    echo "== POST ${BASE}/basic/workOrder/findById.do id=${first_id} =="
-    code2=$(curl -sS -o /tmp/xlink-woid.json -w "%{http_code}" -X POST "${BASE}/basic/workOrder/findById.do" \
+    echo "== POST ${BASE}/basic/serviceAppointment/queryById/${first_id}.do type=query =="
+    code2=$(curl -sS -o /tmp/xlink-woid.json -w "%{http_code}" -X POST "${BASE}/basic/serviceAppointment/queryById/${first_id}.do" \
       -H 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
       "${AUTH_HEADERS[@]}" \
-      --data-urlencode "id=${first_id}")
+      --data-urlencode "type=query")
     echo "HTTP ${code2}"
     st=$(jq -r '.status // empty' /tmp/xlink-woid.json)
     echo "ReturnStatus.status=${st}"

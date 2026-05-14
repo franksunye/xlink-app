@@ -18,6 +18,8 @@
 
 ### A0 — Beta（business / `fsgo/wm`）契约（已在本机用默认测试账号跑通）
 
+> **日常获取 `JSESSIONID` 填 Vercel / `.env.local`**：见 [xlink-cloud-read-jsessionid.md](./xlink-cloud-read-jsessionid.md)（脚本一键、浏览器、可选 shell 函数）。
+
 前置知识（`code/app/business` 仓库，与 `xlink-app` 同工作区时常为兄弟目录）：
 
 - 环境拓扑：`code/app/business/docs/architecture/env-topology.md`（API 根 **`/fsgo/wm/`**；beta host **`https://xlinkbeta.fsgo365.cn`**）。
@@ -26,7 +28,7 @@
 **已执行验证（联网环境）**：
 
 1. `code/app/business/scripts/run_api_smoke.sh`：**全部 PASS**（登录、服务工单列表/详情、项目、合同等）。  
-2. `business_3_0/web`：`XLINK_CLOUD_READ_BASE_URL=https://xlinkbeta.fsgo365.cn/fsgo/wm`，用 **`api_client` 登录得到的 `JSESSIONID`** 运行 **`npm run verify:cloud-read`**：**PASS**（`query.do` 返回 `FlipInfo`，`data` 为数组；默认账号下 **非服务** `workOrder` 列表可为空，与 `business_core_beta.json` 走 **serviceAppointment** 主链路不矛盾，见 [13-v0.2-scope.md](../../docs/13-v0.2-scope.md) §8）。
+2. `business_3_0/web`：`XLINK_CLOUD_READ_BASE_URL=https://xlinkbeta.fsgo365.cn/fsgo/wm`，用 **`api_client` 登录得到的 `JSESSIONID`** 运行 **`npm run verify:cloud-read`**：**PASS**（`querySAWorkflowNode.do` 返回 `FlipInfo`，`data` 为数组；与小程序 **SANode** 主链路一致，见 [13-v0.2-scope.md](../../docs/13-v0.2-scope.md) §3.1）。
 
 获取 `JSESSIONID` 示例（需在 `code/app/business` 已创建 `.venv-api-tools`）：
 
@@ -54,12 +56,12 @@ export XLINK_CLOUD_READ_AUTH_TOKEN='<上一步的 token>'
 npm run verify:cloud-read
 ```
 
-3. 期望终端输出 **`PASS`**，且 `query.do` 返回 JSON 根级 **`data` 为数组**；若列表非空，脚本会继续请求 **`findById.do`** 且 `status===1`。
+3. 期望终端输出 **`PASS`**，且 `querySAWorkflowNode.do` 返回 JSON 根级 **`data` 为数组**；若列表非空，脚本会继续请求 **`queryById/{id}.do`**（`type=query`）且 `status===1`。
 
 ### A2 — 经本 Web BFF（端到端）
 
 1. 对运行 `next dev` / 部署实例配置：`USE_CLOUD_READ=1`、`XLINK_CLOUD_READ_BASE_URL`（beta 用 **`https://xlinkbeta.fsgo365.cn/fsgo/wm`**）、以及 **`XLINK_CLOUD_READ_JSESSIONID`** 或 **`XLINK_CLOUD_READ_AUTH_TOKEN`**（或在浏览器写入 `localStorage` 见 [README](../README.md)）。  
 2. Mock 登录后打开 `/work-orders`，在 Network 中查看 **`GET /api/work-orders`**：响应头 **`X-Xlink-Read-Source: cloud`**（列表可为空）。  
-3. 若有 **非服务** `workOrder` 数据，点进详情同上 **`cloud`** 且 **「流程节点」** 区与 `findById` 映射一致。
+3. 若有 **服务预约** 数据，点进详情同上 **`cloud`** 且 **「流程节点」** 区与 **`queryById` + `workflowNode`** 映射一致。
 
 验收通过：**档位 B** 全过；**档位 A** 在目标环境上 **A0 或 A1 + A2** 按所用栈勾选通过。

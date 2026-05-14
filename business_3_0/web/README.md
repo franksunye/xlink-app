@@ -10,7 +10,7 @@
 4. **项目内约定**：根目录已放 **`vercel.json`**（`framework: nextjs`）；环境变量清单见 **`.env.example`**。
 5. **cloud 读默认走 beta（Vercel 运行时）**：当 **`VERCEL=1`** 且未设置 **`XLINK_CLOUD_VERCEL_DEFAULTS=0`** 时，若未显式配置 `USE_CLOUD_READ` / `XLINK_CLOUD_READ_BASE_URL`，则 **自动** `USE_CLOUD_READ` 视为开启、`XLINK_CLOUD_READ_BASE_URL` 为 **`https://xlinkbeta.fsgo365.cn/fsgo/wm`**（与 `code/app/business` 小程序栈一致）。覆盖方式：在 Vercel 环境变量中显式设置上述键，或设置 `XLINK_CLOUD_VERCEL_DEFAULTS=0` 恢复为纯 Mock（直至你自行配置其它 Base）。
 6. **环境变量（可选）**：`NEXT_PUBLIC_SITE_URL` = 生产或预览站点的 **https** 基 URL（用于 OG `metadataBase`；勿提交密钥）。
-7. **cloud 鉴权（敏感，仅 Dashboard / CLI）**：在 Vercel 为 **Production** 与 **Preview** 配置 **`XLINK_CLOUD_READ_JSESSIONID`** 和/或 **`XLINK_CLOUD_READ_AUTH_TOKEN`**（含义见下；勿写入仓库）。浏览器联调可写 `localStorage['xlink_cloud_read_jsession']` / `['xlink_cloud_read_token']`（`fetchJson` 会转发到 BFF）。未配置会话时 BFF 仍会 **降级 Mock**（`X-Xlink-Read-Source: mock-fallback`）。
+7. **cloud 鉴权（敏感，仅 Dashboard / CLI）**：在 Vercel 为 **Production** 与 **Preview** 配置 **`XLINK_CLOUD_READ_JSESSIONID`** 和/或 **`XLINK_CLOUD_READ_AUTH_TOKEN`**（含义见下；勿写入仓库）。**如何快速获取并轮换 `JSESSIONID`**：见 [docs/xlink-cloud-read-jsessionid.md](./docs/xlink-cloud-read-jsessionid.md)。浏览器联调可写 `localStorage['xlink_cloud_read_jsession']` / `['xlink_cloud_read_token']`（`fetchJson` 会转发到 BFF）。未配置会话时 BFF 仍会 **降级 Mock**（`X-Xlink-Read-Source: mock-fallback`）。
 
 **快速写入非敏感变量（CLI 示例）**：
 
@@ -25,7 +25,7 @@ echo "1" | vercel env add USE_CLOUD_READ preview
 # vercel env add XLINK_CLOUD_READ_JSESSIONID production
 ```
 
-**cloud 只读变量说明（与 v0.2 一致）**：`USE_CLOUD_READ`；`XLINK_CLOUD_READ_BASE_URL`（`cloud_ui` 用 `…/api`，**beta / business** 用 `https://xlinkbeta.fsgo365.cn/fsgo/wm`）；`XLINK_CLOUD_READ_JSESSIONID`（`index/phoneLogin.do` 的 `data.token`）；`XLINK_CLOUD_READ_AUTH_TOKEN`（`cloud_ui` 的 `X-Auth-Token`）。获取 JSESSIONID 见 `code/app/business/docs/api-test-tooling.md`。本地契约脚本：`npm run verify:cloud-read`。
+**cloud 只读变量说明（与 v0.2 一致）**：`USE_CLOUD_READ`；`XLINK_CLOUD_READ_BASE_URL`（`cloud_ui` 管理后台用 `…/api`；**beta / business 管家**用 `https://xlinkbeta.fsgo365.cn/fsgo/wm`）；`XLINK_CLOUD_READ_JSESSIONID`（`index/phoneLogin.do` 的 `data.token`）；`XLINK_CLOUD_READ_AUTH_TOKEN`（仅 `cloud_ui` 栈的 `X-Auth-Token`）。**列表/详情接口真源**：与 **business** `serviceAppointments`（SANode）一致，而非 cloud_ui `WorkOrders`。**获取 / 轮换 `JSESSIONID`（常用）**：[docs/xlink-cloud-read-jsessionid.md](./docs/xlink-cloud-read-jsessionid.md)；账号与工具链细节：`code/app/business/docs/api-test-tooling.md`。本地契约脚本：`npm run verify:cloud-read`。
 
 **基 URL（当前）**
 
@@ -62,6 +62,17 @@ cd business_3_0/web
 npm install
 npm run dev
 ```
+
+**带 beta cloud 只读（自动 `api_client` 登录并注入 `JSESSIONID`，适合闭环调 BFF）**：
+
+```bash
+cd business_3_0/web
+npm run dev:cloud
+# 换端口：npm run dev:cloud -- -p 3001
+# business 不在默认路径时：export XLINK_BUSINESS_ROOT=/path/to/code/app/business && npm run dev:cloud
+```
+
+实现见 `scripts/dev-with-cloud-read.sh`；与 [docs/xlink-cloud-read-jsessionid.md](./docs/xlink-cloud-read-jsessionid.md) 同源约定。
 
 浏览器打开 <http://localhost:3000>。
 

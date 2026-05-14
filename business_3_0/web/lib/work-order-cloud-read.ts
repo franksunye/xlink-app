@@ -36,8 +36,12 @@ function cloudReadBaseUrl(): string | null {
 
 /**
  * Base URL 须与目标前端一致，例如：
- * - cloud_ui 本地：`http://host:8070/api`
- * - business / beta：`https://xlinkbeta.fsgo365.cn/fsgo/wm`（见 `code/app/business/docs/architecture/env-topology.md`）
+ * - cloud_ui 管理后台：`http://host:8070/api`（与管家小程序接口族不同）
+ * - business / beta 小程序：`https://xlinkbeta.fsgo365.cn/fsgo/wm`（见 `code/app/business/docs/architecture/env-topology.md`）
+ *
+ * **列表 / 详情**与小程序 `pages/serviceAppointment/serviceAppointments.vue` 一致：
+ * - 列表：`POST basic/serviceAppointment/querySAWorkflowNode.do`（`type === 'SANode'` 时的 `getData` 参数）
+ * - 详情：`POST basic/serviceAppointment/queryById/{id}.do` + `type=query`
  */
 export function isCloudReadConfigured(): boolean {
   return cloudReadEnabledFromEnv() && Boolean(cloudReadBaseUrl());
@@ -120,19 +124,40 @@ function defaultContext(): WorkOrder["context"] {
   };
 }
 
-/** 将 cloud `WorkOrder` JSON 映射为 BFF `WorkOrder`（缺省 UI 字段用占位补齐） */
-export function mapCloudRowToWorkOrder(
-  row: Record<string, unknown>,
+/**
+ * 将 `serviceAppointment` 主档（及可选 `workflowNode`）映射为 BFF `WorkOrder`。
+ * 列表项外层为工作流节点、内层 `data` 为预约主档（与小程序 `serviceAppointments.vue` 一致）。
+ */
+export function mapServiceAppointmentRecordToWorkOrder(
+  sa: Record<string, unknown>,
   extras?: { workflowNodes?: unknown }
 ): WorkOrder {
-  const id = pickId(row);
-  const title = typeof row.title === "string" ? row.title : "工单";
-  const name = typeof row.name === "string" ? row.name : "—";
-  const status = typeof row.status === "string" ? row.status : "";
-  const stage = typeof row.stage === "string" ? row.stage : "";
+  const id = pickId(sa);
+  const title = typeof sa.title === "string" ? sa.title : "工单";
+  const name = typeof sa.name === "string" ? sa.name : "—";
+  const status =
+    typeof sa.status === "string" ? sa.status : sa.status != null ? String(sa.status) : "";
+  const stage = typeof sa.stage === "string" ? sa.stage : "";
   const statusText = stage || status || "进行中";
-  const priority = typeof row.priority === "string" ? row.priority : "普通";
-  const code = typeof row.code === "string" ? row.code : id;
+  const priority = typeof sa.priority === "string" ? sa.priority : "普通";
+  const orderNum =
+    typeof sa.orderNum === "string"
+      ? sa.orderNum
+      : typeof sa.code === "string"
+        ? sa.code
+        : "";
+  const code = orderNum || id;
+
+  const exts = sa.exts && typeof sa.exts === "object" ? (sa.exts as Record<string, unknown>) : null;
+  let part = "屋顶";
+  if (exts?.leakagesite_copy && Array.isArray(exts.leakagesite_copy) && exts.leakagesite_copy.length > 0) {
+    const first = exts.leakagesite_copy[0];
+    if (typeof first === "string" && first.trim()) part = first.trim();
+  }
+  let distanceStr = "—";
+  if (exts?.distance != null && String(exts.distance).trim() !== "") {
+    distanceStr = `${exts.distance} km`;
+  }
 
   const readonlyWorkflowNodes =
     mapWorkflowNodes(extras?.workflowNodes) ??
@@ -140,21 +165,21 @@ export function mapCloudRowToWorkOrder(
 
   return {
     id: id || code,
-    part: "屋顶",
+    part,
     customerNo: code,
     taskType: title,
     title,
     customer: name,
-    project: typeof row.community === "string" ? row.community : "—",
+    project: typeof sa.community === "string" ? sa.community : "—",
     status,
     statusText,
     priority,
     assignee: "—",
     appointment: "待定",
     timeText: "—",
-    address: joinAddress(row),
-    distance: "—",
-    group: "following",
+    address: joinAddress(sa),
+    distance: distanceStr,
+    group: mapServiceAppointmentStatusToGroup(status),
     icon: "▦",
     tone: "blue",
     tags: [{ text: statusText, tone: "blue" }],
@@ -162,6 +187,37 @@ export function mapCloudRowToWorkOrder(
     activities: [],
     readonlyWorkflowNodes,
   };
+}
+
+/** 非服务 `workOrder` 主档（旧路径）；仅保留给可能的扩展，当前列表已走 `serviceAppointment`。 */
+export function mapCloudRowToWorkOrder(
+  row: Record<string, unknown>,
+  extras?: { workflowNodes?: unknown }
+): WorkOrder {
+  return mapServiceAppointmentRecordToWorkOrder(row, extras);
+}
+
+/** 小程序菜单 URL 中 `status` 与管家 Tab 粗对齐（`change-role-menu-tree` / `serviceAppointments`）；未命中归「待跟进」 */
+function mapServiceAppointmentStatusToGroup(statusRaw: string): WorkOrder["group"] {
+  const head = statusRaw.split(/,/)[0]?.trim() ?? "";
+  switch (head) {
+    case "103":
+      return "to_accept";
+    case "104":
+      return "need_contact";
+    case "105":
+    case "203":
+      return "onsite";
+    default:
+      return "following";
+  }
+}
+
+/** 将 `querySAWorkflowNode` Flip 行（含 `data` 预约档）映射为 `WorkOrder` */
+function mapSaWorkflowFlipRowToWorkOrder(raw: Record<string, unknown>): WorkOrder | null {
+  const inner = raw.data;
+  if (!inner || typeof inner !== "object") return null;
+  return mapServiceAppointmentRecordToWorkOrder(inner as Record<string, unknown>);
 }
 
 function authTokenForCloud(forwardedToken: string | null | undefined): string | null {
@@ -207,14 +263,18 @@ async function fetchCloudForm(
   return { ok: res.ok, json };
 }
 
-/** 与 cloud_ui `WorkOrders.vue` getSA 一致的最小查询参数（仅读列表） */
-function workOrderQueryBody(): URLSearchParams {
+/**
+ * 与小程序 `serviceAppointments.vue` `getData` 在 `queryType == 'SANode'` 时一致的最小查询体。
+ * `orderState=all` 覆盖「全部」类菜单；与 `tmp/api_samples/workorder-list.json` 分页链一致。
+ */
+function serviceAppointmentSanodeListBody(): URLSearchParams {
   const p = new URLSearchParams();
   p.set("page", "1");
   p.set("rows", "50");
-  p.set("sortField", "createTime");
+  p.set("sortField", "updateTime");
   p.set("sortOrder", "desc");
-  p.set("in:state|integer#and", "1");
+  p.set("orderState", "all");
+  p.set("is:state|integer#and", "1");
   return p;
 }
 
@@ -226,8 +286,8 @@ export async function cloudFetchWorkOrders(
 ): Promise<WorkOrder[] | null> {
   if (!isCloudReadConfigured()) return null;
   const { ok, json } = await fetchCloudForm(
-    "basic/workOrder/query.do",
-    workOrderQueryBody(),
+    "basic/serviceAppointment/querySAWorkflowNode.do",
+    serviceAppointmentSanodeListBody(),
     cookie,
     forwardedAuthToken ?? null,
     forwardedJSessionId ?? null
@@ -238,13 +298,14 @@ export async function cloudFetchWorkOrders(
   const out: WorkOrder[] = [];
   for (const item of data) {
     if (item && typeof item === "object") {
-      out.push(mapCloudRowToWorkOrder(item as Record<string, unknown>));
+      const mapped = mapSaWorkflowFlipRowToWorkOrder(item as Record<string, unknown>);
+      if (mapped) out.push(mapped);
     }
   }
   return out;
 }
 
-/** findById：合并 workOrder + workflowNode 列表 */
+/** 详情：与小程序 `getSAById` 一致 `queryById/{id}` + `type=query`；失败时回退旧 `workOrder/findById`（仅兼容） */
 export async function cloudFetchWorkOrderById(
   id: string,
   cookie: string | null,
@@ -252,24 +313,47 @@ export async function cloudFetchWorkOrderById(
   forwardedJSessionId?: string | null
 ): Promise<WorkOrder | null> {
   if (!isCloudReadConfigured()) return null;
+  const saBody = new URLSearchParams();
+  saBody.set("type", "query");
+  const saPath = `basic/serviceAppointment/queryById/${encodeURIComponent(id)}.do`;
+  const { ok, json } = await fetchCloudForm(
+    saPath,
+    saBody,
+    cookie,
+    forwardedAuthToken ?? null,
+    forwardedJSessionId ?? null
+  );
+  if (ok && json && typeof json === "object") {
+    const rs = json as ReturnStatusLike;
+    if (rs.status === 1 && rs.data && typeof rs.data === "object") {
+      const d = rs.data as Record<string, unknown>;
+      const sa = d.serviceAppointment;
+      if (sa && typeof sa === "object") {
+        return mapServiceAppointmentRecordToWorkOrder(sa as Record<string, unknown>, {
+          workflowNodes: d.workflowNode,
+        });
+      }
+    }
+  }
+
   const body = new URLSearchParams();
   body.set("id", id);
-  const { ok, json } = await fetchCloudForm(
+  const legacy = await fetchCloudForm(
     "basic/workOrder/findById.do",
     body,
     cookie,
     forwardedAuthToken ?? null,
     forwardedJSessionId ?? null
   );
-  if (!ok || !json || typeof json !== "object") return null;
-  const rs = json as ReturnStatusLike;
-  if (rs.status !== 1) return null;
-  const data = rs.data;
-  if (!data || typeof data !== "object") return null;
-  const d = data as Record<string, unknown>;
-  const wo = d.workOrder;
+  if (!legacy.ok || !legacy.json || typeof legacy.json !== "object") return null;
+  const rs2 = legacy.json as ReturnStatusLike;
+  if (rs2.status !== 1) return null;
+  const data2 = rs2.data;
+  if (!data2 || typeof data2 !== "object") return null;
+  const d2 = data2 as Record<string, unknown>;
+  const wo = d2.workOrder;
   if (!wo || typeof wo !== "object") return null;
-  return mapCloudRowToWorkOrder(wo as Record<string, unknown>, {
-    workflowNodes: d.workflowNode,
+  return mapServiceAppointmentRecordToWorkOrder(wo as Record<string, unknown>, {
+    workflowNodes: d2.workflowNode,
   });
 }
