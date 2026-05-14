@@ -142,7 +142,7 @@ export type WorkOrder = {
   orderInfoTitle?: string;
   orderInfo?: { label: string; value: string }[] | null;
   materials?: { title: string; desc: string; tone: string }[];
-  /** 服务预约列表；缺省时仍可仅用顶层 appointment/timeText */
+  /** 服务预约列表（BFF/Mock 真源之一）；缺省时仍可仅用顶层 appointment/timeText。v0.1 详情页可不展示独立区块。 */
   appointments?: ServiceAppointment[];
 };
 

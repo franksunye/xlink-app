@@ -47,7 +47,7 @@
 ### 任务（工单）
 
 - **列表页**：`/work-orders`；支持概念版 mock 中的 `group` / `filter`（如 `need_contact`、`to_accept`、`onsite`、`following`），与首页 `entries`、`taskOverview` 跳转对齐。  
-- **详情页**：`/work-orders/[id]`；展示摘要、`context`、`followRecords`、服务预约等块（概念版 `getWorkOrder` 数据结构；Web 不单独展示概念版 `timeline` 列表）。
+- **详情页**：`/work-orders/[id]`；展示摘要、`context`、`followRecords` 等块（概念版 `getWorkOrder` 数据结构）。BFF 可含 `appointments[]`；**v0.1 Web 不在此页单独展示服务预约列表**，主预约信息通过摘要区 `timeText` / 任务上下文等与顶层字段一致。
 - **与现网一致项（语义）**：工单标识、客户、地址、状态类信息、跟进记录的业务含义应对齐 `business` 服务工单；**展示分块可与概念版一致**，字段名在 BFF/Adapter 层映射。
 
 ### 项目

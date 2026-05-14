@@ -4,12 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-  primaryAppointment,
-  type FollowRecord,
-  type ServiceAppointment,
-  type WorkOrder,
-} from "@/lib/mock-data";
+import { type FollowRecord, type WorkOrder } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson } from "@/lib/fetch-json";
 import {
@@ -193,10 +188,6 @@ export default function WorkOrderDetailPage() {
         </button>
       </section>
 
-      {w.appointments && w.appointments.length > 0 ? (
-        <AppointmentsSection appointments={w.appointments} primaryId={primaryAppointment(w)?.id} tone={tone} />
-      ) : null}
-
       <section className="overflow-hidden rounded-2xl border border-[#e4e9f1] bg-white shadow-[0_10px_34px_rgba(22,40,72,0.07)]">
         <div className="flex overflow-x-auto border-b border-[#edf1f6]">
           {TABS.map((t) => (
@@ -293,80 +284,6 @@ function RecordRow({ r }: { r: FollowRecord }) {
         </p>
       </div>
     </li>
-  );
-}
-
-const APPOINTMENT_STATUS_LABEL: Record<string, string> = {
-  pending_contact: "待联系",
-  completed: "已完成",
-  scheduled: "已预约",
-  pending_sign: "待签约",
-};
-
-function appointmentStatusLabel(status: string) {
-  return APPOINTMENT_STATUS_LABEL[status] ?? status;
-}
-
-function AppointmentsSection({
-  appointments,
-  primaryId,
-  tone,
-}: {
-  appointments: ServiceAppointment[];
-  primaryId: string | undefined;
-  tone: string;
-}) {
-  const sorted = [...appointments].sort(
-    (a, b) => (a.sequence ?? 999) - (b.sequence ?? 999)
-  );
-  return (
-    <section className="rounded-2xl border border-[#e4e9f1] bg-white p-4 shadow-[0_10px_34px_rgba(22,40,72,0.07)]">
-      <div className="flex items-center justify-between gap-2">
-        <span className={`text-xs font-black ${sectionEyebrowClass(tone)}`}>服务预约</span>
-        <span className="text-xs font-black text-[#778191]">{sorted.length} 条</span>
-      </div>
-      <ul className="mt-3 space-y-2">
-        {sorted.map((a) => {
-          const isPrimary = a.id === primaryId;
-          return (
-            <li
-              key={a.id}
-              className={`rounded-xl border px-3 py-2.5 ${
-                isPrimary
-                  ? tone === "orange"
-                    ? "border-[#ffd9ad] bg-[#fffaf4]"
-                    : tone === "red"
-                      ? "border-[#ffd1d7] bg-[#fff8f9]"
-                      : tone === "purple"
-                        ? "border-[#dccfff] bg-[#fbf8ff]"
-                        : tone === "green"
-                          ? "border-[#ccefdc] bg-[#f7fffa]"
-                          : "border-[#cfe3ff] bg-[#fbfdff]"
-                  : "border-[#edf1f6] bg-[#fbfcfe]"
-              }`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-black text-[#101827]">
-                  {a.windowText}
-                  {isPrimary ? (
-                    <span className="ml-1.5 rounded bg-[#e8f2ff] px-1 py-0.5 text-[10px] font-black text-[#1478ff]">
-                      当前
-                    </span>
-                  ) : null}
-                </p>
-                <span className="shrink-0 rounded-md bg-[#f3f5f7] px-1.5 py-0.5 text-[10px] font-black text-[#475569]">
-                  {appointmentStatusLabel(a.status)}
-                </span>
-              </div>
-              <p className="mt-1 text-xs text-[#687386]">
-                👷 {a.assignee}
-                {a.address ? ` · ${a.address}` : ""}
-              </p>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
   );
 }
 
