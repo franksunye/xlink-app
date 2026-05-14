@@ -4,6 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
+| 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.8：服务产品（工艺+人材机）与报价分层，对照 FSL Work Type / Price Book。 |
 | 2026-05-14 | web | `FollowRecord`→`WorkOrderActivity`，`followRecords`→`activities`（Mock、BFF JSON、详情页）；文档 04/09/12/flows 同步。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md)：文首「奠基期原则」— 底层实体简洁、扩展后置；§1.3/§5/§6.1 与之一致。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §1.3：WorkOrderActivity 与 Task/Event 通表持久化取向、与 ServiceAppointment 分表原则。 |
