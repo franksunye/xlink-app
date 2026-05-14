@@ -74,7 +74,7 @@ export type Dashboard = {
   todayResult: { amount: string; orders: number };
 };
 
-export type FollowRecord = {
+export type WorkOrderActivity = {
   id: string;
   title: string;
   content: string;
@@ -136,7 +136,8 @@ export type WorkOrder = {
     contextTitle: string;
     contextDesc: string;
   };
-  followRecords: FollowRecord[];
+  /** 工单时间序活动（沟通、上门、系统记录等）；API 字段名 `activities` */
+  activities: WorkOrderActivity[];
   /** 概念版列表「工单附近客户」计数 */
   nearbyCustomers?: number;
   customerInfo?: { label: string; value: string }[];
@@ -360,7 +361,7 @@ const mockWorkOrdersSeed: WorkOrder[] = [
       contextTitle: "暂无预约时间",
       contextDesc: "请与客户沟通上门时间，完成首次预约",
     },
-    followRecords: [
+    activities: [
       {
         id: "R-1001",
         title: "电话联系",
@@ -451,7 +452,7 @@ const mockWorkOrdersSeed: WorkOrder[] = [
       contextTitle: "已预约时间",
       contextDesc: "2026-04-14（周二）14:00-16:00",
     },
-    followRecords: [
+    activities: [
       {
         id: "R-2001",
         title: "预约已确认",
@@ -564,7 +565,7 @@ const mockWorkOrdersSeed: WorkOrder[] = [
       contextTitle: "方案与报价",
       contextDesc: "合同金额：￥9,960；方案版本：V2（厨房防水 + 阳台防水）",
     },
-    followRecords: [
+    activities: [
       {
         id: "R-3001",
         title: "已上门",
@@ -669,7 +670,7 @@ const mockWorkOrdersSeed: WorkOrder[] = [
       contextTitle: "报价已确认",
       contextDesc: "订单金额：￥6,800；施工范围：卫生间防水维修",
     },
-    followRecords: [
+    activities: [
       {
         id: "R-4001",
         title: "报价确认",

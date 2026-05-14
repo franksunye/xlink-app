@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { type FollowRecord, type WorkOrder } from "@/lib/mock-data";
+import { type WorkOrder, type WorkOrderActivity } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson } from "@/lib/fetch-json";
 import {
@@ -207,7 +207,7 @@ export default function WorkOrderDetailPage() {
           ))}
         </div>
         <div className="p-3">
-          {tab === "records" ? <RecordList records={w.followRecords} /> : null}
+          {tab === "records" ? <RecordList activities={w.activities} /> : null}
           {tab === "customer" ? <CustomerRows w={w} /> : null}
           {tab === "order" ? (
             w.orderInfo && w.orderInfo.length > 0 ? (
@@ -229,14 +229,14 @@ export default function WorkOrderDetailPage() {
   );
 }
 
-function RecordList({ records }: { records: FollowRecord[] }) {
-  if (records.length === 0) {
+function RecordList({ activities }: { activities: WorkOrderActivity[] }) {
+  if (activities.length === 0) {
     return <p className="py-6 text-center text-sm text-[#8d95a5]">暂无跟进记录</p>;
   }
 
   return (
     <ul className="space-y-0">
-      {records.map((r) => (
+      {activities.map((r) => (
         <RecordRow key={r.id} r={r} />
       ))}
     </ul>
@@ -252,7 +252,7 @@ function recordDotClass(tone: string) {
   return "bg-[#1478ff]";
 }
 
-function RecordRow({ r }: { r: FollowRecord }) {
+function RecordRow({ r }: { r: WorkOrderActivity }) {
   const badgeTone =
     r.tone === "orange"
       ? "bg-[#fff0dc] text-[#ff8a1a]"

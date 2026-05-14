@@ -16,7 +16,7 @@
 
 1. **工作台** `/`：`getDashboard` — 指标、`entries` / `taskOverview` 带 `filter` 跳转列表。  
 2. **任务列表** `/work-orders`：`getWorkOrders` — 支持按 `group` / `filter` 筛选（与 mock 中 `need_contact`、`to_accept` 等一致）。  
-3. **任务详情** `/work-orders/[id]`：`getWorkOrder(id)` — 客户信息、`context`（主副行动）、`followRecords`；响应可含结构化 `appointments[]`（主预约映射到顶层 `appointment`/`timeText` 等）。**v0.1 Web 详情不渲染独立「服务预约」区块**；概念版 `timeline` 字符串列表亦不在 Web 展示。
+3. **任务详情** `/work-orders/[id]`：`getWorkOrder(id)` — 客户信息、`context`（主副行动）、`activities`（`WorkOrderActivity[]`）；响应可含结构化 `appointments[]`（主预约映射到顶层 `appointment`/`timeText` 等）。**v0.1 Web 详情不渲染独立「服务预约」区块**；概念版 `timeline` 字符串列表亦不在 Web 展示。
 
 ## 与现网一致的状态 / 字段（对齐方向）
 
