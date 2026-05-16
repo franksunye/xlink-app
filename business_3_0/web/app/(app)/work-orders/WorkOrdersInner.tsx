@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -87,6 +87,18 @@ export function WorkOrdersInner() {
   }
 
   const showFullSkeleton = isInitialQueryLoad(q.isPending, q.data);
+  const listRefreshing = q.isFetching && q.isPlaceholderData;
+  const [listFadeClass, setListFadeClass] = useState("");
+  const lastSettledAt = useRef(q.dataUpdatedAt);
+
+  useEffect(() => {
+    if (listRefreshing) return;
+    if (q.dataUpdatedAt === lastSettledAt.current) return;
+    lastSettledAt.current = q.dataUpdatedAt;
+    setListFadeClass("wo-list-fade-in");
+    const t = window.setTimeout(() => setListFadeClass(""), 240);
+    return () => window.clearTimeout(t);
+  }, [listRefreshing, q.dataUpdatedAt]);
 
   if (showFullSkeleton) {
     return (
@@ -108,7 +120,6 @@ export function WorkOrdersInner() {
   }
 
   const tabs = q.data.tabs;
-  const listRefreshing = q.isFetching && q.isPlaceholderData;
 
   return (
     <div className="px-3.5 pb-4 pt-4">
@@ -144,43 +155,109 @@ export function WorkOrdersInner() {
         </button>
       </div>
 
-      <div className="mt-4 -mx-1 overflow-x-auto border-b border-[#e6edf6] pb-0">
-        <div className="flex min-w-max justify-between gap-1 px-1">
-          {tabs.map((t) => {
-            const active = t.key === activeTab;
-            return (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setTab(t.key as FilterTabKey)}
-                className={`relative flex shrink-0 items-center justify-center gap-1 px-2 py-2 text-sm font-extrabold ${
-                  active ? "text-[#1478ff]" : "text-[#64748b]"
-                }`}
-              >
-                <span>{t.label}</span>
-                <span className="tabular-nums">{t.count}</span>
-                {active ? (
-                  <span className="absolute bottom-0 left-2 right-2 h-1 rounded-full bg-[#1478ff]" />
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <FilterTabBar tabs={tabs} activeTab={activeTab} onTab={setTab} />
 
-      <ul
-        className={`mt-5 flex flex-col gap-4 transition-opacity duration-150 ${listRefreshing ? "opacity-55" : ""}`}
-        aria-busy={listRefreshing}
-      >
-        {visible.length === 0 ? (
-          <li className="rounded-[14px] border border-[#e8edf4] bg-white p-6 text-center shadow-[0_12px_28px_rgba(22,40,72,0.06)]">
-            <p className="text-sm font-black text-[#18253d]">暂无匹配任务</p>
-            <p className="mt-2 text-[13px] leading-snug text-[#7a879b]">换个筛选条件，或者清空搜索再试一次</p>
-          </li>
-        ) : (
-          visible.map((w) => <TaskCard key={w.id} order={w} />)
-        )}
-      </ul>
+      <div className="relative mt-5">
+        <div
+          className={`wo-list-progress ${listRefreshing ? "is-active" : ""}`}
+          aria-hidden={!listRefreshing}
+        >
+          <span className="wo-list-progress-bar" />
+        </div>
+        <ul
+          className={`flex flex-col gap-4 ${listFadeClass} ${listRefreshing ? "wo-list-row-shimmer" : ""}`}
+          aria-busy={listRefreshing}
+          aria-live="polite"
+        >
+          {visible.length === 0 ? (
+            <li className="rounded-[14px] border border-[#e8edf4] bg-white p-6 text-center shadow-[0_12px_28px_rgba(22,40,72,0.06)]">
+              <p className="text-sm font-semibold text-[#18253d]">暂无匹配任务</p>
+              <p className="mt-2 text-[13px] leading-snug text-[#7a879b]">换个筛选条件，或者清空搜索再试一次</p>
+            </li>
+          ) : (
+            visible.map((w) => <TaskCard key={w.id} order={w} />)
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+type FilterTab = { key: string; label: string; count: number };
+
+function FilterTabBar({
+  tabs,
+  activeTab,
+  onTab,
+}: {
+  tabs: FilterTab[];
+  activeTab: FilterTabKey;
+  onTab: (key: FilterTabKey) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef(new Map<string, HTMLButtonElement>());
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  const syncIndicator = useCallback(() => {
+    const btn = tabRefs.current.get(activeTab);
+    const container = containerRef.current;
+    if (!btn || !container) return;
+    const containerRect = container.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    setIndicator({
+      left: btnRect.left - containerRect.left,
+      width: btnRect.width,
+    });
+  }, [activeTab]);
+
+  useLayoutEffect(() => {
+    syncIndicator();
+  }, [syncIndicator, tabs]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const ro = new ResizeObserver(() => syncIndicator());
+    ro.observe(container);
+    return () => ro.disconnect();
+  }, [syncIndicator]);
+
+  return (
+    <div className="mt-4 -mx-1 overflow-x-auto border-b border-[#e6edf6] pb-0">
+      <div ref={containerRef} className="wo-filter-tabs flex min-w-max justify-between gap-1 px-1">
+        {tabs.map((t) => {
+          const active = t.key === activeTab;
+          return (
+            <button
+              key={t.key}
+              ref={(el) => {
+                if (el) tabRefs.current.set(t.key, el);
+                else tabRefs.current.delete(t.key);
+              }}
+              type="button"
+              onClick={() => onTab(t.key as FilterTabKey)}
+              className={`relative flex shrink-0 items-center justify-center gap-1 px-2 py-2 text-sm transition-colors duration-200 ease-out ${
+                active
+                  ? "font-semibold text-[var(--xlink-primary)]"
+                  : "font-medium text-[var(--xlink-tab-inactive)]"
+              }`}
+            >
+              <span>{t.label}</span>
+              <span className="tabular-nums">{t.count}</span>
+            </button>
+          );
+        })}
+        {indicator.width > 0 ? (
+          <span
+            className="wo-filter-tab-indicator"
+            style={{
+              width: indicator.width,
+              transform: `translateX(${indicator.left}px)`,
+            }}
+            aria-hidden
+          />
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -125,3 +125,141 @@ body {
 }
 
 /* 任务列表卡片左侧条由 Tailwind + lib/ui-tones 控制 */
+
+/* 任务列表 — 筛选 Tab / 列表切换（FSL 对齐：克制反馈，见 docs/18-task-list-ux-notes.md） */
+.wo-filter-tabs {
+  position: relative;
+}
+
+.wo-filter-tab-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--xlink-primary);
+  opacity: 0.92;
+  pointer-events: none;
+  transition:
+    transform 200ms ease,
+    width 200ms ease;
+}
+
+.wo-list-progress {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 1.5px;
+  overflow: hidden;
+  border-radius: 9999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.wo-list-progress.is-active {
+  opacity: 0.72;
+}
+
+.wo-list-progress-bar {
+  display: block;
+  height: 100%;
+  width: 28%;
+  border-radius: inherit;
+  background: var(--xlink-primary);
+  opacity: 0.55;
+  transform: translateX(-120%);
+}
+
+.wo-list-progress.is-active .wo-list-progress-bar {
+  animation: wo-list-progress-drift 1.4s ease-in-out infinite;
+}
+
+@keyframes wo-list-fade-in {
+  from {
+    opacity: 0.92;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.wo-list-fade-in {
+  animation: wo-list-fade-in 220ms ease;
+}
+
+@keyframes wo-list-progress-drift {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(380%);
+    opacity: 0.4;
+  }
+}
+
+/* 筛选切换刷新：行级低幅度 shimmer（不改动卡片结构） */
+.wo-list-row-shimmer > li {
+  position: relative;
+}
+
+.wo-list-row-shimmer > li::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 62%
+  );
+  opacity: 0;
+  animation: wo-list-row-shimmer 1.35s ease-in-out infinite;
+}
+
+@keyframes wo-list-row-shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-22%);
+  }
+  50% {
+    opacity: 0.48;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(22%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wo-filter-tabs button {
+    transition: none;
+  }
+
+  .wo-filter-tab-indicator {
+    transition: none;
+  }
+
+  .wo-list-fade-in {
+    animation: none;
+  }
+
+  .wo-list-progress.is-active .wo-list-progress-bar {
+    animation: none;
+    transform: none;
+    width: 100%;
+    opacity: 0.45;
+  }
+
+  .wo-list-row-shimmer > li::after {
+    animation: none;
+    opacity: 0;
+  }
+}
