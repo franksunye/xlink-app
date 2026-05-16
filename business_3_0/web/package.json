@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "extract:area-county": "node scripts/extract-area-county.mjs",
     "verify:cloud-read": "bash scripts/verify-cloud-read.sh"
   },
   "dependencies": {

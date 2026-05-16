@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { loadCodeLabels } from "@/lib/cloud-code-labels";
 import { jsonResponse } from "@/lib/http";
 import { getSessionFromCookies } from "@/lib/session";
 import { getWorkOrderById, withDefaultReadonlyWorkflowNodes } from "@/lib/mock-data";
@@ -29,6 +30,7 @@ export async function GET(
   const headers = new Headers();
 
   if (isCloudReadConfigured()) {
+    await loadCodeLabels(cookie, cloudJSession);
     const cloudOrder = await cloudFetchWorkOrderById(id, cookie, cloudToken, cloudJSession);
     if (cloudOrder) {
       headers.set("X-Xlink-Read-Source", "cloud");

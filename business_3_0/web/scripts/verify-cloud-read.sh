@@ -53,6 +53,28 @@ if command -v jq >/dev/null 2>&1; then
   fi
   if [[ "${len}" -lt 1 ]]; then
     echo "WARN: empty list (auth ok but no rows); still considered HTTP contract OK"
+  else
+    title=$(jq -r '.data[0].data.title // empty' /tmp/xlink-wolist.json)
+    status=$(jq -r '.data[0].data.status // empty' /tmp/xlink-wolist.json)
+    district=$(jq -r '.data[0].data.district // empty' /tmp/xlink-wolist.json)
+    echo "sample row: status=${status} district=${district} title_len=${#title}"
+    if [[ -z "${title}" ]]; then
+      echo "FAIL: expected nested data.title on first row"
+      exit 1
+    fi
+    total=$(jq -r '.total // empty' /tmp/xlink-wolist.json)
+    echo "Flip.total=${total}"
+    if [[ -n "${status}" && "${status}" != "null" ]]; then
+      echo "== filtered list in:status|array#and=${status} (rows=1, expect total) =="
+      filter_body="page=1&rows=1&sortField=updateTime&sortOrder=desc&orderState=all&is%3Astate%7Cinteger%23and=1&in%3Astatus%7Carray%23and=${status}"
+      code_f=$(curl -sS -o /tmp/xlink-wolist-filter.json -w "%{http_code}" -X POST "${BASE}/basic/serviceAppointment/querySAWorkflowNode.do" \
+        -H 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
+        "${AUTH_HEADERS[@]}" \
+        --data-binary "${filter_body}")
+      echo "HTTP ${code_f}"
+      ft=$(jq -r '.total // empty' /tmp/xlink-wolist-filter.json)
+      echo "filtered Flip.total=${ft}"
+    fi
   fi
   first_id=$(jq -r '.data[0].data._id // .data[0]._id // .data[0].id // empty' /tmp/xlink-wolist.json)
   if [[ -n "${first_id}" && "${first_id}" != "null" ]]; then

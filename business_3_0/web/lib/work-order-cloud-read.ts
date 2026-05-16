@@ -1,4 +1,16 @@
 import type { ReadonlyWorkflowNode, WorkOrder } from "@/lib/mock-data";
+import { partLabel, statusLabel } from "@/lib/cloud-code-labels";
+import { formatServiceAddress } from "@/lib/format-district";
+import {
+  iconForTaskType,
+  resolveGroup,
+  resolveTaskType,
+  statusCodesForFilter,
+} from "@/lib/sa-list-display-map";
+import {
+  FILTER_TABS,
+  type FilterTabKey,
+} from "@/lib/work-order-filters";
 
 /** business / beta 小程序 API 根（与 `code/app/business` 一致） */
 const DEFAULT_BETA_WM_API_ROOT = "https://xlinkbeta.fsgo365.cn/fsgo/wm";
@@ -7,7 +19,6 @@ function isVercelRuntime(): boolean {
   return process.env.VERCEL === "1" || process.env.VERCEL === "true";
 }
 
-/** 设为 `0` / `false` 时，不在 Vercel 上自动启用 cloud 读、也不自动填 beta Base URL */
 function vercelCloudDefaultsDisabled(): boolean {
   const d = process.env.XLINK_CLOUD_VERCEL_DEFAULTS?.toLowerCase();
   return d === "0" || d === "false" || d === "no";
@@ -34,20 +45,10 @@ function cloudReadBaseUrl(): string | null {
   }
 }
 
-/**
- * Base URL 须与目标前端一致，例如：
- * - cloud_ui 管理后台：`http://host:8070/api`（与管家小程序接口族不同）
- * - business / beta 小程序：`https://xlinkbeta.fsgo365.cn/fsgo/wm`（见 `code/app/business/docs/architecture/env-topology.md`）
- *
- * **列表 / 详情**与小程序 `pages/serviceAppointment/serviceAppointments.vue` 一致：
- * - 列表：`POST basic/serviceAppointment/querySAWorkflowNode.do`（`type === 'SANode'` 时的 `getData` 参数）
- * - 详情：`POST basic/serviceAppointment/queryById/{id}.do` + `type=query`
- */
 export function isCloudReadConfigured(): boolean {
   return cloudReadEnabledFromEnv() && Boolean(cloudReadBaseUrl());
 }
 
-/** 合并 Cookie：支持 beta `JSESSIONID`（`phoneLogin` 的 `data.token`，见 business `api_client.py`） */
 export function buildCloudCookieHeader(
   incomingCookie: string | null | undefined,
   forwardedJSessionId: string | null | undefined
@@ -62,7 +63,7 @@ export function buildCloudCookieHeader(
   return c.length > 0 ? c : null;
 }
 
-type FlipLike = { data?: unknown[] };
+type FlipLike = { data?: unknown[]; total?: number };
 type ReturnStatusLike = { status?: number; data?: unknown };
 
 function pickId(row: Record<string, unknown>): string {
@@ -70,10 +71,44 @@ function pickId(row: Record<string, unknown>): string {
   return typeof id === "string" ? id : id != null ? String(id) : "";
 }
 
-function joinAddress(row: Record<string, unknown>): string {
-  const parts = [row.province, row.city, row.district, row.address]
-    .filter((x) => typeof x === "string" && (x as string).trim().length > 0) as string[];
-  return parts.join("") || "—";
+function statusHead(statusRaw: string): string {
+  return statusRaw.split(/,/)[0]?.trim() ?? "";
+}
+
+function nodeDefNameFromFlip(flip: Record<string, unknown>): string | undefined {
+  const nodeDef = flip.nodeDef;
+  if (nodeDef && typeof nodeDef === "object" && nodeDef !== null) {
+    const name = (nodeDef as Record<string, unknown>).name;
+    if (typeof name === "string" && name.trim()) return name.trim();
+  }
+  return undefined;
+}
+
+function formatApplyTimeShort(applyTimeStr: unknown): string | null {
+  if (typeof applyTimeStr !== "string" || !applyTimeStr.trim()) return null;
+  const s = applyTimeStr.trim();
+  if (s.length >= 16) return s.slice(5, 16);
+  return s;
+}
+
+function resolveTone(sa: Record<string, unknown>): "red" | "blue" {
+  const raw = sa.sourceType;
+  const n = typeof raw === "number" ? raw : Number(raw);
+  if ([1, 2, 5].includes(n)) return "red";
+  return "blue";
+}
+
+function resolvePart(sa: Record<string, unknown>, exts: Record<string, unknown> | null): string {
+  if (exts?.leakagesite_copy && Array.isArray(exts.leakagesite_copy) && exts.leakagesite_copy.length > 0) {
+    const first = exts.leakagesite_copy[0];
+    if (typeof first === "string" && first.trim()) {
+      const code = first.trim();
+      return partLabel(code) || code;
+    }
+  }
+  const tag = exts?.ujTag;
+  if (typeof tag === "string" && tag.trim()) return tag.trim();
+  return "屋顶";
 }
 
 function mapWorkflowNodes(raw: unknown): ReadonlyWorkflowNode[] | undefined {
@@ -124,21 +159,18 @@ function defaultContext(): WorkOrder["context"] {
   };
 }
 
-/**
- * 将 `serviceAppointment` 主档（及可选 `workflowNode`）映射为 BFF `WorkOrder`。
- * 列表项外层为工作流节点、内层 `data` 为预约主档（与小程序 `serviceAppointments.vue` 一致）。
- */
-export function mapServiceAppointmentRecordToWorkOrder(
+function buildWorkOrderFromSa(
   sa: Record<string, unknown>,
-  extras?: { workflowNodes?: unknown }
+  opts?: { nodeDefName?: string; workflowNodes?: unknown }
 ): WorkOrder {
   const id = pickId(sa);
   const title = typeof sa.title === "string" ? sa.title : "工单";
   const name = typeof sa.name === "string" ? sa.name : "—";
   const status =
     typeof sa.status === "string" ? sa.status : sa.status != null ? String(sa.status) : "";
-  const stage = typeof sa.stage === "string" ? sa.stage : "";
-  const statusText = stage || status || "进行中";
+  const codeHead = statusHead(status);
+  const statusText = statusLabel(status) || codeHead || "进行中";
+  const taskType = resolveTaskType(status, opts?.nodeDefName, statusText);
   const priority = typeof sa.priority === "string" ? sa.priority : "普通";
   const orderNum =
     typeof sa.orderNum === "string"
@@ -149,75 +181,82 @@ export function mapServiceAppointmentRecordToWorkOrder(
   const code = orderNum || id;
 
   const exts = sa.exts && typeof sa.exts === "object" ? (sa.exts as Record<string, unknown>) : null;
-  let part = "屋顶";
-  if (exts?.leakagesite_copy && Array.isArray(exts.leakagesite_copy) && exts.leakagesite_copy.length > 0) {
-    const first = exts.leakagesite_copy[0];
-    if (typeof first === "string" && first.trim()) part = first.trim();
-  }
-  let distanceStr = "—";
-  if (exts?.distance != null && String(exts.distance).trim() !== "") {
-    distanceStr = `${exts.distance} km`;
+  const part = resolvePart(sa, exts);
+  const tone = resolveTone(sa);
+  const group = resolveGroup(status);
+  const icon = iconForTaskType(taskType);
+  const districtRaw = sa.district;
+  const district =
+    typeof districtRaw === "string" || typeof districtRaw === "number"
+      ? districtRaw
+      : null;
+  const addressLine =
+    typeof sa.address === "string" ? sa.address : typeof sa.address === "number" ? String(sa.address) : "";
+  const address = formatServiceAddress(district, addressLine);
+
+  const applyShort = formatApplyTimeShort(sa.applyTimeStr);
+  const appointment = applyShort ? `预约 ${applyShort}` : "待定";
+  const timeText = applyShort ?? "—";
+
+  const tags: WorkOrder["tags"] = [{ text: statusText, tone }];
+  if (applyShort && codeHead && Number(codeHead) < 203) {
+    tags.push({ text: `预约上门 ${applyShort}`, tone });
   }
 
+  const supervisor = exts?.supervisorName;
+  const assignee =
+    typeof supervisor === "string" && supervisor.trim() ? supervisor.trim() : "—";
+
   const readonlyWorkflowNodes =
-    mapWorkflowNodes(extras?.workflowNodes) ??
-    (stage ? [{ id: "stage", label: stage, state: "current" as const }] : undefined);
+    mapWorkflowNodes(opts?.workflowNodes) ?? undefined;
 
   return {
     id: id || code,
     part,
     customerNo: code,
-    taskType: title,
+    taskType,
     title,
     customer: name,
     project: typeof sa.community === "string" ? sa.community : "—",
     status,
     statusText,
     priority,
-    assignee: "—",
-    appointment: "待定",
-    timeText: "—",
-    address: joinAddress(sa),
-    distance: distanceStr,
-    group: mapServiceAppointmentStatusToGroup(status),
-    icon: "▦",
-    tone: "blue",
-    tags: [{ text: statusText, tone: "blue" }],
+    assignee,
+    appointment,
+    timeText,
+    address,
+    distance: "2.3 km",
+    nearbyCustomers: 2,
+    group,
+    icon,
+    tone,
+    tags,
     context: defaultContext(),
     activities: [],
     readonlyWorkflowNodes,
   };
 }
 
-/** 非服务 `workOrder` 主档（旧路径）；仅保留给可能的扩展，当前列表已走 `serviceAppointment`。 */
+export function mapServiceAppointmentRecordToWorkOrder(
+  sa: Record<string, unknown>,
+  extras?: { workflowNodes?: unknown; nodeDefName?: string }
+): WorkOrder {
+  return buildWorkOrderFromSa(sa, extras);
+}
+
 export function mapCloudRowToWorkOrder(
   row: Record<string, unknown>,
-  extras?: { workflowNodes?: unknown }
+  extras?: { workflowNodes?: unknown; nodeDefName?: string }
 ): WorkOrder {
   return mapServiceAppointmentRecordToWorkOrder(row, extras);
 }
 
-/** 小程序菜单 URL 中 `status` 与管家 Tab 粗对齐（`change-role-menu-tree` / `serviceAppointments`）；未命中归「待跟进」 */
-function mapServiceAppointmentStatusToGroup(statusRaw: string): WorkOrder["group"] {
-  const head = statusRaw.split(/,/)[0]?.trim() ?? "";
-  switch (head) {
-    case "103":
-      return "to_accept";
-    case "104":
-      return "need_contact";
-    case "105":
-    case "203":
-      return "onsite";
-    default:
-      return "following";
-  }
-}
-
-/** 将 `querySAWorkflowNode` Flip 行（含 `data` 预约档）映射为 `WorkOrder` */
 function mapSaWorkflowFlipRowToWorkOrder(raw: Record<string, unknown>): WorkOrder | null {
   const inner = raw.data;
   if (!inner || typeof inner !== "object") return null;
-  return mapServiceAppointmentRecordToWorkOrder(inner as Record<string, unknown>);
+  return buildWorkOrderFromSa(inner as Record<string, unknown>, {
+    nodeDefName: nodeDefNameFromFlip(raw),
+  });
 }
 
 function authTokenForCloud(forwardedToken: string | null | undefined): string | null {
@@ -227,7 +266,6 @@ function authTokenForCloud(forwardedToken: string | null | undefined): string | 
   return t || null;
 }
 
-/** POST + `application/x-www-form-urlencoded` + `.do`（cloud_ui / business 一致） */
 async function fetchCloudForm(
   path: string,
   body: URLSearchParams,
@@ -263,40 +301,57 @@ async function fetchCloudForm(
   return { ok: res.ok, json };
 }
 
-/**
- * 与小程序 `serviceAppointments.vue` `getData` 在 `queryType == 'SANode'` 时一致的最小查询体。
- * `orderState=all` 覆盖「全部」类菜单；与 `tmp/api_samples/workorder-list.json` 分页链一致。
- */
-function serviceAppointmentSanodeListBody(): URLSearchParams {
+function serviceAppointmentSanodeListBody(
+  filter?: FilterTabKey | null,
+  rows = "50"
+): URLSearchParams {
   const p = new URLSearchParams();
   p.set("page", "1");
-  p.set("rows", "50");
+  p.set("rows", rows);
   p.set("sortField", "updateTime");
   p.set("sortOrder", "desc");
   p.set("orderState", "all");
   p.set("is:state|integer#and", "1");
+  const codes = statusCodesForFilter(filter ?? null);
+  if (codes) p.set("in:status|array#and", codes);
   return p;
 }
 
-/** 分页查询 cloud 工单列表，映射为 `WorkOrder[]` */
+async function fetchSaListFlip(
+  filter: FilterTabKey | null | undefined,
+  rows: string,
+  cookie: string | null,
+  forwardedAuthToken: string | null,
+  forwardedJSessionId: string | null
+): Promise<FlipLike | null> {
+  const { ok, json } = await fetchCloudForm(
+    "basic/serviceAppointment/querySAWorkflowNode.do",
+    serviceAppointmentSanodeListBody(filter, rows),
+    cookie,
+    forwardedAuthToken,
+    forwardedJSessionId
+  );
+  if (!ok || !json || typeof json !== "object") return null;
+  return json as FlipLike;
+}
+
 export async function cloudFetchWorkOrders(
   cookie: string | null,
   forwardedAuthToken?: string | null,
-  forwardedJSessionId?: string | null
+  forwardedJSessionId?: string | null,
+  filter?: FilterTabKey | null
 ): Promise<WorkOrder[] | null> {
   if (!isCloudReadConfigured()) return null;
-  const { ok, json } = await fetchCloudForm(
-    "basic/serviceAppointment/querySAWorkflowNode.do",
-    serviceAppointmentSanodeListBody(),
+  const flip = await fetchSaListFlip(
+    filter,
+    "50",
     cookie,
     forwardedAuthToken ?? null,
     forwardedJSessionId ?? null
   );
-  if (!ok || !json || typeof json !== "object") return null;
-  const data = (json as FlipLike).data;
-  if (!Array.isArray(data)) return null;
+  if (!flip?.data || !Array.isArray(flip.data)) return null;
   const out: WorkOrder[] = [];
-  for (const item of data) {
+  for (const item of flip.data) {
     if (item && typeof item === "object") {
       const mapped = mapSaWorkflowFlipRowToWorkOrder(item as Record<string, unknown>);
       if (mapped) out.push(mapped);
@@ -305,7 +360,31 @@ export async function cloudFetchWorkOrders(
   return out;
 }
 
-/** 详情：与小程序 `getSAById` 一致 `queryById/{id}` + `type=query`；失败时回退旧 `workOrder/findById`（仅兼容） */
+export async function cloudFetchWorkOrderTabTotals(
+  cookie: string | null,
+  forwardedAuthToken?: string | null,
+  forwardedJSessionId?: string | null
+): Promise<ReturnType<typeof import("@/lib/work-order-filters").tabCountsForOrders> | null> {
+  if (!isCloudReadConfigured()) return null;
+
+  const tabKeys = FILTER_TABS.map((t) => t.key);
+  const requests = tabKeys.map((key) =>
+    fetchSaListFlip(
+      key === "all" ? null : key,
+      "1",
+      cookie,
+      forwardedAuthToken ?? null,
+      forwardedJSessionId ?? null
+    )
+  );
+  const results = await Promise.all(requests);
+  return FILTER_TABS.map(({ key, label }, i) => {
+    const flip = results[i];
+    const total = typeof flip?.total === "number" ? flip.total : 0;
+    return { key, label, count: total };
+  });
+}
+
 export async function cloudFetchWorkOrderById(
   id: string,
   cookie: string | null,
