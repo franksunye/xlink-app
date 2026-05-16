@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { WorkOrder } from "@/lib/mock-data";
@@ -20,6 +20,7 @@ import {
   taskCardStripeClass,
   taskIconWrapClass,
 } from "@/lib/ui-tones";
+import { WORK_ORDER_LIST_ROWS } from "@/lib/work-order-list-page";
 import { parseFilterTabKey, type FilterTabKey } from "@/lib/work-order-filters";
 
 function workOrdersKey(filter: string | null) {
@@ -31,10 +32,32 @@ function readFilterFromLocation(): FilterTabKey {
   return parseFilterTabKey(new URLSearchParams(window.location.search).get("filter"));
 }
 
+function buildListUrl(filter: FilterTabKey, page: number): string {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("rows", String(WORK_ORDER_LIST_ROWS));
+  if (filter !== "all") params.set("filter", filter);
+  return `/api/work-orders?${params.toString()}`;
+}
+
+type LoadStatus = "more" | "loading" | "noMore";
+
+function resolveLoadStatus(
+  itemCount: number,
+  hasNextPage: boolean,
+  isFetchingNextPage: boolean
+): LoadStatus | null {
+  if (itemCount <= 3) return null;
+  if (isFetchingNextPage) return "loading";
+  if (!hasNextPage) return "noMore";
+  return "more";
+}
+
 export function WorkOrdersInner() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<FilterTabKey>("all");
   const [keyword, setKeyword] = useState("");
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setActiveTab(readFilterFromLocation());
@@ -46,20 +69,26 @@ export function WorkOrdersInner() {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const q = useQuery({
-    queryKey: workOrdersKey(activeTab === "all" ? null : activeTab),
-    queryFn: () => {
-      const qstr = activeTab === "all" ? "" : `?filter=${encodeURIComponent(activeTab)}`;
-      return fetchJson<WorkOrdersListResponse>(`/api/work-orders${qstr}`);
-    },
-    placeholderData: keepPreviousData,
+  const filterKey = activeTab === "all" ? null : activeTab;
+
+  const q = useInfiniteQuery({
+    queryKey: workOrdersKey(filterKey),
+    queryFn: ({ pageParam }) =>
+      fetchJson<WorkOrdersListResponse>(buildListUrl(activeTab, pageParam)),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.hasMore ? last.page + 1 : undefined),
   });
 
+  const tabs = q.data?.pages[0]?.tabs ?? [];
+  const allItems = useMemo(
+    () => q.data?.pages.flatMap((p) => p.items) ?? [],
+    [q.data?.pages]
+  );
+
   const visible = useMemo(() => {
-    if (!q.data) return [];
     const k = keyword.trim().toLowerCase();
-    if (!k) return q.data.items;
-    return q.data.items.filter((o) => {
+    if (!k) return allItems;
+    return allItems.filter((o) => {
       const hay = [
         o.id,
         o.taskType,
@@ -75,7 +104,7 @@ export function WorkOrdersInner() {
         .toLowerCase();
       return hay.includes(k);
     });
-  }, [q.data, keyword]);
+  }, [allItems, keyword]);
 
   function setTab(key: FilterTabKey) {
     setActiveTab(key);
@@ -87,18 +116,25 @@ export function WorkOrdersInner() {
   }
 
   const showFullSkeleton = isInitialQueryLoad(q.isPending, q.data);
-  const listRefreshing = q.isFetching && q.isPlaceholderData;
-  const [listFadeClass, setListFadeClass] = useState("");
-  const lastSettledAt = useRef(q.dataUpdatedAt);
+  const listLoading = q.isFetching && !q.isFetchingNextPage;
+  const loadStatus = resolveLoadStatus(
+    allItems.length,
+    Boolean(q.hasNextPage),
+    q.isFetchingNextPage
+  );
 
   useEffect(() => {
-    if (listRefreshing) return;
-    if (q.dataUpdatedAt === lastSettledAt.current) return;
-    lastSettledAt.current = q.dataUpdatedAt;
-    setListFadeClass("wo-list-fade-in");
-    const t = window.setTimeout(() => setListFadeClass(""), 240);
-    return () => window.clearTimeout(t);
-  }, [listRefreshing, q.dataUpdatedAt]);
+    const el = loadMoreRef.current;
+    if (!el || !q.hasNextPage || q.isFetchingNextPage) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) void q.fetchNextPage();
+      },
+      { rootMargin: "120px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [q.hasNextPage, q.isFetchingNextPage, q.fetchNextPage]);
 
   if (showFullSkeleton) {
     return (
@@ -108,7 +144,7 @@ export function WorkOrdersInner() {
       </div>
     );
   }
-  if (q.isError || !q.data) {
+  if (q.isError) {
     return (
       <div className="mx-3.5 mt-4 rounded-2xl border border-[#e8edf4] bg-white p-6 text-center text-[var(--xlink-red)] shadow-sm">
         列表加载失败
@@ -118,8 +154,6 @@ export function WorkOrdersInner() {
       </div>
     );
   }
-
-  const tabs = q.data.tabs;
 
   return (
     <div className="px-3.5 pb-4 pt-4">
@@ -157,27 +191,25 @@ export function WorkOrdersInner() {
 
       <FilterTabBar tabs={tabs} activeTab={activeTab} onTab={setTab} />
 
-      <div className="relative mt-5">
-        <div
-          className={`wo-list-progress ${listRefreshing ? "is-active" : ""}`}
-          aria-hidden={!listRefreshing}
-        >
-          <span className="wo-list-progress-bar" />
-        </div>
-        <ul
-          className={`flex flex-col gap-4 ${listFadeClass} ${listRefreshing ? "wo-list-row-shimmer" : ""}`}
-          aria-busy={listRefreshing}
-          aria-live="polite"
-        >
+      <div className="relative mt-5" aria-busy={listLoading || q.isFetchingNextPage}>
+        <ul className="flex flex-col gap-4">
           {visible.length === 0 ? (
             <li className="rounded-[14px] border border-[#e8edf4] bg-white p-6 text-center shadow-[0_12px_28px_rgba(22,40,72,0.06)]">
-              <p className="text-sm font-semibold text-[#18253d]">暂无匹配任务</p>
-              <p className="mt-2 text-[13px] leading-snug text-[#7a879b]">换个筛选条件，或者清空搜索再试一次</p>
+              <p className="text-sm font-semibold text-[#18253d]">
+                {listLoading ? "加载中…" : "暂无匹配任务"}
+              </p>
+              {!listLoading ? (
+                <p className="mt-2 text-[13px] leading-snug text-[#7a879b]">
+                  换个筛选条件，或者清空搜索再试一次
+                </p>
+              ) : null}
             </li>
           ) : (
             visible.map((w) => <TaskCard key={w.id} order={w} />)
           )}
         </ul>
+        <div ref={loadMoreRef} className="h-1" aria-hidden />
+        {loadStatus ? <ListLoadMore status={loadStatus} /> : null}
       </div>
     </div>
   );
@@ -185,6 +217,7 @@ export function WorkOrdersInner() {
 
 type FilterTab = { key: string; label: string; count: number };
 
+/** 对齐 business `van-tabs`：底边激活态，无自定义滑动指示条 */
 function FilterTabBar({
   tabs,
   activeTab,
@@ -194,70 +227,41 @@ function FilterTabBar({
   activeTab: FilterTabKey;
   onTab: (key: FilterTabKey) => void;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef(new Map<string, HTMLButtonElement>());
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
-
-  const syncIndicator = useCallback(() => {
-    const btn = tabRefs.current.get(activeTab);
-    const container = containerRef.current;
-    if (!btn || !container) return;
-    const containerRect = container.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    setIndicator({
-      left: btnRect.left - containerRect.left,
-      width: btnRect.width,
-    });
-  }, [activeTab]);
-
-  useLayoutEffect(() => {
-    syncIndicator();
-  }, [syncIndicator, tabs]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const ro = new ResizeObserver(() => syncIndicator());
-    ro.observe(container);
-    return () => ro.disconnect();
-  }, [syncIndicator]);
-
   return (
-    <div className="mt-4 -mx-1 overflow-x-auto border-b border-[#e6edf6] pb-0">
-      <div ref={containerRef} className="wo-filter-tabs flex min-w-max justify-between gap-1 px-1">
+    <div className="mt-4 -mx-1 overflow-x-auto border-b border-[#e6edf6]">
+      <div className="flex min-w-max justify-between gap-1 px-1">
         {tabs.map((t) => {
           const active = t.key === activeTab;
           return (
             <button
               key={t.key}
-              ref={(el) => {
-                if (el) tabRefs.current.set(t.key, el);
-                else tabRefs.current.delete(t.key);
-              }}
               type="button"
               onClick={() => onTab(t.key as FilterTabKey)}
-              className={`relative flex shrink-0 items-center justify-center gap-1 px-2 py-2 text-sm transition-colors duration-200 ease-out ${
+              className={`shrink-0 border-b-2 px-2 py-2 text-sm ${
                 active
-                  ? "font-semibold text-[var(--xlink-primary)]"
-                  : "font-medium text-[var(--xlink-tab-inactive)]"
+                  ? "border-[var(--xlink-primary)] font-semibold text-[var(--xlink-primary)]"
+                  : "border-transparent font-medium text-[var(--xlink-tab-inactive)]"
               }`}
             >
               <span>{t.label}</span>
-              <span className="tabular-nums">{t.count}</span>
+              <span className="tabular-nums"> {t.count}</span>
             </button>
           );
         })}
-        {indicator.width > 0 ? (
-          <span
-            className="wo-filter-tab-indicator"
-            style={{
-              width: indicator.width,
-              transform: `translateX(${indicator.left}px)`,
-            }}
-            aria-hidden
-          />
-        ) : null}
       </div>
+    </div>
+  );
+}
+
+function ListLoadMore({ status }: { status: LoadStatus }) {
+  return (
+    <div className="wo-load-more" role="status" aria-live="polite">
+      {status === "loading" ? (
+        <span className="wo-load-more-spinner" aria-hidden />
+      ) : null}
+      <span className="text-[13px] text-[#7a879b]">
+        {status === "loading" ? "加载中…" : status === "noMore" ? "没有更多了" : "上拉加载更多"}
+      </span>
     </div>
   );
 }

@@ -26,4 +26,8 @@ export type WorkOrdersListResponse = {
   items: import("@/lib/mock-data").WorkOrder[];
   filter: string | null;
   tabs: { key: string; label: string; count: number }[];
+  page: number;
+  rows: number;
+  total: number;
+  hasMore: boolean;
 };

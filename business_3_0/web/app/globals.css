@@ -262,4 +262,32 @@ body {
     animation: none;
     opacity: 0;
   }
+
+  .wo-load-more-spinner {
+    animation: none;
+  }
+}
+
+/* 对齐 business uni-load-more */
+.wo-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0 0.5rem;
+}
+
+.wo-load-more-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #e2e7ef;
+  border-top-color: var(--xlink-primary);
+  border-radius: 50%;
+  animation: wo-load-more-spin 0.8s linear infinite;
+}
+
+@keyframes wo-load-more-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -539,10 +539,11 @@ async function fetchCloudForm(
 
 function serviceAppointmentSanodeListBody(
   filter?: FilterTabKey | null,
-  rows = "50"
+  page = 1,
+  rows = "10"
 ): URLSearchParams {
   const p = new URLSearchParams();
-  p.set("page", "1");
+  p.set("page", String(page));
   p.set("rows", rows);
   p.set("sortField", "updateTime");
   p.set("sortOrder", "desc");
@@ -555,6 +556,7 @@ function serviceAppointmentSanodeListBody(
 
 async function fetchSaListFlip(
   filter: FilterTabKey | null | undefined,
+  page: number,
   rows: string,
   cookie: string | null,
   forwardedAuthToken: string | null,
@@ -562,7 +564,7 @@ async function fetchSaListFlip(
 ): Promise<FlipLike | null> {
   const { ok, json } = await fetchCloudForm(
     "basic/serviceAppointment/querySAWorkflowNode.do",
-    serviceAppointmentSanodeListBody(filter, rows),
+    serviceAppointmentSanodeListBody(filter, page, rows),
     cookie,
     forwardedAuthToken,
     forwardedJSessionId
@@ -571,21 +573,8 @@ async function fetchSaListFlip(
   return json as FlipLike;
 }
 
-export async function cloudFetchWorkOrders(
-  cookie: string | null,
-  forwardedAuthToken?: string | null,
-  forwardedJSessionId?: string | null,
-  filter?: FilterTabKey | null
-): Promise<WorkOrder[] | null> {
-  if (!isCloudReadConfigured()) return null;
-  const flip = await fetchSaListFlip(
-    filter,
-    "50",
-    cookie,
-    forwardedAuthToken ?? null,
-    forwardedJSessionId ?? null
-  );
-  if (!flip?.data || !Array.isArray(flip.data)) return null;
+function mapFlipRowsToWorkOrders(flip: FlipLike): WorkOrder[] {
+  if (!flip?.data || !Array.isArray(flip.data)) return [];
   const out: WorkOrder[] = [];
   for (const item of flip.data) {
     if (item && typeof item === "object") {
@@ -594,6 +583,53 @@ export async function cloudFetchWorkOrders(
     }
   }
   return out;
+}
+
+export async function cloudFetchWorkOrdersPage(
+  cookie: string | null,
+  forwardedAuthToken: string | null | undefined,
+  forwardedJSessionId: string | null | undefined,
+  filter: FilterTabKey | null | undefined,
+  page: number,
+  rows: number
+): Promise<import("@/lib/work-order-list-page").WorkOrderListPage | null> {
+  if (!isCloudReadConfigured()) return null;
+  const flip = await fetchSaListFlip(
+    filter,
+    page,
+    String(rows),
+    cookie,
+    forwardedAuthToken ?? null,
+    forwardedJSessionId ?? null
+  );
+  if (!flip) return null;
+  const items = mapFlipRowsToWorkOrders(flip);
+  const total = typeof flip.total === "number" ? flip.total : items.length;
+  return {
+    items,
+    page,
+    rows,
+    total,
+    hasMore: page * rows < total,
+  };
+}
+
+/** 单页拉取（如 Dashboard 取首条）；默认第 1 页、50 条以兼容旧调用 */
+export async function cloudFetchWorkOrders(
+  cookie: string | null,
+  forwardedAuthToken?: string | null,
+  forwardedJSessionId?: string | null,
+  filter?: FilterTabKey | null
+): Promise<WorkOrder[] | null> {
+  const page = await cloudFetchWorkOrdersPage(
+    cookie,
+    forwardedAuthToken,
+    forwardedJSessionId,
+    filter,
+    1,
+    50
+  );
+  return page?.items ?? null;
 }
 
 export async function cloudFetchWorkOrderTabTotals(
@@ -607,6 +643,7 @@ export async function cloudFetchWorkOrderTabTotals(
   const requests = tabKeys.map((key) =>
     fetchSaListFlip(
       key === "all" ? null : key,
+      1,
       "1",
       cookie,
       forwardedAuthToken ?? null,

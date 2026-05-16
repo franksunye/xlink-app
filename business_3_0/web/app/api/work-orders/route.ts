@@ -9,8 +9,9 @@ import {
   withDefaultReadonlyWorkflowNodes,
 } from "@/lib/mock-data";
 import { tabCountsForOrders, type FilterTabKey } from "@/lib/work-order-filters";
+import { paginateWorkOrders, parseListPageParams } from "@/lib/work-order-list-page";
 import {
-  cloudFetchWorkOrders,
+  cloudFetchWorkOrdersPage,
   cloudFetchWorkOrderTabTotals,
   isCloudReadConfigured,
 } from "@/lib/work-order-cloud-read";
@@ -32,6 +33,10 @@ export async function GET(req: NextRequest) {
     return jsonResponse({ error: "unauthorized" }, { status: 401 });
   }
   const filter = parseFilter(req.nextUrl.searchParams.get("filter"));
+  const { page, rows } = parseListPageParams(
+    req.nextUrl.searchParams.get("page"),
+    req.nextUrl.searchParams.get("rows")
+  );
   const cookie = req.headers.get("cookie");
   const cloudJSession = resolveCloudJSessionId(req);
   const cloudToken =
@@ -45,14 +50,15 @@ export async function GET(req: NextRequest) {
 
   if (isCloudReadConfigured() && cloudJSession) {
     await loadCodeLabels(cookie, cloudJSession);
-    const cloudList = await cloudFetchWorkOrders(
+    const cloudPage = await cloudFetchWorkOrdersPage(
       cookie,
       cloudToken,
       cloudJSession,
-      filter
+      filter,
+      page,
+      rows
     );
-    if (cloudList !== null) {
-      sourceList = cloudList;
+    if (cloudPage !== null) {
       const cloudTabs = await cloudFetchWorkOrderTabTotals(
         cookie,
         cloudToken,
@@ -60,24 +66,37 @@ export async function GET(req: NextRequest) {
       );
       if (cloudTabs) tabs = cloudTabs;
       headers.set("X-Xlink-Read-Source", "cloud");
-    } else {
-      headers.set("X-Xlink-Read-Source", "mock-fallback");
+      const items = cloudPage.items.map((w) => withDefaultReadonlyWorkflowNodes(w));
+      return jsonResponse(
+        {
+          items,
+          filter: filter ?? null,
+          tabs,
+          page: cloudPage.page,
+          rows: cloudPage.rows,
+          total: cloudPage.total,
+          hasMore: cloudPage.hasMore,
+        },
+        { headers }
+      );
     }
+    headers.set("X-Xlink-Read-Source", "mock-fallback");
   }
 
   const withNodes = sourceList.map((w) => withDefaultReadonlyWorkflowNodes(w));
-
-  if (headers.get("X-Xlink-Read-Source") === "cloud") {
-    return jsonResponse(
-      { items: withNodes, filter: filter ?? null, tabs },
-      { headers }
-    );
-  }
-
-  const list = filterWorkOrders(withNodes, filter);
+  const filtered = filterWorkOrders(withNodes, filter);
   tabs = tabCountsForOrders(withNodes);
+  const slice = paginateWorkOrders(filtered, page, rows);
   return jsonResponse(
-    { items: list, filter: filter ?? null, tabs },
+    {
+      items: slice.items,
+      filter: filter ?? null,
+      tabs,
+      page: slice.page,
+      rows: slice.rows,
+      total: slice.total,
+      hasMore: slice.hasMore,
+    },
     { headers }
   );
 }
