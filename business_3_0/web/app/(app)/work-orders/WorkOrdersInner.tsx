@@ -13,7 +13,7 @@ import {
   telHref,
 } from "@/lib/work-order-contact";
 import { fetchJson, type WorkOrdersListResponse } from "@/lib/fetch-json";
-import { isInitialQueryLoad } from "@/lib/query-display";
+import { shouldShowWorkOrdersFullSkeleton } from "@/lib/query-display";
 import {
   listTagClass,
   phoneButtonTextClass,
@@ -58,6 +58,8 @@ export function WorkOrdersInner() {
   const [activeTab, setActiveTab] = useState<FilterTabKey>("all");
   const [keyword, setKeyword] = useState("");
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const shellMountedRef = useRef(false);
+  const lastTabsRef = useRef<FilterTab[]>([]);
 
   useEffect(() => {
     setActiveTab(readFilterFromLocation());
@@ -79,7 +81,10 @@ export function WorkOrdersInner() {
     getNextPageParam: (last) => (last.hasMore ? last.page + 1 : undefined),
   });
 
-  const tabs = q.data?.pages[0]?.tabs ?? [];
+  const pageTabs = q.data?.pages[0]?.tabs;
+  if (pageTabs?.length) lastTabsRef.current = pageTabs;
+  const tabs = pageTabs?.length ? pageTabs : lastTabsRef.current;
+
   const allItems = useMemo(
     () => q.data?.pages.flatMap((p) => p.items) ?? [],
     [q.data?.pages]
@@ -115,7 +120,13 @@ export function WorkOrdersInner() {
     router.replace(s ? `/work-orders?${s}` : "/work-orders", { scroll: false });
   }
 
-  const showFullSkeleton = isInitialQueryLoad(q.isPending, q.data);
+  if (q.data !== undefined) shellMountedRef.current = true;
+
+  const showFullSkeleton = shouldShowWorkOrdersFullSkeleton(
+    shellMountedRef.current,
+    q.isPending,
+    q.data
+  );
   const listLoading = q.isFetching && !q.isFetchingNextPage;
   const loadStatus = resolveLoadStatus(
     allItems.length,
