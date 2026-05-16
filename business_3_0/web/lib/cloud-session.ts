@@ -6,6 +6,7 @@ export type UserProfile = {
   displayName: string;
   roleId: string;
   roleName: string;
+  companyName?: string;
 };
 
 /** Priority: login cookie → x-xlink-jsessionid → XLINK_CLOUD_READ_JSESSIONID */
@@ -59,11 +60,16 @@ export function parseProfileCookie(value: string | undefined): UserProfile | nul
       typeof raw.roleId === "string" &&
       typeof raw.roleName === "string"
     ) {
+      const companyName =
+        typeof raw.companyName === "string" && raw.companyName.trim()
+          ? raw.companyName.trim()
+          : undefined;
       return {
         userId: raw.userId,
         displayName: raw.displayName,
         roleId: raw.roleId,
         roleName: raw.roleName,
+        ...(companyName ? { companyName } : {}),
       };
     }
   } catch {

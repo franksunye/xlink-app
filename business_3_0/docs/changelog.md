@@ -4,6 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
+| 2026-05-16 | web v0.2.4 | 前端技术地基：持久 Tab Shell（`AppTabShell`）、四 Tab React Query + `isInitialQueryLoad`、TabBar prefetch/scroll=false、SW network-only；见 [17-v0.2.4-scope.md](./17-v0.2.4-scope.md)。 |
 | 2026-05-16 | web v0.2.3 | 真实 beta 登录（`phoneLogin` BFF）、httpOnly JSESSIONID + profile；Dashboard/Projects/Account 读贯通；统一 `resolveCloudJSessionId`；见 [16-v0.2.3-scope.md](./16-v0.2.3-scope.md)。注：changelog 中 2026-05-14「v0.2.3 Vercel」为基础设施条目，**产品版本**以本行为准。 |
 | 2026-05-16 | web v0.2.2 | 工单详情 Cloud 读：`sa-detail-context`（23 态 context、去「演示」文案）、`biz/action/query.do`→`activities`（含通话时长/附图）；列表 `nodeDef`→详情 `?node=` 与 `activeNodeName` 对齐；跟进记录 UI 展示照片；见 [15-v0.2.2-detail-read.md](./15-v0.2.2-detail-read.md)。 |
 | 2026-05-16 | web v0.2.1 | 工单列表 Cloud 映射：`sa-list-display-map`、`cloud-code-labels`、`format-district`；Tab 服务端 `in:status` + Flip `total`；taskType/地址/码表对齐 Mock；`resolveCardTone` / `resolveListTags` 分色与紧急度角标。 |

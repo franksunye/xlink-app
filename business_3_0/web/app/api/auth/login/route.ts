@@ -54,12 +54,17 @@ function displayNameFromUser(user: CloudUser): string {
 }
 
 function profileFromCloud(user: CloudUser, role: CloudRole): UserProfile {
+  const companyName =
+    typeof user.tenantName === "string" && user.tenantName.trim()
+      ? user.tenantName.trim()
+      : undefined;
   return {
     userId: user._id != null ? String(user._id) : "",
     displayName: displayNameFromUser(user),
     roleId: role._id != null ? String(role._id) : "",
     roleName:
       (typeof role.name === "string" && role.name.trim()) || "服务商",
+    companyName,
   };
 }
 

@@ -2,6 +2,7 @@ import type {
   Dashboard,
   DashboardEntry,
   HomeTask,
+  QuickAction,
   TaskOverview,
 } from "@/lib/mock-data";
 import type { UserProfile } from "@/lib/cloud-session";
@@ -86,33 +87,125 @@ export function mapTabTotalsToTaskOverview(
   });
 }
 
+function shortenAddress(address: string, max = 18): string {
+  const t = address.trim();
+  if (t.length <= max) return t;
+  return `${t.slice(0, max)}…`;
+}
+
+function visitTaskFromPrimary(primary: Dashboard["primaryTask"]): HomeTask | null {
+  if (!primary.id?.trim()) return null;
+  const timeMatch = primary.appointment.match(/(\d{1,2}:\d{2})/);
+  const hasTime = Boolean(timeMatch?.[1]);
+  return {
+    key: "visit",
+    title: hasTime ? `${timeMatch![1]} 上门服务` : primary.appointment || "上门服务",
+    valueText: hasTime ? timeMatch![1] : undefined,
+    labelText: hasTime ? "上门服务" : undefined,
+    subtitle: `${primary.customer} | ${shortenAddress(primary.address)}`,
+    iconName: "appointment",
+    tone: "orange",
+    orderId: primary.id,
+  };
+}
+
 export function mapTabTotalsToHomeTasks(
-  tabs: { key: string; label: string; count: number }[]
+  tabs: { key: string; label: string; count: number }[],
+  primary?: Dashboard["primaryTask"] | null
 ): HomeTask[] {
+  const tasks: HomeTask[] = [];
+  if (primary) {
+    const visit = visitTaskFromPrimary(primary);
+    if (visit) tasks.push(visit);
+  }
+
   const contact = tabs.find((t) => t.key === "need_contact");
   const following = tabs.find((t) => t.key === "following");
-  const tasks: HomeTask[] = [];
-  if ((contact?.count ?? 0) > 0) {
+  const onsite = tabs.find((t) => t.key === "onsite");
+  const toAccept = tabs.find((t) => t.key === "to_accept");
+
+  if (contact && contact.count > 0) {
     tasks.push({
       key: "appointment",
       title: "联系客户预约",
       iconName: "phone",
       tone: "green",
-      count: contact?.count,
+      count: contact.count,
       filter: "need_contact",
     });
   }
-  if ((following?.count ?? 0) > 0) {
+  if (following && following.count > 0) {
     tasks.push({
       key: "sign",
       title: "跟进方案",
       iconName: "proposal",
       tone: "orange",
-      count: following?.count,
+      count: following.count,
       filter: "following",
     });
   }
+  if (onsite && onsite.count > 0 && !tasks.some((t) => t.filter === "onsite")) {
+    tasks.push({
+      key: "onsite",
+      title: "待上门任务",
+      iconName: "appointment",
+      tone: "blue",
+      count: onsite.count,
+      filter: "onsite",
+    });
+  }
+  if (toAccept && toAccept.count > 0) {
+    tasks.push({
+      key: "accept",
+      title: "待接单",
+      iconName: "phone",
+      tone: "purple",
+      count: toAccept.count,
+      filter: "to_accept",
+    });
+  }
   return tasks;
+}
+
+export function buildCloudQuickActions(): QuickAction[] {
+  return [
+    {
+      label: "待接单",
+      iconName: "orderAdd",
+      icon: "▦",
+      tone: "green",
+      desc: "查看待接单列表",
+      route: "tasks",
+      filter: "to_accept",
+    },
+    {
+      label: "待联系",
+      iconName: "phone",
+      icon: "☎",
+      tone: "blue",
+      desc: "查看待联系客户",
+      route: "tasks",
+      filter: "need_contact",
+    },
+    {
+      label: "待上门",
+      iconName: "appointment",
+      icon: "◷",
+      tone: "orange",
+      desc: "查看待上门任务",
+      route: "tasks",
+      filter: "onsite",
+    },
+    {
+      label: "全部任务",
+      iconName: "customer",
+      icon: "≡",
+      tone: "purple",
+      desc: "查看全部工单",
+      route: "tasks",
+      filter: "all",
+    },
+  ];
 }
 
 export function buildMetricsFromEntries(entries: DashboardEntry[]) {
@@ -140,11 +233,12 @@ export async function cloudFetchDashboard(
 
   const entries = mapTabTotalsToEntries(tabs);
   const total = entries.reduce((sum, e) => sum + e.value, 0);
+  const byFilter = Object.fromEntries(entries.map((e) => [e.filter, e.value]));
+  const onsiteCount = (byFilter.onsite as number) ?? 0;
   const taskOverview = mapTabTotalsToTaskOverview(tabs);
-  const homeTasks = mapTabTotalsToHomeTasks(tabs);
 
-  let primaryTask = mockDashboard.primaryTask;
-  for (const filter of ["need_contact", "onsite"] as const) {
+  let primaryTask: Dashboard["primaryTask"] | null = null;
+  for (const filter of ["onsite", "need_contact", "to_accept"] as const) {
     const list = await cloudFetchWorkOrders(
       cookieHeader,
       cloudToken ?? null,
@@ -165,26 +259,39 @@ export async function cloudFetchDashboard(
     }
   }
 
+  const homeTasks = mapTabTotalsToHomeTasks(tabs, primaryTask);
+
   const today = new Date();
   const date = today.toISOString().slice(0, 10);
 
   return {
     date,
-    company: profile?.displayName ? "修链科技" : mockDashboard.company,
+    company: profile?.companyName || mockDashboard.company,
     channel: profile?.roleName || "服务商",
     greeting: greetingForProfile(profile),
-    statusText: "服务中",
+    statusText: total > 0 ? `${total} 项待处理` : "暂无待办",
     role: profile?.roleName || "服务商",
-    dateText: "今天是高效工作的一天，继续加油！",
+    dateText:
+      total > 0
+        ? `待上门 ${onsiteCount} 单 · 待联系 ${(byFilter.need_contact as number) ?? 0} 单`
+        : "暂无待办任务，可稍后再来查看",
     total,
     done: 0,
-    progress: total > 0 ? 0 : 0,
+    progress: 0,
     metrics: buildMetricsFromEntries(entries),
     entries,
-    primaryTask,
+    primaryTask: primaryTask ?? {
+      id: "",
+      customer: "—",
+      title: "—",
+      appointment: "待定",
+      address: "—",
+      distance: "",
+    },
     homeTasks,
     taskOverview,
-    quickActions: mockDashboard.quickActions,
-    todayResult: { amount: "—", orders: 0 },
+    quickActions: buildCloudQuickActions(),
+    todayResult: { amount: String(total), orders: onsiteCount },
+    todayResultStyle: "work_orders",
   };
 }

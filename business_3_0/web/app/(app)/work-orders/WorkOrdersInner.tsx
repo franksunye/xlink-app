@@ -13,6 +13,7 @@ import {
   telHref,
 } from "@/lib/work-order-contact";
 import { fetchJson, type WorkOrdersListResponse } from "@/lib/fetch-json";
+import { isInitialQueryLoad } from "@/lib/query-display";
 import {
   listTagClass,
   phoneButtonTextClass,
@@ -74,7 +75,7 @@ export function WorkOrdersInner() {
     router.push(s ? `/work-orders?${s}` : "/work-orders");
   }
 
-  if (q.isPending) {
+  if (isInitialQueryLoad(q.isPending, q.data)) {
     return (
       <div className="animate-pulse space-y-4 px-3.5 pt-4">
         <div className="h-11 rounded-2xl bg-white" />
@@ -82,7 +83,7 @@ export function WorkOrdersInner() {
       </div>
     );
   }
-  if (q.isError) {
+  if (q.isError || !q.data) {
     return (
       <div className="mx-3.5 mt-4 rounded-2xl border border-[#e8edf4] bg-white p-6 text-center text-[var(--xlink-red)] shadow-sm">
         列表加载失败

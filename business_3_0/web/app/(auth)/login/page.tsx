@@ -153,7 +153,7 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-          <p className="text-center text-xs text-[#9aa7bb]">版本号：v0.2.3（Web）</p>
+          <p className="text-center text-xs text-[#9aa7bb]">版本号：v0.2.4（Web）</p>
           <button
             type="button"
             className="mt-3 h-12 w-full rounded-xl bg-[rgba(20,120,242,0.08)] text-[15px] font-extrabold text-[#1478f2]"

@@ -72,6 +72,8 @@ export type Dashboard = {
   quickActions: QuickAction[];
   /** 与概念版工作台「今日结果」一致 */
   todayResult: { amount: string; orders: number };
+  /** cloud 读路径用任务汇总文案，mock 为签单演示 */
+  todayResultStyle?: "sales" | "work_orders";
 };
 
 export type WorkOrderActivity = {

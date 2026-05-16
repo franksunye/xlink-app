@@ -28,6 +28,8 @@ export function AppTabBar() {
             <Link
               key={t.href}
               href={t.href}
+              prefetch
+              scroll={false}
               className={`flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-1.5 text-[10px] font-bold ${
                 active ? "text-[var(--xlink-primary)]" : "text-[var(--xlink-tab-inactive)]"
               }`}
