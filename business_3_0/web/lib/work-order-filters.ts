@@ -10,6 +10,13 @@ export const FILTER_TABS = [
 
 export type FilterTabKey = (typeof FILTER_TABS)[number]["key"];
 
+const FILTER_TAB_KEYS = new Set<string>(FILTER_TABS.map((t) => t.key));
+
+export function parseFilterTabKey(raw: string | null | undefined): FilterTabKey {
+  if (raw && FILTER_TAB_KEYS.has(raw)) return raw as FilterTabKey;
+  return "all";
+}
+
 export function matchWorkOrderFilter(order: WorkOrder, key: FilterTabKey): boolean {
   if (key === "all") return true;
   return order.group === key;

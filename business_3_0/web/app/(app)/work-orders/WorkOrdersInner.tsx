@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { WorkOrder } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import {
@@ -20,22 +20,31 @@ import {
   taskCardStripeClass,
   taskIconWrapClass,
 } from "@/lib/ui-tones";
-import type { FilterTabKey } from "@/lib/work-order-filters";
+import { parseFilterTabKey, type FilterTabKey } from "@/lib/work-order-filters";
 
 function workOrdersKey(filter: string | null) {
   return ["/api/work-orders", filter] as const;
 }
 
+function readFilterFromLocation(): FilterTabKey {
+  if (typeof window === "undefined") return "all";
+  return parseFilterTabKey(new URLSearchParams(window.location.search).get("filter"));
+}
+
 export function WorkOrdersInner() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const filter = searchParams.get("filter") as FilterTabKey | null;
-  const activeTab: FilterTabKey =
-    filter && ["to_accept", "need_contact", "onsite", "following", "all"].includes(filter)
-      ? filter
-      : "all";
-
+  const [activeTab, setActiveTab] = useState<FilterTabKey>("all");
   const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    setActiveTab(readFilterFromLocation());
+  }, []);
+
+  useEffect(() => {
+    const onPopState = () => setActiveTab(readFilterFromLocation());
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const q = useQuery({
     queryKey: workOrdersKey(activeTab === "all" ? null : activeTab),
@@ -43,6 +52,7 @@ export function WorkOrdersInner() {
       const qstr = activeTab === "all" ? "" : `?filter=${encodeURIComponent(activeTab)}`;
       return fetchJson<WorkOrdersListResponse>(`/api/work-orders${qstr}`);
     },
+    placeholderData: keepPreviousData,
   });
 
   const visible = useMemo(() => {
@@ -68,14 +78,17 @@ export function WorkOrdersInner() {
   }, [q.data, keyword]);
 
   function setTab(key: FilterTabKey) {
-    const params = new URLSearchParams(searchParams.toString());
+    setActiveTab(key);
+    const params = new URLSearchParams(window.location.search);
     if (key === "all") params.delete("filter");
     else params.set("filter", key);
     const s = params.toString();
-    router.push(s ? `/work-orders?${s}` : "/work-orders");
+    router.replace(s ? `/work-orders?${s}` : "/work-orders", { scroll: false });
   }
 
-  if (isInitialQueryLoad(q.isPending, q.data)) {
+  const showFullSkeleton = isInitialQueryLoad(q.isPending, q.data);
+
+  if (showFullSkeleton) {
     return (
       <div className="animate-pulse space-y-4 px-3.5 pt-4">
         <div className="h-11 rounded-2xl bg-white" />
@@ -95,6 +108,7 @@ export function WorkOrdersInner() {
   }
 
   const tabs = q.data.tabs;
+  const listRefreshing = q.isFetching && q.isPlaceholderData;
 
   return (
     <div className="px-3.5 pb-4 pt-4">
@@ -154,7 +168,10 @@ export function WorkOrdersInner() {
         </div>
       </div>
 
-      <ul className="mt-5 flex flex-col gap-4">
+      <ul
+        className={`mt-5 flex flex-col gap-4 transition-opacity duration-150 ${listRefreshing ? "opacity-55" : ""}`}
+        aria-busy={listRefreshing}
+      >
         {visible.length === 0 ? (
           <li className="rounded-[14px] border border-[#e8edf4] bg-white p-6 text-center shadow-[0_12px_28px_rgba(22,40,72,0.06)]">
             <p className="text-sm font-black text-[#18253d]">暂无匹配任务</p>

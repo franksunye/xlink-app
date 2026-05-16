@@ -203,27 +203,14 @@ function MetricsHomeContent({
           <h2 className="text-lg font-black text-[var(--xlink-text-strong)]">
             {metricsSectionTitle(d)}
           </h2>
-          <Link href="/work-orders" className="text-[13px] font-semibold text-[#6f7685]">
-            全部任务 ›
-          </Link>
+          <button
+            type="button"
+            className="text-[13px] font-semibold text-[#6f7685]"
+            onClick={() => onToast("更多数据将于后续版本开放")}
+          >
+            更多数据 ›
+          </button>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {d.metrics.map((m) => (
-            <div
-              key={m.label}
-              className="rounded-xl border border-[#edf1f6] bg-gradient-to-b from-white to-[#f8faff] px-3 py-3 text-center"
-            >
-              <p className="text-2xl font-bold tabular-nums text-[#090f1e]">{m.value}</p>
-              <p className="mt-1 text-[11px] font-extrabold text-[#6f7685]">{m.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="xlink-card p-4 pt-5">
-        <h2 className="text-lg font-black text-[var(--xlink-text-strong)]">
-          {todayResultSectionTitle(d)}
-        </h2>
         <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <div className="text-center">
             <span className="block text-[13px] text-[#666d7d]">{resultLabels.left}</span>
