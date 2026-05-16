@@ -64,4 +64,12 @@ npm run verify:cloud-read
 2. Mock 登录后打开 `/work-orders`，在 Network 中查看 **`GET /api/work-orders`**：响应头 **`X-Xlink-Read-Source: cloud`**（列表可为空）。  
 3. 若有 **服务预约** 数据，点进详情同上 **`cloud`** 且 **「流程节点」** 区与 **`queryById` + `workflowNode`** 映射一致。
 
-验收通过：**档位 B** 全过；**档位 A** 在目标环境上 **A0 或 A1 + A2** 按所用栈勾选通过。
+### A3 — 详情 context + 跟进记录（v0.2.2）
+
+1. 在 **A2** 已启用 cloud 读的前提下，打开一条有历史的 **`/work-orders/[id]`**。  
+2. Network：**`GET /api/work-orders/[id]`** 响应头为 **`X-Xlink-Read-Source: cloud`**。  
+3. **当前任务 / 任务上下文**：不出现「POC 占位」类文案；`status=104` 且无 `applyTimeStr` 时，上下文区为「暂无预约时间」类 copy。  
+4. **跟进记录** Tab：若 beta 该 SA 有动态，应显示 **≥1** 条真实记录（笔记/系统/通话等类型之一）；无动态时显示空态即可。  
+5. 与列表对照：同 id 的 **`taskType`**、**`statusText`**、**`address`** 与列表卡片一致。
+
+验收通过：**档位 B** 全过；**档位 A** 在目标环境上 **A0 或 A1 + A2 + A3** 按所用栈勾选通过。

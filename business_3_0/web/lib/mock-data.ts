@@ -148,6 +148,8 @@ export type WorkOrder = {
   appointments?: ServiceAppointment[];
   /** v0.2：详情「流程节点（只读）」数据；Mock 可由 BFF 注入静态演示，cloud 由 Adapter 映射 */
   readonlyWorkflowNodes?: ReadonlyWorkflowNode[];
+  /** 列表 Flip 行当前 workflow 节点名；用于详情与列表 taskType 对齐 */
+  activeNodeName?: string;
 };
 
 /** 与 `lib/work-order-cloud-read` 对齐导出，供 UI 引用 */

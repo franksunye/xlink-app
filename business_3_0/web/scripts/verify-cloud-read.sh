@@ -87,11 +87,29 @@ if command -v jq >/dev/null 2>&1; then
     st=$(jq -r '.status // empty' /tmp/xlink-woid.json)
     echo "ReturnStatus.status=${st}"
     if [[ "${code2}" != "200" || "${st}" != "1" ]]; then
-      echo "FAIL findById"
+      echo "FAIL queryById"
       head -c 500 /tmp/xlink-woid.json || true
       echo
       exit 1
     fi
+    echo "== POST ${BASE}/biz/action/query.do (serviceAppointment, actionType 1-6) =="
+    action_body="bizType=serviceAppointment&sid=${first_id}&actionType=1%2C2%2C3%2C4%2C5%2C6"
+    code3=$(curl -sS -o /tmp/xlink-woactions.json -w "%{http_code}" -X POST "${BASE}/biz/action/query.do" \
+      -H 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
+      "${AUTH_HEADERS[@]}" \
+      --data-binary "${action_body}")
+    echo "HTTP ${code3}"
+    st3=$(jq -r '.status // empty' /tmp/xlink-woactions.json)
+    data_typ=$(jq -r '.data | type' /tmp/xlink-woactions.json)
+    echo "ReturnStatus.status=${st3} data.type=${data_typ}"
+    if [[ "${code3}" != "200" || "${st3}" != "1" || "${data_typ}" != "array" ]]; then
+      echo "FAIL biz/action/query.do"
+      head -c 500 /tmp/xlink-woactions.json || true
+      echo
+      exit 1
+    fi
+    action_len=$(jq -r '.data | length' /tmp/xlink-woactions.json)
+    echo "action rows=${action_len}"
   fi
 else
   echo "OK (install jq to validate JSON shape and chain findById)"

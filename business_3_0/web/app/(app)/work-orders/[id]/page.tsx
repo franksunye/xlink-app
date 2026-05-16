@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { type WorkOrder, type WorkOrderActivity, type ReadonlyWorkflowNode } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson } from "@/lib/fetch-json";
@@ -23,12 +23,17 @@ const TABS = [
 
 export default function WorkOrderDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = typeof params.id === "string" ? params.id : "";
+  const nodeHint = searchParams.get("node")?.trim() ?? "";
   const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("records");
 
   const q = useQuery({
-    queryKey: ["work-order", id],
-    queryFn: () => fetchJson<WorkOrder>(`/api/work-orders/${encodeURIComponent(id)}`),
+    queryKey: ["work-order", id, nodeHint],
+    queryFn: () => {
+      const qstr = nodeHint ? `?node=${encodeURIComponent(nodeHint)}` : "";
+      return fetchJson<WorkOrder>(`/api/work-orders/${encodeURIComponent(id)}${qstr}`);
+    },
     enabled: Boolean(id),
   });
 
@@ -320,6 +325,22 @@ function RecordRow({ r }: { r: WorkOrderActivity }) {
           <span className={`rounded-md px-1.5 py-0.5 text-xs font-black ${badgeTone}`}>{r.badge}</span>
         </div>
         <p className="mt-2 text-sm leading-relaxed text-[#4e596d]">{r.content}</p>
+        {r.photos && r.photos.length > 0 ? (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {r.photos.slice(0, 4).map((url) => (
+              <a
+                key={url}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block h-12 w-12 overflow-hidden rounded-md border border-[#e4e9f1] bg-[#f8fafc]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" className="h-full w-full object-cover" />
+              </a>
+            ))}
+          </div>
+        ) : null}
         <p className="mt-2 text-xs text-[#8d95a5]">
           👷 {r.owner} · {r.time}
         </p>

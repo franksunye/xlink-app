@@ -18,6 +18,7 @@ export async function GET(
     return jsonResponse({ error: "unauthorized" }, { status: 401 });
   }
   const { id } = await context.params;
+  const nodeDefHint = req.nextUrl.searchParams.get("node")?.trim() || null;
   const cookie = req.headers.get("cookie");
   const cloudToken =
     req.headers.get("x-xlink-cloud-token")?.trim() ||
@@ -31,7 +32,13 @@ export async function GET(
 
   if (isCloudReadConfigured()) {
     await loadCodeLabels(cookie, cloudJSession);
-    const cloudOrder = await cloudFetchWorkOrderById(id, cookie, cloudToken, cloudJSession);
+    const cloudOrder = await cloudFetchWorkOrderById(
+      id,
+      cookie,
+      cloudToken,
+      cloudJSession,
+      nodeDefHint
+    );
     if (cloudOrder) {
       headers.set("X-Xlink-Read-Source", "cloud");
       return jsonResponse(withDefaultReadonlyWorkflowNodes(cloudOrder), { headers });

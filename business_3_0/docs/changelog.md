@@ -4,6 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
+| 2026-05-16 | web v0.2.2 | 工单详情 Cloud 读：`sa-detail-context`（23 态 context、去「演示」文案）、`biz/action/query.do`→`activities`（含通话时长/附图）；列表 `nodeDef`→详情 `?node=` 与 `activeNodeName` 对齐；跟进记录 UI 展示照片；见 [15-v0.2.2-detail-read.md](./15-v0.2.2-detail-read.md)。 |
 | 2026-05-16 | web v0.2.1 | 工单列表 Cloud 映射：`sa-list-display-map`、`cloud-code-labels`、`format-district`；Tab 服务端 `in:status` + Flip `total`；taskType/地址/码表对齐 Mock；`resolveCardTone` / `resolveListTags` 分色与紧急度角标。 |
 | 2026-05-14 | web v0.2.3 | Vercel：`vercel.json`、`.env.example`；`VERCEL=1` 时默认启用 cloud 读且 Base 指向 **beta** `https://xlinkbeta.fsgo365.cn/fsgo/wm`（可用 `XLINK_CLOUD_VERCEL_DEFAULTS=0` 关闭）；README 增补 `vercel env` 示例。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.9：合同与支付为商务/资金域，与工单执行分离；奠基期外键优先。 |

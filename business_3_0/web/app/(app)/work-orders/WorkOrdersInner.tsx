@@ -171,7 +171,11 @@ function TaskCard({ order }: { order: WorkOrder }) {
   return (
     <li className="relative">
       <Link
-        href={`/work-orders/${order.id}`}
+        href={
+          order.activeNodeName
+            ? `/work-orders/${order.id}?node=${encodeURIComponent(order.activeNodeName)}`
+            : `/work-orders/${order.id}`
+        }
         className="relative flex gap-2.5 overflow-hidden rounded-[14px] border border-[#e8edf4] bg-white py-3.5 pl-2 pr-[3.75rem] shadow-[0_12px_28px_rgba(22,40,72,0.06)] transition active:scale-[0.99]"
       >
         <span className={`absolute bottom-0 left-0 top-0 w-1 shrink-0 ${stripe}`} aria-hidden />
