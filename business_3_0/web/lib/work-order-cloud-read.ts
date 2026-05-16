@@ -3,7 +3,10 @@ import { partLabel, statusLabel } from "@/lib/cloud-code-labels";
 import { formatServiceAddress } from "@/lib/format-district";
 import {
   iconForTaskType,
+  resolveCardTone,
   resolveGroup,
+  resolveListTags,
+  resolveSourceTypeCode,
   resolveTaskType,
   statusCodesForFilter,
 } from "@/lib/sa-list-display-map";
@@ -91,13 +94,6 @@ function formatApplyTimeShort(applyTimeStr: unknown): string | null {
   return s;
 }
 
-function resolveTone(sa: Record<string, unknown>): "red" | "blue" {
-  const raw = sa.sourceType;
-  const n = typeof raw === "number" ? raw : Number(raw);
-  if ([1, 2, 5].includes(n)) return "red";
-  return "blue";
-}
-
 function resolvePart(sa: Record<string, unknown>, exts: Record<string, unknown> | null): string {
   if (exts?.leakagesite_copy && Array.isArray(exts.leakagesite_copy) && exts.leakagesite_copy.length > 0) {
     const first = exts.leakagesite_copy[0];
@@ -182,8 +178,9 @@ function buildWorkOrderFromSa(
 
   const exts = sa.exts && typeof sa.exts === "object" ? (sa.exts as Record<string, unknown>) : null;
   const part = resolvePart(sa, exts);
-  const tone = resolveTone(sa);
+  const sourceTypeCode = resolveSourceTypeCode(sa, exts);
   const group = resolveGroup(status);
+  const tone = resolveCardTone(status, sourceTypeCode);
   const icon = iconForTaskType(taskType);
   const districtRaw = sa.district;
   const district =
@@ -198,10 +195,14 @@ function buildWorkOrderFromSa(
   const appointment = applyShort ? `预约 ${applyShort}` : "待定";
   const timeText = applyShort ?? "—";
 
-  const tags: WorkOrder["tags"] = [{ text: statusText, tone }];
-  if (applyShort && codeHead && Number(codeHead) < 203) {
-    tags.push({ text: `预约上门 ${applyShort}`, tone });
-  }
+  const tags = resolveListTags({
+    status,
+    statusText,
+    cardTone: tone,
+    applyTimeStr: sa.applyTimeStr,
+    updateTime: sa.updateTime,
+    sourceTypeCode,
+  });
 
   const supervisor = exts?.supervisorName;
   const assignee =
@@ -231,7 +232,7 @@ function buildWorkOrderFromSa(
     icon,
     tone,
     tags,
-    context: defaultContext(),
+    context: { ...defaultContext(), tone },
     activities: [],
     readonlyWorkflowNodes,
   };

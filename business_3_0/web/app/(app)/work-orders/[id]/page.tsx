@@ -9,6 +9,7 @@ import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson } from "@/lib/fetch-json";
 import {
   currentCardShellClass,
+  detailTagClass,
   primaryActionClass,
   sectionEyebrowClass,
 } from "@/lib/ui-tones";
@@ -74,7 +75,9 @@ export default function WorkOrderDetailPage() {
               {part}
             </span>
             {w.statusText ? (
-              <span className="shrink-0 rounded-md bg-[#ffe8e9] px-1.5 py-0.5 text-xs font-black text-[#ff4052]">
+              <span
+                className={`shrink-0 rounded-md px-1.5 py-0.5 text-xs font-black ${detailTagClass(w.tone)}`}
+              >
                 {w.statusText}
               </span>
             ) : null}
@@ -323,14 +326,6 @@ function RecordRow({ r }: { r: WorkOrderActivity }) {
       </div>
     </li>
   );
-}
-
-function detailTagClass(tone: string) {
-  if (tone === "red") return "bg-[#ffe8e9] text-[#ff4052]";
-  if (tone === "orange") return "bg-[#fff0dc] text-[#ff8a1a]";
-  if (tone === "green") return "bg-[#e8f8ef] text-[#18ae65]";
-  if (tone === "purple") return "bg-[#efeaff] text-[#7459e8]";
-  return "bg-[#eef5ff] text-[#2563eb]";
 }
 
 function CustomerRows({ w }: { w: WorkOrder }) {

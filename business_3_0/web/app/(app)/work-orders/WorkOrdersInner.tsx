@@ -7,7 +7,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import type { WorkOrder } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson, type WorkOrdersListResponse } from "@/lib/fetch-json";
-import { phoneButtonTextClass, taskCardStripeClass, taskIconWrapClass } from "@/lib/ui-tones";
+import {
+  listTagClass,
+  phoneButtonTextClass,
+  taskCardStripeClass,
+  taskIconWrapClass,
+} from "@/lib/ui-tones";
 import type { FilterTabKey } from "@/lib/work-order-filters";
 
 function workOrdersKey(filter: string | null) {
@@ -187,6 +192,18 @@ function TaskCard({ order }: { order: WorkOrder }) {
             <span aria-hidden>📍 </span>
             {order.address}
           </p>
+          {order.tags.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {order.tags.slice(0, 2).map((t) => (
+                <span
+                  key={t.text}
+                  className={`rounded-md px-1.5 py-0.5 text-[10px] font-black ${listTagClass(t.tone)}`}
+                >
+                  {t.text}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <div className="mt-2 flex items-center justify-between gap-2">
             <span className="truncate text-base font-black text-[#101827]">{order.customer}</span>
             <span className="shrink-0 text-[11px] text-[#64748b]">

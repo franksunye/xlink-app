@@ -4,6 +4,7 @@
 
 | 日期 | 版本 / 主题 | 摘要 |
 | --- | --- | --- |
+| 2026-05-16 | web v0.2.5 | v0.2.1 补全列表紧急度：`resolveCardTone` / `resolveListTags`（status 分色、未联系天数、渠道角标）；列表卡片展示最多 2 个 tag。 |
 | 2026-05-16 | web v0.2.4 | v0.2.1 列表 Cloud 映射：`sa-list-display-map`、`cloud-code-labels`、`format-district` + `area-county.json`；列表按 Tab `in:status` 查询，Tab 计数读 Flip `total`；taskType/地址/码表与 Mock 风格对齐。 |
 | 2026-05-14 | web v0.2.3 | Vercel：`vercel.json`、`.env.example`；`VERCEL=1` 时默认启用 cloud 读且 Base 指向 **beta** `https://xlinkbeta.fsgo365.cn/fsgo/wm`（可用 `XLINK_CLOUD_VERCEL_DEFAULTS=0` 关闭）；README 增补 `vercel env` 示例。 |
 | 2026-05-14 | 领域地基 | [12](./12-domain-glossary.md) §2.9：合同与支付为商务/资金域，与工单执行分离；奠基期外键优先。 |

@@ -66,6 +66,20 @@ export function quickIconClass(tone: string | undefined): string {
   return taskIconWrapClass(tone);
 }
 
+/** 列表卡片角标（与详情 `detailTagClass` 色系一致） */
+export function listTagClass(tone: string | undefined): string {
+  if (tone === "red") return "bg-[#ffe8e9] text-[#ff4052]";
+  if (tone === "orange") return "bg-[#fff0dc] text-[#ff8a1a]";
+  if (tone === "green") return "bg-[#e8f8ef] text-[#18ae65]";
+  if (tone === "purple") return "bg-[#efeaff] text-[#7459e8]";
+  if (tone === "gray") return "bg-[#f1f5f9] text-[#64748b]";
+  return "bg-[#eef5ff] text-[#2563eb]";
+}
+
+export function detailTagClass(tone: string | undefined): string {
+  return listTagClass(tone);
+}
+
 export function phoneButtonTextClass(tone: string | undefined): string {
   const t = isUiTone(tone) ? tone : "blue";
   const map: Record<UiTone, string> = {
