@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { resolveCloudJSessionId } from "@/lib/cloud-session";
 import { jsonResponse } from "@/lib/http";
 import { loadCodeLabels } from "@/lib/cloud-code-labels";
 import { getSessionFromCookies } from "@/lib/session";
@@ -32,20 +33,17 @@ export async function GET(req: NextRequest) {
   }
   const filter = parseFilter(req.nextUrl.searchParams.get("filter"));
   const cookie = req.headers.get("cookie");
+  const cloudJSession = resolveCloudJSessionId(req);
   const cloudToken =
     req.headers.get("x-xlink-cloud-token")?.trim() ||
     req.headers.get("X-Xlink-Cloud-Token")?.trim() ||
-    null;
-  const cloudJSession =
-    req.headers.get("x-xlink-jsessionid")?.trim() ||
-    req.headers.get("X-Xlink-Jsessionid")?.trim() ||
     null;
 
   let sourceList = mockWorkOrders;
   let tabs = tabCountsForOrders(mockWorkOrders);
   const headers = new Headers();
 
-  if (isCloudReadConfigured()) {
+  if (isCloudReadConfigured() && cloudJSession) {
     await loadCodeLabels(cookie, cloudJSession);
     const cloudList = await cloudFetchWorkOrders(
       cookie,

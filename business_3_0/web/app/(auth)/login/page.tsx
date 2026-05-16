@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LoginBrandMark, LoginWorkerScene } from "@/components/login/LoginWorkerScene";
+import { InlineToast } from "@/components/ui/InlineToast";
 
 const TRUST = [
   { icon: "♢", label: "专业可靠" },
@@ -26,6 +27,8 @@ export default function LoginPage() {
   const [agreed, setAgreed] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const [codeHint, setCodeHint] = useState<string | null>(null);
   const launchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -56,7 +59,15 @@ export default function LoginPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setErr(data.error === "login_failed" ? "登录失败" : "请稍后重试");
+        const msg =
+          typeof data.message === "string" && data.message.trim()
+            ? data.message.trim()
+            : data.error === "login_failed"
+              ? "手机号或验证码不正确"
+              : data.error === "agreement_required"
+                ? "请先同意协议"
+                : "请稍后重试";
+        setErr(msg);
         return;
       }
       router.replace("/");
@@ -88,20 +99,24 @@ export default function LoginPage() {
       agreed,
       method: authMode === "password" ? "password" : "code",
       code: authMode === "code" ? code : undefined,
+      password: authMode === "password" ? password : undefined,
     });
   }
 
   async function quickLogin() {
-    window.alert("一键登录（演示）：将使用当前手机号直接登录");
     if (!phone.trim()) {
       setErr("请输入手机号");
       return;
     }
-    await postLogin({ phone, agreed: true, method: "quick" });
+    setAgreed(true);
+    setCode("999999");
+    setToast("已使用测试验证码登录");
+    await postLogin({ phone, agreed: true, method: "code", code: "999999" });
   }
 
   return (
     <div className="mx-auto flex min-h-[calc(100dvh-2rem)] max-w-md flex-col pb-10 pt-0">
+      <InlineToast message={toast} onClear={() => setToast(null)} />
       {step === "launch" ? (
         <>
           <div className="flex h-6 items-center justify-between text-xs font-bold text-[#050b18]">
@@ -138,7 +153,7 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-          <p className="text-center text-xs text-[#9aa7bb]">版本号：v0.1.0（Web）</p>
+          <p className="text-center text-xs text-[#9aa7bb]">版本号：v0.2.3（Web）</p>
           <button
             type="button"
             className="mt-3 h-12 w-full rounded-xl bg-[rgba(20,120,242,0.08)] text-[15px] font-extrabold text-[#1478f2]"
@@ -267,25 +282,33 @@ export default function LoginPage() {
               {authMode === "password" ? "密码" : "验证码"}
             </label>
             {authMode === "code" ? (
-              <div className="mt-2 flex h-11 items-center rounded-xl border border-[#dbe5f2] bg-white pr-2 shadow-sm">
-                <input
-                  className="h-full min-w-0 flex-1 bg-transparent px-3 text-base outline-none"
-                  placeholder="请输入短信验证码"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  autoComplete="one-time-code"
-                />
-                <button
-                  type="button"
-                  className="shrink-0 px-2 text-xs font-extrabold text-[#1478f2]"
-                  onClick={() => {
-                    window.alert("验证码已发送");
-                    setCode("268899");
-                  }}
-                >
-                  获取验证码
-                </button>
-              </div>
+              <>
+                <div className="mt-2 flex h-11 items-center rounded-xl border border-[#dbe5f2] bg-white pr-2 shadow-sm">
+                  <input
+                    className="h-full min-w-0 flex-1 bg-transparent px-3 text-base outline-none"
+                    placeholder="请输入短信验证码"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    autoComplete="one-time-code"
+                  />
+                  <button
+                    type="button"
+                    className="shrink-0 px-2 text-xs font-extrabold text-[#1478f2]"
+                    onClick={() => {
+                      setCode("999999");
+                      setCodeHint("Beta 环境已填入测试验证码 999999");
+                      setErr(null);
+                    }}
+                  >
+                    填入测试码
+                  </button>
+                </div>
+                {codeHint ? (
+                  <p className="mt-1.5 text-xs font-semibold text-[#19b66a]">{codeHint}</p>
+                ) : (
+                  <p className="mt-1.5 text-xs text-[#8995a7]">未接短信网关时，可点「填入测试码」</p>
+                )}
+              </>
             ) : (
               <input
                 type="password"
@@ -299,7 +322,9 @@ export default function LoginPage() {
           </div>
 
           <p className="mt-2 text-xs text-[#8995a7]">
-            演示：手机号填 <code className="rounded bg-[#f0f4fa] px-1">error</code> 模拟失败。
+            Beta 联调：测试账号验证码可用固定码{" "}
+            <code className="rounded bg-[#f0f4fa] px-1">999999</code>；演示失败填{" "}
+            <code className="rounded bg-[#f0f4fa] px-1">error</code>。
           </p>
 
           <label className="mt-4 flex cursor-pointer items-start gap-2 text-sm text-[#8995a7]">

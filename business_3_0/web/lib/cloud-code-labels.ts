@@ -1,3 +1,5 @@
+import { buildCloudCookieHeaderFromSession } from "@/lib/cloud-session";
+
 const DEFAULT_TENANT_ID = "1340835581184723420";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -18,19 +20,6 @@ function cloudReadBaseUrl(): string | null {
   }
 }
 
-function buildCookie(
-  incomingCookie: string | null | undefined,
-  forwardedJSessionId: string | null | undefined
-): string | null {
-  const fromEnv = process.env.XLINK_CLOUD_READ_JSESSIONID?.trim();
-  const sid = fromEnv || forwardedJSessionId?.trim();
-  let c = (incomingCookie ?? "").trim();
-  if (sid) {
-    c = c.replace(/(?:^|;)\s*JSESSIONID=[^;]*/gi, "").replace(/^;\s*|\s*;\s*$/g, "").trim();
-    c = (c ? `${c}; ` : "") + `JSESSIONID=${sid}`;
-  }
-  return c.length > 0 ? c : null;
-}
 
 type CodeRow = { eleid?: string; options?: Record<string, string> };
 
@@ -67,7 +56,7 @@ async function fetchSelectCode(
     Accept: "application/json, text/plain, */*",
     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
   };
-  const cookieHeader = buildCookie(cookie, forwardedJSessionId);
+  const cookieHeader = buildCloudCookieHeaderFromSession(forwardedJSessionId, cookie);
   if (cookieHeader) headers.Cookie = cookieHeader;
 
   const url = `${base.replace(/\/$/, "")}/i/code/selectCode.do`;

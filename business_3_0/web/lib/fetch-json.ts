@@ -1,10 +1,9 @@
 export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
+  // Legacy dev: optional cloud_ui X-Auth-Token in localStorage (not JSESSIONID — session is httpOnly cookie).
   if (typeof window !== "undefined") {
     const t = window.localStorage.getItem("xlink_cloud_read_token")?.trim();
     if (t) headers.set("x-xlink-cloud-token", t);
-    const j = window.localStorage.getItem("xlink_cloud_read_jsession")?.trim();
-    if (j) headers.set("x-xlink-jsessionid", j);
   }
   const res = await fetch(url, {
     ...init,

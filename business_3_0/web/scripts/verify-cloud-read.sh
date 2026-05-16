@@ -4,7 +4,8 @@
 #   - cloud_ui：X-Auth-Token → 设置 XLINK_CLOUD_READ_AUTH_TOKEN
 #   - business / beta（/fsgo/wm）：JSESSIONID（phoneLogin 的 data.token）→ 设置 XLINK_CLOUD_READ_JSESSIONID
 #
-# Beta 示例（在 business_3_0/web 目录）：
+# v0.2.3 端到端登录读：需 dev server，curl POST /api/auth/login 后带 cookie 请求 /api/work-orders（见 acceptance A4）。
+# Beta 直连示例（在 business_3_0/web 目录）：
 #   export XLINK_CLOUD_READ_BASE_URL='https://xlinkbeta.fsgo365.cn/fsgo/wm'
 #   export XLINK_CLOUD_READ_JSESSIONID='<python api_client login 后 session_id>'
 #   npm run verify:cloud-read

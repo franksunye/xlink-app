@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +10,7 @@
     "lint": "eslint",
     "extract:area-county": "node scripts/extract-area-county.mjs",
     "verify:cloud-read": "bash scripts/verify-cloud-read.sh",
-    "test:unit": "npx --yes tsx --test lib/sa-detail-read.smoke.test.ts"
+    "test:unit": "npx --yes tsx --test lib/*.smoke.test.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.10",

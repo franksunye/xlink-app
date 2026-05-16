@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { InlineToast } from "@/components/ui/InlineToast";
 import { type WorkOrder, type WorkOrderActivity, type ReadonlyWorkflowNode } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
 import { fetchJson } from "@/lib/fetch-json";
@@ -13,6 +14,13 @@ import {
   primaryActionClass,
   sectionEyebrowClass,
 } from "@/lib/ui-tones";
+import {
+  classifyCtaLabel,
+  extractContactPhone,
+  mapsHref,
+  showDistanceLine,
+  telHref,
+} from "@/lib/work-order-contact";
 
 const TABS = [
   { key: "records", label: "跟进记录" },
@@ -27,6 +35,8 @@ export default function WorkOrderDetailPage() {
   const id = typeof params.id === "string" ? params.id : "";
   const nodeHint = searchParams.get("node")?.trim() ?? "";
   const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("records");
+  const [toast, setToast] = useState<string | null>(null);
+  const tabsRef = useRef<HTMLElement | null>(null);
 
   const q = useQuery({
     queryKey: ["work-order", id, nodeHint],
@@ -65,9 +75,44 @@ export default function WorkOrderDetailPage() {
   const no = displayOrderNo(w);
   const ctx = w.context;
   const tone = w.tone ?? "blue";
+  const phone = extractContactPhone(w);
+
+  function runCta(label: string) {
+    const kind = classifyCtaLabel(label);
+    if (kind === "call") {
+      if (!phone) {
+        setToast("暂无联系电话，请先在客户信息中确认");
+        setTab("customer");
+        tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      window.location.assign(telHref(phone));
+      return;
+    }
+    if (kind === "navigate") {
+      if (!w.address?.trim()) {
+        setToast("暂无服务地址");
+        return;
+      }
+      window.open(mapsHref(w.address), "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (kind === "tab_customer") {
+      setTab("customer");
+      tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (kind === "tab_records") {
+      setTab("records");
+      tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    setToast(`${label} 将于后续版本开放`);
+  }
 
   return (
     <div className="space-y-4 px-3.5 pb-6 pt-3">
+      <InlineToast message={toast} onClear={() => setToast(null)} />
       <Link href="/work-orders" className="inline-flex text-sm font-bold text-[#1478ff]">
         ‹ 返回任务
       </Link>
@@ -93,7 +138,9 @@ export default function WorkOrderDetailPage() {
         <p className="mt-1 text-sm font-bold text-[#252d3d]">{w.customer}</p>
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#7c8595]">{w.address}</p>
         <p className="mt-1 text-sm font-bold text-[#252d3d]">{w.title}</p>
-        <p className="mt-1 text-right text-xs text-[#64748b]">{w.distance}</p>
+        {showDistanceLine(w) ? (
+          <p className="mt-1 text-right text-xs text-[#64748b]">{w.distance}</p>
+        ) : null}
         <div className="mt-3 flex flex-wrap gap-2">
           {w.tags.map((t) => (
             <span
@@ -109,8 +156,8 @@ export default function WorkOrderDetailPage() {
             <button
               key={label}
               type="button"
-              className="h-8 flex-1 rounded-lg border border-[#e1e7f0] bg-[#fbfdff] text-xs font-extrabold text-[#1478ff]"
-              onClick={() => window.alert(`${label}（演示）`)}
+              className="h-8 flex-1 rounded-lg border border-[#e1e7f0] bg-[#fbfdff] text-xs font-extrabold text-[#1478ff] transition active:scale-[0.98] active:bg-[#eef5ff]"
+              onClick={() => runCta(label)}
             >
               {label}
             </button>
@@ -141,7 +188,7 @@ export default function WorkOrderDetailPage() {
         <button
           type="button"
           className={`mt-4 flex h-10 w-full items-center justify-center rounded-lg text-sm font-black text-white ${primaryActionClass(tone)}`}
-          onClick={() => window.alert(ctx.primary)}
+          onClick={() => runCta(ctx.primary)}
         >
           {ctx.primary}
         </button>
@@ -193,14 +240,17 @@ export default function WorkOrderDetailPage() {
             background: tone === "green" ? "#f3fff8" : "#fbfdff",
             color: tone === "green" ? "#18ae65" : tone === "red" ? "#ff4052" : "#1478ff",
           }}
-          onClick={() => window.alert(ctx.secondary)}
+          onClick={() => runCta(ctx.secondary)}
         >
           <span>{ctx.secondary.startsWith("新增") ? "+" : "›"}</span>
           {ctx.secondary}
         </button>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-[#e4e9f1] bg-white shadow-[0_10px_34px_rgba(22,40,72,0.07)]">
+      <section
+        ref={tabsRef}
+        className="overflow-hidden rounded-2xl border border-[#e4e9f1] bg-white shadow-[0_10px_34px_rgba(22,40,72,0.07)]"
+      >
         <div className="flex overflow-x-auto border-b border-[#edf1f6]">
           {TABS.map((t) => (
             <button
@@ -378,7 +428,16 @@ function InfoRows({
             className="flex items-center justify-between gap-3 border-b border-[#edf1f6] py-3 text-sm last:border-0"
           >
             <span className="text-[#7a8394]">{row.label}</span>
-            <span className="max-w-[60%] text-right font-black text-[#192234]">{row.value}</span>
+            {row.label === "联系电话" && row.value !== "—" ? (
+              <a
+                href={telHref(row.value)}
+                className="max-w-[60%] text-right font-black text-[#1478ff] underline-offset-2 hover:underline"
+              >
+                {row.value}
+              </a>
+            ) : (
+              <span className="max-w-[60%] text-right font-black text-[#192234]">{row.value}</span>
+            )}
           </li>
         ))}
       </ul>

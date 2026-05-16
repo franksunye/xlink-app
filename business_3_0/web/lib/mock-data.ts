@@ -120,7 +120,10 @@ export type WorkOrder = {
   appointment: string;
   timeText: string;
   address: string;
-  distance: string;
+  /** 列表/摘要距离；cloud 读路径不填占位值 */
+  distance?: string;
+  /** 列表一键拨号；cloud 由 SA 电话字段填充 */
+  contactPhone?: string;
   group: string;
   icon: string;
   tone: string;

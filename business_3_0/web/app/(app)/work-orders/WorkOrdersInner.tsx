@@ -6,6 +6,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { WorkOrder } from "@/lib/mock-data";
 import { displayOrderNo, displayPart } from "@/lib/order-display";
+import {
+  extractContactPhone,
+  showDistanceLine,
+  showNearbyCount,
+  telHref,
+} from "@/lib/work-order-contact";
 import { fetchJson, type WorkOrdersListResponse } from "@/lib/fetch-json";
 import {
   listTagClass,
@@ -210,21 +216,34 @@ function TaskCard({ order }: { order: WorkOrder }) {
           ) : null}
           <div className="mt-2 flex items-center justify-between gap-2">
             <span className="truncate text-base font-black text-[#101827]">{order.customer}</span>
-            <span className="shrink-0 text-[11px] text-[#64748b]">
-              工单附近客户 {order.nearbyCustomers ?? 2}
-            </span>
+            {showNearbyCount(order.nearbyCustomers) ? (
+              <span className="shrink-0 text-[11px] text-[#64748b]">
+                工单附近客户 {order.nearbyCustomers}
+              </span>
+            ) : null}
           </div>
-          <p className="mt-1 text-right text-[11px] text-[#64748b]">🚗 {order.distance}</p>
+          {showDistanceLine(order) ? (
+            <p className="mt-1 text-right text-[11px] text-[#64748b]">🚗 {order.distance}</p>
+          ) : null}
         </div>
       </Link>
-      <button
-        type="button"
-        className={`absolute right-3 top-1/2 z-10 flex h-[46px] w-[46px] -translate-y-1/2 items-center justify-center rounded-full border border-[#e5eaf1] bg-white text-xl font-black shadow-sm ${phoneC}`}
-        onClick={() => window.alert(`联系 ${order.customer}`)}
-        aria-label={`联系${order.customer}`}
-      >
-        ☎
-      </button>
+      {(() => {
+        const phone = extractContactPhone(order);
+        const cls = `absolute right-3 top-1/2 z-10 flex h-[46px] w-[46px] -translate-y-1/2 items-center justify-center rounded-full border border-[#e5eaf1] bg-white text-xl font-black shadow-sm transition active:scale-95 ${phoneC}`;
+        return phone ? (
+          <a href={telHref(phone)} className={cls} aria-label={`联系${order.customer}`}>
+            ☎
+          </a>
+        ) : (
+          <span
+            className={`${cls} cursor-not-allowed opacity-45`}
+            aria-label="暂无联系电话"
+            title="暂无联系电话"
+          >
+            ☎
+          </span>
+        );
+      })()}
     </li>
   );
 }

@@ -72,4 +72,14 @@ npm run verify:cloud-read
 4. **跟进记录** Tab：若 beta 该 SA 有动态，应显示 **≥1** 条真实记录（笔记/系统/通话等类型之一）；无动态时显示空态即可。  
 5. 与列表对照：同 id 的 **`taskType`**、**`statusText`**、**`address`** 与列表卡片一致。
 
-验收通过：**档位 B** 全过；**档位 A** 在目标环境上 **A0 或 A1 + A2 + A3** 按所用栈勾选通过。
+### A4 — 真实登录 + 读贯通（v0.2.3）
+
+1. `USE_CLOUD_READ=1`，**不配置** `XLINK_CLOUD_READ_JSESSIONID`（`npm run dev` + `.env.local` 仅 Base/租户即可）。
+2. 登录页用 beta 测试手机号 + 验证码（固定码 **`999999`**）登录成功。
+3. `GET /api/work-orders` → 响应头 **`X-Xlink-Read-Source: cloud`**。
+4. 工作台四格数字与任务 Tab 计数 **一致**（同源 `querySAWorkflowNode` Tab totals）。
+5. `GET /api/projects` → **`X-Xlink-Read-Source: cloud`**（可为空列表）。
+6. **我的**：显示登录用户 **姓名 / 角色**（非「体验账号」硬编码）。
+7. 退出后受保护 API 返回 **401**；档位 B（`USE_CLOUD_READ=0`）mock 登录仍通过。
+
+验收通过：**档位 B** 全过；**档位 A** 在目标环境上 **A0 或 A1 + A2 + A3 + A4** 按所用栈勾选通过。

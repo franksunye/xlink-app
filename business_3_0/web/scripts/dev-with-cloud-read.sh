@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# 本地启动 Next dev，并自动用 api_client 拉取 beta JSESSIONID 注入 cloud 只读（避免每次手 export）。
+# 本地启动 Next dev，并自动用 api_client 拉取 beta JSESSIONID 注入 cloud 只读（可选快捷方式）。
+# v0.2.3 推荐：npm run dev + 登录页 beta 账号（无需本脚本）；本脚本适合无 UI 的 BFF 调试。
 # 可选：XLINK_BUSINESS_ROOT — business 仓库根目录（默认 ~/Code/xlink/code/app/business）
 # 可选：XLINK_CLOUD_READ_BASE_URL — 未设置时默认 beta wm
 # 其余参数原样传给 next dev，例如：npm run dev:cloud -- -p 3001

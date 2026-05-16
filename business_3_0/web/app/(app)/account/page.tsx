@@ -1,6 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { InlineToast } from "@/components/ui/InlineToast";
+import { fetchJson } from "@/lib/fetch-json";
 import { type HomeVariant, writeHomeVariant } from "@/lib/home-variant";
 import { useHomeVariant } from "@/lib/use-home-variant";
 
@@ -9,16 +12,52 @@ const HOME_OPTIONS: { value: HomeVariant; label: string; desc: string }[] = [
   { value: "metrics", label: "方案 B：数据概览", desc: "突出任务总览、关键数据和快捷操作" },
 ];
 
+type MeUser = {
+  userId: string;
+  displayName: string;
+  role: string;
+};
+
+function initials(name: string): string {
+  const t = name.trim();
+  if (!t) return "B3";
+  if (t.length <= 2) return t;
+  return t.slice(-2);
+}
+
 export default function AccountPage() {
   const router = useRouter();
   const homeVariant = useHomeVariant();
+  const [user, setUser] = useState<MeUser | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchJson<{ user: MeUser }>("/api/auth/me")
+      .then((data) => {
+        if (!cancelled) setUser(data.user);
+      })
+      .catch(() => {
+        if (!cancelled) setUser(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingUser(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const currentLabel =
     HOME_OPTIONS.find((o) => o.value === homeVariant)?.label.replace("方案 ", "") ?? "A：任务优先";
 
+  const displayName = user?.displayName ?? "Business 3.0";
+  const roleLine = user?.role ?? "体验账号";
+
   function setVariant(v: HomeVariant) {
     writeHomeVariant(v);
-    window.alert("首页方案已切换");
+    setToast("首页方案已切换");
   }
 
   async function logout() {
@@ -29,15 +68,22 @@ export default function AccountPage() {
 
   return (
     <div className="px-3.5 pb-4 pt-4">
+      <InlineToast message={toast} onClear={() => setToast(null)} />
       <h1 className="mb-4 text-xl font-black text-[#111827]">我的</h1>
       <div className="overflow-hidden rounded-[14px] border border-[#e8edf4] bg-white shadow-[0_12px_28px_rgba(22,40,72,0.06)]">
       <div className="flex items-center gap-4 border-b border-[#edf1f5] p-4">
-        <div className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-lg bg-[#176b87] text-sm font-extrabold text-white">
-          B3
+        <div
+          className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#176b87] to-[#1478ff] text-sm font-extrabold text-white ${loadingUser ? "animate-pulse" : ""}`}
+        >
+          {loadingUser ? "…" : initials(displayName)}
         </div>
         <div className="min-w-0">
-          <p className="text-base font-extrabold text-[#182338]">Business 3.0 体验账号</p>
-          <p className="mt-1 text-sm text-[#6b7485]">当前模式：{homeVariant === "task" ? "任务优先" : "数据概览"}</p>
+          <p className="text-base font-extrabold text-[#182338]">
+            {loadingUser ? "加载中…" : displayName}
+          </p>
+          <p className="mt-1 text-sm text-[#6b7485]">
+            {roleLine} · 当前模式：{homeVariant === "task" ? "任务优先" : "数据概览"}
+          </p>
         </div>
       </div>
 
@@ -79,16 +125,16 @@ export default function AccountPage() {
       <div className="divide-y divide-[#edf1f5]">
         <div className="flex min-h-[3.25rem] items-center justify-between px-4 text-sm font-bold text-[#182338]">
           <span>体验版本</span>
-          <span className="font-extrabold text-[#176b87]">0.1.0</span>
+          <span className="font-extrabold text-[#176b87]">0.2.3</span>
         </div>
         <div className="flex min-h-[3.25rem] items-center justify-between px-4 text-sm font-bold text-[#182338]">
           <span>数据来源</span>
-          <span className="font-extrabold text-[#176b87]">本地 Mock</span>
+          <span className="font-extrabold text-[#176b87]">BFF + Cloud 读</span>
         </div>
         <button
           type="button"
           className="flex min-h-[3.25rem] w-full items-center justify-between px-4 text-left text-sm font-bold text-[#182338] active:bg-[#f8fafc]"
-          onClick={() => window.alert("体验反馈（v0.1 未接独立路由）")}
+          onClick={() => window.alert("体验反馈（v0.2 未接独立路由）")}
         >
           <span>提交反馈</span>
           <span className="font-extrabold text-[#176b87]">进入 ›</span>

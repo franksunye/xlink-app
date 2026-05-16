@@ -1,4 +1,5 @@
 import type { ReadonlyWorkflowNode, WorkOrder, WorkOrderActivity } from "@/lib/mock-data";
+import { buildCloudCookieHeaderFromSession } from "@/lib/cloud-session";
 import { loadCodeLabels, partLabel, statusLabel } from "@/lib/cloud-code-labels";
 import { formatServiceAddress } from "@/lib/format-district";
 import {
@@ -40,7 +41,7 @@ function cloudReadEnabledFromEnv(): boolean {
   return false;
 }
 
-function cloudReadBaseUrl(): string | null {
+export function cloudReadBaseUrl(): string | null {
   let u = process.env.XLINK_CLOUD_READ_BASE_URL?.trim();
   if (!u && isVercelRuntime() && !vercelCloudDefaultsDisabled()) {
     u = DEFAULT_BETA_WM_API_ROOT;
@@ -57,18 +58,12 @@ export function isCloudReadConfigured(): boolean {
   return cloudReadEnabledFromEnv() && Boolean(cloudReadBaseUrl());
 }
 
+/** @param jsessionId Resolved session (login cookie / header / env via resolveCloudJSessionId). */
 export function buildCloudCookieHeader(
   incomingCookie: string | null | undefined,
-  forwardedJSessionId: string | null | undefined
+  jsessionId: string | null | undefined
 ): string | null {
-  const fromEnv = process.env.XLINK_CLOUD_READ_JSESSIONID?.trim();
-  const sid = fromEnv || forwardedJSessionId?.trim();
-  let c = (incomingCookie ?? "").trim();
-  if (sid) {
-    c = c.replace(/(?:^|;)\s*JSESSIONID=[^;]*/gi, "").replace(/^;\s*|\s*;\s*$/g, "").trim();
-    c = (c ? `${c}; ` : "") + `JSESSIONID=${sid}`;
-  }
-  return c.length > 0 ? c : null;
+  return buildCloudCookieHeaderFromSession(jsessionId, incomingCookie);
 }
 
 type FlipLike = { data?: unknown[]; total?: number };
@@ -357,6 +352,21 @@ function buildCustomerInfo(
   ];
 }
 
+function pickContactPhone(
+  sa: Record<string, unknown>,
+  exts: Record<string, unknown> | null
+): string | undefined {
+  const phoneRaw =
+    sa.contactPhone ??
+    sa.phone ??
+    sa.mobile ??
+    exts?.contactPhone ??
+    exts?.phone;
+  if (typeof phoneRaw !== "string" || !phoneRaw.trim()) return undefined;
+  const v = phoneRaw.trim();
+  return v === "—" ? undefined : v;
+}
+
 function buildWorkOrderFromSa(
   sa: Record<string, unknown>,
   opts?: {
@@ -365,6 +375,8 @@ function buildWorkOrderFromSa(
     context?: WorkOrder["context"];
     activities?: WorkOrderActivity[];
     includeCustomerInfo?: boolean;
+    /** cloud 路径：不写入假距离/同小区 */
+    omitDemoMetrics?: boolean;
   }
 ): WorkOrder {
   const id = pickId(sa);
@@ -419,6 +431,8 @@ function buildWorkOrderFromSa(
   const readonlyWorkflowNodes =
     mapWorkflowNodes(opts?.workflowNodes) ?? undefined;
 
+  const contactPhone = pickContactPhone(sa, exts);
+
   const order: WorkOrder = {
     id: id || code,
     activeNodeName: opts?.nodeDefName,
@@ -435,8 +449,10 @@ function buildWorkOrderFromSa(
     appointment,
     timeText,
     address,
-    distance: "2.3 km",
-    nearbyCustomers: 2,
+    ...(opts?.omitDemoMetrics
+      ? {}
+      : { distance: "2.3 km", nearbyCustomers: 2 }),
+    ...(contactPhone ? { contactPhone } : {}),
     group,
     icon,
     tone,
@@ -472,6 +488,7 @@ function mapSaWorkflowFlipRowToWorkOrder(raw: Record<string, unknown>): WorkOrde
   if (!inner || typeof inner !== "object") return null;
   return buildWorkOrderFromSa(inner as Record<string, unknown>, {
     nodeDefName: nodeDefNameFromFlip(raw),
+    omitDemoMetrics: true,
   });
 }
 
@@ -636,6 +653,7 @@ async function enrichWorkOrderDetail(
     context,
     activities,
     includeCustomerInfo: true,
+    omitDemoMetrics: true,
   });
 }
 
