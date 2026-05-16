@@ -25,7 +25,8 @@ export function dashboardQueryKey() {
 export type WorkOrdersListResponse = {
   items: import("@/lib/mock-data").WorkOrder[];
   filter: string | null;
-  tabs: { key: string; label: string; count: number }[];
+  /** Present on page=1 only; later pages reuse client-held tab badges. */
+  tabs?: { key: string; label: string; count: number }[];
   page: number;
   rows: number;
   total: number;

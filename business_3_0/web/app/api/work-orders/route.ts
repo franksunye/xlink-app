@@ -50,20 +50,21 @@ export async function GET(req: NextRequest) {
 
   if (isCloudReadConfigured() && cloudJSession) {
     await loadCodeLabels(cookie, cloudJSession);
-    const cloudPage = await cloudFetchWorkOrdersPage(
-      cookie,
-      cloudToken,
-      cloudJSession,
-      filter,
-      page,
-      rows
-    );
-    if (cloudPage !== null) {
-      const cloudTabs = await cloudFetchWorkOrderTabTotals(
+    const includeTabs = page === 1;
+    const [cloudPage, cloudTabs] = await Promise.all([
+      cloudFetchWorkOrdersPage(
         cookie,
         cloudToken,
-        cloudJSession
-      );
+        cloudJSession,
+        filter,
+        page,
+        rows
+      ),
+      includeTabs
+        ? cloudFetchWorkOrderTabTotals(cookie, cloudToken, cloudJSession)
+        : Promise.resolve(null),
+    ]);
+    if (cloudPage !== null) {
       if (cloudTabs) tabs = cloudTabs;
       headers.set("X-Xlink-Read-Source", "cloud");
       const items = cloudPage.items.map((w) => withDefaultReadonlyWorkflowNodes(w));
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
         {
           items,
           filter: filter ?? null,
-          tabs,
+          ...(includeTabs ? { tabs } : {}),
           page: cloudPage.page,
           rows: cloudPage.rows,
           total: cloudPage.total,
@@ -85,13 +86,14 @@ export async function GET(req: NextRequest) {
 
   const withNodes = sourceList.map((w) => withDefaultReadonlyWorkflowNodes(w));
   const filtered = filterWorkOrders(withNodes, filter);
-  tabs = tabCountsForOrders(withNodes);
+  const includeTabs = page === 1;
+  if (includeTabs) tabs = tabCountsForOrders(withNodes);
   const slice = paginateWorkOrders(filtered, page, rows);
   return jsonResponse(
     {
       items: slice.items,
       filter: filter ?? null,
-      tabs,
+      ...(includeTabs ? { tabs } : {}),
       page: slice.page,
       rows: slice.rows,
       total: slice.total,

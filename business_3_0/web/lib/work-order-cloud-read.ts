@@ -632,13 +632,34 @@ export async function cloudFetchWorkOrders(
   return page?.items ?? null;
 }
 
-export async function cloudFetchWorkOrderTabTotals(
-  cookie: string | null,
-  forwardedAuthToken?: string | null,
-  forwardedJSessionId?: string | null
-): Promise<ReturnType<typeof import("@/lib/work-order-filters").tabCountsForOrders> | null> {
-  if (!isCloudReadConfigured()) return null;
+export type WorkOrderTabTotals = ReturnType<
+  typeof import("@/lib/work-order-filters").tabCountsForOrders
+>;
 
+/** Align with React Query default staleTime — tab badges change less often than list rows. */
+const TAB_TOTALS_CACHE_TTL_MS = 60_000;
+
+let tabTotalsCache: {
+  sessionKey: string;
+  at: number;
+  tabs: WorkOrderTabTotals;
+} | null = null;
+
+function tabTotalsSessionKey(
+  forwardedJSessionId: string | null | undefined
+): string {
+  return forwardedJSessionId?.trim() || "no-jsession";
+}
+
+export function clearWorkOrderTabTotalsCache(): void {
+  tabTotalsCache = null;
+}
+
+async function fetchWorkOrderTabTotalsFromCloud(
+  cookie: string | null,
+  forwardedAuthToken: string | null,
+  forwardedJSessionId: string | null
+): Promise<WorkOrderTabTotals> {
   const tabKeys = FILTER_TABS.map((t) => t.key);
   const requests = tabKeys.map((key) =>
     fetchSaListFlip(
@@ -646,8 +667,8 @@ export async function cloudFetchWorkOrderTabTotals(
       1,
       "1",
       cookie,
-      forwardedAuthToken ?? null,
-      forwardedJSessionId ?? null
+      forwardedAuthToken,
+      forwardedJSessionId
     )
   );
   const results = await Promise.all(requests);
@@ -656,6 +677,33 @@ export async function cloudFetchWorkOrderTabTotals(
     const total = typeof flip?.total === "number" ? flip.total : 0;
     return { key, label, count: total };
   });
+}
+
+/** Five lightweight FlipInfo totals (rows=1). Cached per session ~60s. */
+export async function cloudFetchWorkOrderTabTotals(
+  cookie: string | null,
+  forwardedAuthToken?: string | null,
+  forwardedJSessionId?: string | null
+): Promise<WorkOrderTabTotals | null> {
+  if (!isCloudReadConfigured()) return null;
+
+  const sessionKey = tabTotalsSessionKey(forwardedJSessionId ?? null);
+  const now = Date.now();
+  if (
+    tabTotalsCache &&
+    tabTotalsCache.sessionKey === sessionKey &&
+    now - tabTotalsCache.at < TAB_TOTALS_CACHE_TTL_MS
+  ) {
+    return tabTotalsCache.tabs;
+  }
+
+  const tabs = await fetchWorkOrderTabTotalsFromCloud(
+    cookie,
+    forwardedAuthToken ?? null,
+    forwardedJSessionId ?? null
+  );
+  tabTotalsCache = { sessionKey, at: now, tabs };
+  return tabs;
 }
 
 async function enrichWorkOrderDetail(

@@ -79,6 +79,7 @@ export function WorkOrdersInner() {
       fetchJson<WorkOrdersListResponse>(buildListUrl(activeTab, pageParam)),
     initialPageParam: 1,
     getNextPageParam: (last) => (last.hasMore ? last.page + 1 : undefined),
+    staleTime: 60_000,
   });
 
   const pageTabs = q.data?.pages[0]?.tabs;
@@ -146,6 +147,31 @@ export function WorkOrdersInner() {
     obs.observe(el);
     return () => obs.disconnect();
   }, [q.hasNextPage, q.isFetchingNextPage, q.fetchNextPage]);
+
+  /** Prefetch page N+1 after page N settles — smoother scroll, one cloud call only. */
+  useEffect(() => {
+    if (!q.isSuccess || !q.hasNextPage || q.isFetching || q.isFetchingNextPage) return;
+    const prefetch = () => {
+      void q.fetchNextPage();
+    };
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (w.requestIdleCallback) {
+      const id = w.requestIdleCallback(prefetch, { timeout: 2000 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const t = window.setTimeout(prefetch, 400);
+    return () => window.clearTimeout(t);
+  }, [
+    q.isSuccess,
+    q.hasNextPage,
+    q.isFetching,
+    q.isFetchingNextPage,
+    q.fetchNextPage,
+    q.data?.pages.length,
+  ]);
 
   if (showFullSkeleton) {
     return (
